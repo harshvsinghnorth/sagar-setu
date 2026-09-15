@@ -107,8 +107,8 @@ class EvidenceLedger(BaseModel):
         return {o.value for o in self.observations}
 
     def degraded(self) -> bool:
-        """True if anything came from somewhere other than a live fetch."""
-        return any(o.provenance != "live" for o in self.observations)
+        """True if anything is stale or from the snapshot. A fresh cache hit is not degraded."""
+        return any(o.provenance in ("stale_cache", "snapshot") for o in self.observations)
 
     def sources(self) -> dict[str, Provenance]:
         """Worst provenance seen per source — for the 'this is cached data' banner."""

@@ -283,3 +283,82 @@ path to get wrong.**
   outside Indian waters, is NO_GO. Detention is not a lesser outcome than a swamping.
 
 `tests/test_risk.py` (40) and `tests/test_geo.py` (27): all pass. Engine ≈ 0.1 ms.
+
+### Step 11 · The tool belt (`src/marine/tools/`) — 14 tests
+
+Fifteen typed functions, Pydantic at every boundary, all writing into one per-request
+`ToolContext.ledger`:
+
+| Tool | Does |
+|---|---|
+| `resolve_location` | name → coordinates + INCOIS sector, from the 5 test harbours, 16 curated major ports, and INCOIS's 1223 landing centres; exact, alias, then guarded fuzzy |
+| `get_wave_forecast` / `get_wind_forecast` / `get_visibility_forecast` / `get_sea_state` | windowed series through the chains |
+| `get_chlorophyll` / `get_argo_temperature` | trailing 30-day VIIRS chl; Argo 5 m cross-check |
+| `get_pfz_advisory` | nearest INCOIS PFZ lines with our bearing/distance, as ledger rows |
+| `check_position` / `predict_boundary_crossing` | zone + nearest IMBL; projected crossing |
+| `assess_sailing_risk` | worst-of over the ledger window → `risk.rules.evaluate` |
+| `safety_briefing` | the composite: `fan_out` (4 fetches concurrently) then the verdict |
+| `cyclone_status` / `lightning_status` | record the IMD gap in the ledger |
+| `named_window` | "tomorrow morning" → IST 05:00–12:00 → UTC, deterministic |
+
+- *Decision:* `safety_briefing` exists so the common question costs one tool call and one
+  parallel fan-out, not four sequential LLM round-trips. The planner can still call the
+  pieces individually for unusual questions.
+- *Decision:* geometry results (PFZ distance, IMBL distance, minutes to crossing) are
+  written to the ledger as observations too, so "42 km SW" is citable like any number.
+- *Finding:* "Kochi" resolved to the same-named INCOIS landing centre instead of the test
+  harbour. Fixed ordering so harbours win a name clash.
+- *Finding:* "Rameswaram" fuzzy-matched to "Kameshwaram" and "Kasimedu" to
+  "Kottaimedu" — neither real port is in INCOIS's landing-centre layer. Added a curated
+  `KNOWN_PORTS` list (Rameswaram, Kasimedu, Malpe, Vizag, Sassoon Dock, …), an alias table
+  (Cochin, Madras, Bombay, Vizag, Paradeep, …), and a first-three-letters guard on fuzzy
+  matches. Unknown names return `None`, never a guess.
+- *Finding:* a fresh cache hit was being reported as "degraded". Now only stale cache and
+  snapshot count.
+- *Finding:* wind and visibility tools hit the same weather URL; under `asyncio.gather`
+  both fired. Added in-flight request de-duplication in `try_live` — one network call,
+  both callers await it. Test pins it at 2 requests per briefing, not 4.
+
+`tests/test_tools.py` stubs the network with `httpx.MockTransport`: an `offline` fixture
+where every request raises (the chain must answer from the committed snapshot and label
+it), and a `live_from_snapshot` fixture that serves snapshot payloads as 200s. No test
+touches the internet. 14 tests, including "heading east from the Gulf of Mannar is NO_GO
+whatever the sea state".
+
+### Step 12 · Phase 2 exit criterion — met
+
+`scripts/ask.py`: the REPL answer with no LLM anywhere.
+
+```
+$ uv run python scripts/ask.py kochi
+=== GO === for a traditional craft off Kochi, Wed 16 Sep 05:00–12:00 IST
+status: verdict   engine: 0.12 ms   fetch+risk: 368 ms   total: 389 ms
+  wave_height  GO   wave_height 1.02 m within limits  [obs_0077]
+  wind         GO   wind 5.9 kt within limits         [obs_0013]
+  ...
+  cyclone      —    missing  no cyclone feed (IMD key missing)
+PFZ: advisory 2026-09-14 — #1 KERALA 42.1 km SW (228°)
+ledger: 128 observations, 2 missing
+```
+
+Cold (network): ≈ 2.2 s. **Warm cache: 389–448 ms, full ledger** — under the one-second
+target. Engine itself: ≈ 0.1 ms.
+
+Gulf of Mannar, heading 090 at 8 kt: **DO NOT SAIL — current heading crosses
+Sri Lanka - India in 59.3 min**, with the sea itself benign. The predictive geofence
+works as a safety parameter, not an afterthought. Open-Meteo returned a 503 during that
+run; the chain absorbed it.
+
+All five harbours answered (Veraval: CAUTION on visibility 4.72 km and honestly "no PFZ
+near this point"; Chennai / Paradip / Port Blair: CAUTION on the CAPE proxy).
+
+**Open calibration item:** the CAPE ≥ 2000 J/kg convective proxy fired at three Bay of
+Bengal harbours on an ordinary September day (2230–3540 J/kg). During the monsoon that
+may be every day, and a warning that fires every day is ignored. Needs a real lightning
+feed (IMD key) or a climatology-aware threshold; parked, not tuned blind.
+
+Test count: 81 (risk 40, geo 27, tools 14). All green. Committed.
+
+**Next:** Phase 3 — the planner (the only free-form LLM step, emitting a typed task DAG
+over these tool names), the four specialists, the LangGraph state machine, and the
+synthesis + verifier pass that strips any number not in the ledger.

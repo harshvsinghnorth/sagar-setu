@@ -8,6 +8,7 @@ same way and every observation carries honest provenance and confidence.
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import logging
@@ -151,13 +152,31 @@ def snapshot_lookup(
 # -- the chain -----------------------------------------------------------------------------
 
 
+_inflight: dict[str, asyncio.Future] = {}
+
+
 async def try_live(url: str, ttl: timedelta) -> FetchOutcome | str:
-    """Fresh cache, else live network within the 2 s budget. Returns an error string on failure."""
-    t0 = time.perf_counter()
+    """Fresh cache, else live network within the 2 s budget. Returns an error string on failure.
+    Concurrent callers of the same URL (wind + visibility share one weather request) await
+    one in-flight fetch instead of firing twice."""
     now = datetime.now(UTC)
     cached = cache_read(url)
     if cached and now - cached[1] <= ttl:
         return FetchOutcome(cached[0], "cache", cached[1], 0, None)
+    if url in _inflight:
+        return await _inflight[url]
+    fut: asyncio.Future = asyncio.get_running_loop().create_future()
+    _inflight[url] = fut
+    try:
+        result = await _network(url, now)
+        fut.set_result(result)
+        return result
+    finally:
+        _inflight.pop(url, None)
+
+
+async def _network(url: str, now: datetime) -> FetchOutcome | str:
+    t0 = time.perf_counter()
     try:
         r = await client().get(url)
         if r.status_code == 200:

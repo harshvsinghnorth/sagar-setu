@@ -30,16 +30,28 @@ POINTS = {**HARBOURS, "gulf_of_mannar": GULF_OF_MANNAR}
 
 MARINE_VARS = ",".join(
     [
-        "wave_height", "wave_period", "wave_direction",
-        "swell_wave_height", "swell_wave_period", "swell_wave_direction",
-        "wind_wave_height", "wind_wave_period",
-        "sea_surface_temperature", "ocean_current_velocity", "ocean_current_direction",
+        "wave_height",
+        "wave_period",
+        "wave_direction",
+        "swell_wave_height",
+        "swell_wave_period",
+        "swell_wave_direction",
+        "wind_wave_height",
+        "wind_wave_period",
+        "sea_surface_temperature",
+        "ocean_current_velocity",
+        "ocean_current_direction",
     ]
 )
 WEATHER_VARS = ",".join(
     [
-        "wind_speed_10m", "wind_gusts_10m", "wind_direction_10m",
-        "visibility", "precipitation", "weather_code", "cape",
+        "wind_speed_10m",
+        "wind_gusts_10m",
+        "wind_direction_10m",
+        "visibility",
+        "precipitation",
+        "weather_code",
+        "cape",
     ]
 )
 
