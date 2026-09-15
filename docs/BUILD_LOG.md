@@ -182,3 +182,104 @@ Marine account.
 2 s timeouts and snapshot fallback, the typed tool belt, and the deterministic risk engine
 with unit tests. Exit criterion: answer "is it safe off Kochi tomorrow" from a Python REPL
 with a full ledger in under a second, no LLM involved.
+
+---
+
+## Day 1 (continued) — Phase 2 begins
+
+### Step 7 · The evidence ledger (`src/marine/ledger.py`)
+
+`Observation` exactly as CLAUDE.md specifies, plus three fields the rest of the system
+needs: `provenance` (`live` / `cache` / `stale_cache` / `snapshot`), `latency_ms`, and an
+`id` (`obs_0001`, …) that the ledger assigns so the verifier can match a citation to a
+row. `EvidenceLedger` holds observations and — just as important — `MissingObservation`s:
+every variable we tried to get and could not, with the reason. Helpers: `series()`,
+`worst()` (the most adverse value in a window, which is what the risk engine wants),
+`values()` (the set the verifier checks numeric claims against), `degraded()` and
+`sources()` for the "this is cached data" banner.
+
+### Step 8 · The source chain (`src/marine/sources/base.py`)
+
+- *Decision:* every source is a `JsonSource` with two pure methods, `url(query)` and
+  `parse(payload, query)`. Everything about *where the bytes came from* lives in the base
+  class, so every source degrades identically.
+- Two stages, kept deliberately separate: `try_live` (fresh disk cache within TTL, else
+  network with the 2 s budget) and `try_fallback` (stale cache of any age, else the
+  frozen snapshot). `SourceChain` runs stage one across *all* sources in priority order
+  before stage two across any of them — rule 3 says "down the source chain, then to the
+  snapshot", and a first draft that let each source reach for its own snapshot before the
+  next live source was tried got this wrong. Fixed before it shipped.
+- Confidence multipliers by provenance: live 1.0, cache 0.95, stale cache 0.7, snapshot
+  0.5, times the source's own base confidence.
+- Snapshot lookup picks the nearest snapshot point to the query and says so in the note
+  ("kochi snapshot point, 12 km away"). If the snapshot does not cover the requested time
+  window, `shift_window` moves to the same hours on the snapshot's last day and the note
+  says that too. Loud degradation, never silent.
+- Disk cache is `data/cache/<sha1(url)>.json` with `fetched_at`, so staleness is real.
+
+Source modules written against the verified shapes: `open_meteo.py` (marine + weather,
+unit conversions km/h→kt and m→km, grid-node offset → `distance_km`), `noaa_chl.py`
+(VIIRS chlorophyll, trailing 30 days so one URL serves both baseline and latest),
+`incois_erddap.py` (Argo 5 m temperature, base confidence 0.6), `incois_pfz.py` (global
+daily fetch, parses Year + Julian day into an advisory date), `imd.py` (reports *why*
+cyclone/lightning are missing; activates when a key arrives, but refuses to return data
+from an unverified shape).
+
+Live check at Kochi: marine 1.9 s first hit (TLS handshake), 13 ms from cache; weather
+1.1 s / 13 ms; chlorophyll 2.6 s / 13 ms; PFZ 3.6 s / 66 ms. Forced offline (host
+replaced with `offline.invalid`): 85 ms, 77 observations from the snapshot, confidence
+0.5, note explaining it. A window 40 days out came back shifted and labelled.
+- *Finding:* the PFZ fetch (1.1 MB) takes ~3.6 s live, over the 2 s budget. It is cached
+  for 6 h, so the API must **pre-warm it at startup**. Noted for Phase 3.
+- *Finding:* Argo at Kochi returns `null` (coastal cell). The source reports "empty" and
+  the chain raises `SourceUnavailable`; it does not borrow a neighbouring cell. Chennai
+  gets 29.38 °C from 51 km away, dated 30 July, confidence 0.6 — all visible in the row.
+
+### Step 9 · Geo (`src/marine/geo/`)
+
+`geodesy.py`: haversine, initial bearing, destination point, 16-point compass names, and
+`LocalPlane` — an equirectangular projection centred on the query so shapely can do exact
+nearest-point and line-crossing maths in kilometres.
+
+`boundaries.py`: loads the Marine Regions lines, keeps only the ones that are a boundary
+with another state (`Treaty`, `Median line`, `Court ruling` — 23 segments; "200 NM",
+baselines and connection lines excluded). `position_status()` gives a three-way zone and
+the nearest IMBL with distance, bearing and the closest point. `predict_crossing()`
+projects the heading 12 h ahead, finds the first IMBL or EEZ-edge intersection, and flags
+whether it falls inside the 90 min horizon — so the warning comes *before* the crossing.
+- *Finding:* every harbour reported "not in the EEZ" because harbours are on land and
+  the EEZ polygon starts at the coast. Tried INCOIS's India shapefile layer over WFS —
+  **503**, the server was down (the snapshot argument, live). Found Marine Regions'
+  `eez_land` union layer instead: one polygon for India + Andaman that classifies every
+  test point correctly. Committed as `data/static/india_eez_land_union.geojson`.
+- *Decision:* zones are `eez` (at sea, Indian), `land_or_port`, `outside_india`.
+- Moved the `GULF_OF_MANNAR` fixture to (9.15 N, 79.40 E), 14.6 km from the Sri Lanka
+  line, so an 8 kt boat heading east crosses in ~50 min — inside the horizon.
+
+`pfz.py`: nearest PFZ lines to a point with distance, bearing, compass and the closest
+point, capped at 300 km. Kochi: Kerala zone 42 km SW (228°). Veraval: empty list — the
+honest answer for a sector with no advisory.
+
+### Step 10 · The risk engine (`src/marine/risk/`) — 40 tests
+
+`thresholds.py`: three vessel classes with separate tables; CLAUDE.md numbers for
+traditional craft, progressively looser for motorised and mechanised. Every table is
+stamped `CALIBRATION = "provisional"` and the verdict carries that string, so the UI can
+say so until someone finds the INCOIS/IMD documents. Steepness bands (Hs/T²: 0.04
+caution, 0.06 no-go) were chosen so that 1.4 m at 5 s is flagged as chop while 1.4 m at
+10 s is not.
+
+`rules.py`: `evaluate(RiskInputs, VesselClass) → RiskVerdict`. Seven parameters — wave
+height, wind (gusts escalate), steepness, visibility, lightning, cyclone, boundary — each
+returning its own `ParameterVerdict` with value, thresholds, reason and the ledger ids
+that produced it. Then `max()` over levels. **Worst-of wins; there is no averaging code
+path to get wrong.**
+- *Decision:* a missing wave-height or wind value makes the status `insufficient_data`
+  and floors the level at CAUTION. The engine can never say GO without both.
+- *Decision:* with no lightning feed (IMD key missing), Open-Meteo thunderstorm codes and
+  CAPE ≥ 2000 J/kg act as a *convective proxy* — status `proxy`, never labelled lightning,
+  and the gap is still listed. The CLAUDE.md "thunderhead over calm seas" case is a test.
+- *Decision:* a predicted boundary crossing inside the horizon, or a position already
+  outside Indian waters, is NO_GO. Detention is not a lesser outcome than a swamping.
+
+`tests/test_risk.py` (40) and `tests/test_geo.py` (27): all pass. Engine ≈ 0.1 ms.

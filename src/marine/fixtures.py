@@ -9,4 +9,4 @@ HARBOURS: dict[str, tuple[float, float]] = {
 }
 
 # Gulf of Mannar, ~15 km from the India–Sri Lanka IMBL: the geofencing test case.
-GULF_OF_MANNAR: tuple[float, float] = (9.05, 79.10)
+GULF_OF_MANNAR: tuple[float, float] = (9.15, 79.40)
