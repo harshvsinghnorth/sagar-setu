@@ -362,3 +362,11 @@ Test count: 81 (risk 40, geo 27, tools 14). All green. Committed.
 **Next:** Phase 3 — the planner (the only free-form LLM step, emitting a typed task DAG
 over these tool names), the four specialists, the LangGraph state machine, and the
 synthesis + verifier pass that strips any number not in the ledger.
+
+### Step 13 · GitHub
+
+Renamed the branch `master` → `main`, wrote `README.md` (principles, status table, quick
+start, sources, layout), and pushed the six commits to the private repo
+`github.com/harshvsinghnorth/sagar-setu`. `gh` is not installed on this machine, so the
+repo was created on github.com by hand and pushed over HTTPS with the credentials already
+in Windows Git Credential Manager. From here every phase ends with a push.
