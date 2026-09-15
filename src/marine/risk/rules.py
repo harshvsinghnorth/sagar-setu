@@ -228,7 +228,9 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
                         status="proxy",
                         level=Level.GO,
                         unit="km",
-                        reason="no lightning feed; weather model shows no thunderstorm signal (proxy)",
+                        reason=(
+                            "no lightning feed; weather model shows no thunderstorm signal (proxy)"
+                        ),
                         evidence=ev.get("weather_code", []) + ev.get("cape", []),
                     )
                 )
@@ -302,7 +304,8 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
                 unit="min",
                 no_go_at=inputs.boundary_horizon_min,
                 reason=(
-                    f"current heading crosses {inputs.boundary_name or 'the boundary'} in {inputs.boundary_crossing_min:g} min"
+                    f"current heading crosses {inputs.boundary_name or 'the boundary'} "
+                    f"in {inputs.boundary_crossing_min:g} min"
                     + (
                         ""
                         if within
