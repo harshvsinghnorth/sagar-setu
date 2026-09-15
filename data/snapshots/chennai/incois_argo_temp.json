@@ -1,0 +1,1 @@
+{"table": {"columnNames": ["time", "ZAX", "latitude", "longitude", "TEMP"], "columnTypes": ["String", "double", "double", "double", "float"], "columnUnits": ["UTC", "METERS", "degrees_north", "degrees_east", "degs"], "rows": [["2026-07-30T00:00:00Z", 5, 13.5, 80.5, 29.378]]}}
