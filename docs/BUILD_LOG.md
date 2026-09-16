@@ -427,3 +427,99 @@ Kochi offshore:
 **Still open (user working on them):** IMD key (needs a letter from the college — the
 form at api.imd.gov.in/public/profile.php is free; questionnaire answers drafted),
 Bhashini keys, INCOIS threshold document.
+
+### Step 16 · Phase 3 — the LLM layer, planner, specialists, graph, verifier
+
+**`agents/llm.py` — one interface, four providers.** `complete()` and `stream()`
+behind a Protocol; `GeminiLLM` (REST, no SDK; `thinkingBudget: 0` for speed), `OllamaLLM`
+(local, offline), `AnthropicLLM` (optional, paid, SDK loaded lazily), and `NoLLM`, which
+raises `LLMUnavailable` so every caller has a deterministic fallback. Structured output is
+done the portable way — JSON schema in the prompt, pydantic validation on the way out, one
+corrective retry — so it behaves identically on every provider. `LLM_PROVIDER=auto` picks
+Gemini if a key exists, else Anthropic, else none.
+
+**`agents/planner.py` — the only free-form LLM step, and mostly not an LLM.**
+- *Decision:* a **deterministic fast path** handles Latin-script questions in the common
+  shapes with no model call: intent by keyword, location by scanning 1–3-word spans
+  against the resolver, day/part words, vessel words or "9 m", heading and speed by
+  regex. ~50 ms. Every English demo question takes this path, which is how we stay inside
+  the 600 ms planner budget on a free tier whose round-trip is ~2.8 s.
+- The LLM path (Indic scripts, vague phrasing) does language detection, translation and
+  intent extraction in **one** JSON call. Verified live: Tamil → Kochi/safety; Hindi with
+  "my boat is 15 metres" → Veraval/motorised (it applied the vessel-class rule itself);
+  "write me a poem" → off_topic; "what does a 2 m swell mean" → general_knowledge with a
+  short answer; "is it safe tomorrow" → clarify, asking for the harbour in the user's
+  language.
+- Eight intents: safety, pfz, boundary, conditions, chlorophyll, general_knowledge,
+  off_topic, clarify. The task DAG is derived from the intent by `tasks_for` — typed and
+  explicit, so parallelism is a property of the plan, not of prompt luck.
+- *Finding:* the fast path first mis-filed "what does a 2 metre swell mean" as
+  `conditions` → clarify. Fixed: a data intent with no location defers to the model,
+  which knows the difference between "explain" and "fetch".
+- *Finding:* one planner call took 17 s (free-tier hiccup); the same query then took
+  2.9 s twice. Transient; timeout stays 20 s.
+
+**`agents/specialists.py` — three of the four are plain Python.** Ocean & Weather fans
+out via the tool belt and summarises worst-of per variable, with a disagreement hook that
+names sources rather than averaging them (ready for Copernicus SST/currents). Geospatial
+& Boundary does PFZ + position + predictive crossing. Analytics & Causal compares the
+latest chlorophyll with a trailing 30-day baseline (z-score, 7-day trend) and names a
+*mechanism as a hypothesis* — "consistent with upwelling", "one possible contributor" —
+never a cause.
+
+**`graph.py` — LangGraph.** `planner → {ocean_weather, geospatial, analytics} → risk →
+synthesis`, with a direct edge to synthesis for clarify / off-topic / knowledge. The
+conditional edge returns the list of specialist nodes the DAG needs; they run in the same
+superstep, so concurrently. Every node appends a timed event — the API will stream these
+as agent progress. A specialist that throws degrades the answer; it never kills it.
+
+**`agents/synthesis.py` — Synthesis & Verify.** `build_brief` packs everything into one
+deterministic brief that is *the model's entire world*; the same brief renders the
+template answer used with no model. The prompt's rules: verdict first and final; only
+numbers from the brief; degradation and gaps must be stated; the user's language; plain
+spoken register. `verify()` then scans the draft: every number (Latin or Indic digits)
+must match a ledger value, a threshold, a window hour or a count the brief states; dates
+and clock times are stripped first. An unsupported number → one corrective retry → else
+the template ships. English drafts are also checked for phrases that contradict a DO NOT
+SAIL. The verdict badge and the degradation banner in the UI will come from the engine
+and the ledger, never from the prose, so prose cannot soften them.
+- *Finding:* the verifier flagged dates ("17 Sep", "2026-09-15") as unsupported numbers.
+  Fixed by stripping date/time patterns before the scan.
+- *Finding:* the model called a fresh cache hit "cached weather data" because the word
+  `cache` appeared in the evidence bracket. Fixed: the brief labels provenance as
+  `current` / `OLDER CACHED DATA` / `STORED SNAPSHOT`; a fresh cache is current.
+- *Decision:* boundary crossing inside the 90 min horizon stays NO_GO; **inside twice the
+  horizon is now CAUTION** ("change heading before then"). Trigger: Rameswaram heading 090
+  at 8 kt reaches the Sri Lanka line in 94.5 min — a GO by the letter of the horizon, and
+  obviously not what a fisherman needs to hear. Test added.
+- *Decision:* PFZ search capped at 150 km (was 300). Veraval was being told about
+  Maharashtra's zones 237 km away; "no advisory near you today" is the honest answer.
+
+**Tooling finding:** the Bash tool collapses backslash pairs before the shell sees them,
+so every `\b` in a regex pushed through a heredoc arrived as a **backspace byte**. Cost an
+hour across two files. Rule from now on: code containing backslashes goes through the
+Write/Edit tools, never a shell heredoc. A one-off script strips stray `\x08` bytes.
+
+**Phase 3 exit criterion — met.** `scripts/chat.py`:
+
+| Query | Path | Result | Total |
+|---|---|---|---|
+| "Is it safe to go out from Kochi tomorrow morning?" | fast path | CAUTION (visibility 4.78 km); 10 numbers, all verified | 3.6 s |
+| Tamil, Rameswaram, heading 90 at 8 kt, 9 m boat | LLM | CAUTION; crossing in 94.5 min flagged; answer in Tamil, 13 numbers verified | ~8 s |
+| Hindi, Veraval, 15 m boat | LLM | CAUTION; answer in Hindi, motorised thresholds, 8 numbers verified | 8.4 s |
+
+Where the time goes on a non-English question: planner ~2.8 s + synthesis ~2.5 s (both
+the free model) + live fetch 1.5–2.5 s. English questions skip the planner call. The
+2.4 s first-token budget in CLAUDE.md is not met on the free tier for Indic queries;
+mitigations for Phase 4: pre-warm the demo harbours' caches in the background (fetch
+→ ~30 ms), stream the answer so the first token lands at ~4 s, and show agent progress
+events so the wait is legible. Paying for a faster model is not on the table.
+
+`tests/test_agents.py` (22): fast-path intents, DAG shape, verifier (roundings, Indic
+digits, dates, contradiction), and the graph end to end with a scripted fake model —
+including one that invents "waves 4.7 m, wind 41 kt" and is caught and retried. Total
+suite: 104 tests, no network, no model.
+
+**Next:** Phase 4 — `api.py` (FastAPI + SSE streaming of events and answer chunks),
+then the React + MapLibre interface: chat, map with PFZ lines / EEZ / IMBL / vessel
+position / projected track, and the evidence ledger panel with staleness shown.

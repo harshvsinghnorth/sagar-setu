@@ -27,7 +27,7 @@ class PfzHit:
 
 
 def nearest_zones(
-    lat: float, lon: float, zones: list[PfzZone], k: int = 3, max_km: float = 300.0
+    lat: float, lon: float, zones: list[PfzZone], k: int = 3, max_km: float = 150.0
 ) -> list[PfzHit]:
     """The k closest PFZ lines within max_km, nearest first. Empty list = no advisory near here."""
     plane = LocalPlane(lat, lon)

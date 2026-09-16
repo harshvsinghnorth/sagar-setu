@@ -294,23 +294,27 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
             )
         )
     elif inputs.boundary_crossing_min is not None:
-        within = inputs.boundary_crossing_min <= inputs.boundary_horizon_min
+        # Inside the horizon: no-go. Inside twice the horizon: caution — the heading must
+        # change before then. A fisherman steering at the line 95 min out gets a warning.
+        mins, horizon = inputs.boundary_crossing_min, inputs.boundary_horizon_min
+        if mins <= horizon:
+            lvl, tail = Level.NO_GO, ""
+        elif mins <= 2 * horizon:
+            lvl, tail = Level.CAUTION, " — change heading before then"
+        else:
+            lvl, tail = Level.GO, f" (beyond the {horizon:g} min horizon)"
         params.append(
             ParameterVerdict(
                 parameter="boundary",
                 status="evaluated",
-                level=Level.NO_GO if within else Level.GO,
-                value=inputs.boundary_crossing_min,
+                level=lvl,
+                value=mins,
                 unit="min",
-                no_go_at=inputs.boundary_horizon_min,
+                caution_at=2 * horizon,
+                no_go_at=horizon,
                 reason=(
                     f"current heading crosses {inputs.boundary_name or 'the boundary'} "
-                    f"in {inputs.boundary_crossing_min:g} min"
-                    + (
-                        ""
-                        if within
-                        else f" (beyond the {inputs.boundary_horizon_min:g} min horizon)"
-                    )
+                    f"in {mins:g} min{tail}"
                 ),
                 evidence=ev.get("boundary", []),
             )

@@ -12,7 +12,15 @@ CACHE_DIR = DATA_DIR / "cache"
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT / ".env", extra="ignore")
 
+    # -- LLM: the only paid-or-free-tier component. "auto" picks gemini > anthropic > none.
+    llm_provider: str = "auto"  # auto | gemini | anthropic | ollama | none
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-3.6-flash"  # verified 2026-09-16; free tier, Tamil OK
     anthropic_api_key: str = ""
+    anthropic_model: str = "claude-opus-5"
+    ollama_url: str = "http://localhost:11434"
+    ollama_model: str = "qwen2.5:7b"
+    llm_timeout_s: float = 20.0
     copernicus_username: str = ""
     copernicus_password: str = ""
     imd_api_key: str = ""

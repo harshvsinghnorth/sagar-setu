@@ -221,8 +221,17 @@ def test_boundary_crossing_within_horizon_is_no_go():
     assert any("Sri Lanka - India" in r and "40 min" in r for r in v.reasons)
 
 
-def test_boundary_crossing_beyond_horizon_is_reported_but_go():
-    v = verdict(boundary_crossing_min=180.0)
+def test_boundary_crossing_within_twice_the_horizon_is_caution():
+    # Rameswaram heading 090 at 8 kt reaches the Sri Lanka line in ~95 min: warn now.
+    v = verdict(boundary_crossing_min=95.0, boundary_name="Sri Lanka - India")
+    b = next(p for p in v.parameters if p.parameter == "boundary")
+    assert b.level == Level.CAUTION
+    assert v.level == Level.CAUTION
+    assert "change heading before then" in b.reason
+
+
+def test_boundary_crossing_far_beyond_horizon_is_reported_but_go():
+    v = verdict(boundary_crossing_min=240.0)
     b = next(p for p in v.parameters if p.parameter == "boundary")
     assert b.level == Level.GO
     assert "beyond the 90 min horizon" in b.reason

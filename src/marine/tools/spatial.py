@@ -88,7 +88,7 @@ async def get_pfz_advisory(ctx: ToolContext, p: Point, k: int = 3) -> PfzResult:
     if not hits:
         ctx.ledger.add_missing(
             "pfz_distance_km",
-            f"no PFZ advisory within 300 km on {adv.advisory_date}",
+            f"no PFZ advisory within 150 km on {adv.advisory_date}",
             [incois_pfz.SOURCE_NAME],
         )
         return PfzResult(
