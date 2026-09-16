@@ -405,3 +405,25 @@ should have been called out on Day 0. The user has no budget, so the plan change
 live), Copernicus account (forecast chlorophyll, better currents), Bhashini keys
 (government translation for the language round trip; Gemini is the fallback), and
 INCOIS's official small-craft thresholds document (calibration).
+
+### Step 15 · Copernicus Marine verified
+
+Registered a free account (Academic; blue markets: Extremes/Hazards/Safety, Education).
+`copernicusmarine` toolbox 2.4.1 installed; login works with username + password from
+`.env`. Opened `cmems_mod_glo_bgc-pft_anfc_0.25deg_P1D-m` (chlorophyll, daily, 0.25°) at
+Kochi offshore:
+- *Finding:* time axis runs **2021-11-01 → 2026-09-25** — a 9-day forecast *and* a
+  five-year daily baseline in one dataset. That is exactly what the Analytics & Causal
+  agent needs for "is this week's chlorophyll unusual?". NOAA VIIRS stays as the
+  no-account fallback behind it in the chain.
+- *Finding:* opening the dataset takes ~11 s (lazy remote zarr). Far outside the 2 s
+  budget, so Copernicus is **pre-fetched per harbour by a background job** into
+  `data/cache/` (and the snapshot), never fetched inside a request. Wiring deferred to
+  the Analytics work in Phase 3; the source module will read the cache only.
+- Latest values near Kochi: ~1.0–1.1 mg/m³ (VIIRS gave 3.3–4.3 at the coast — different
+  grid, different product; the ledger will show both with their distances, and the Ocean
+  agent's job is to flag the disagreement, not average it).
+
+**Still open (user working on them):** IMD key (needs a letter from the college — the
+form at api.imd.gov.in/public/profile.php is free; questionnaire answers drafted),
+Bhashini keys, INCOIS threshold document.
