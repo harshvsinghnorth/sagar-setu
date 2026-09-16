@@ -370,3 +370,38 @@ start, sources, layout), and pushed the six commits to the private repo
 `github.com/harshvsinghnorth/sagar-setu`. `gh` is not installed on this machine, so the
 repo was created on github.com by hand and pushed over HTTPS with the credentials already
 in Windows Git Credential Manager. From here every phase ends with a push.
+
+---
+
+## Day 2 — 2026-09-16
+
+### Step 14 · Budget reality check → model-agnostic LLM layer
+
+Before Phase 3, the cost of the LLM layer came up. It is the **only** paid component in
+the design (every data source, the map library, hosting and GitHub are free), and it
+should have been called out on Day 0. The user has no budget, so the plan changed:
+
+- *Decision:* the LLM sits behind a thin provider interface (`agents/llm.py`, selected by
+  `LLM_PROVIDER` in `.env`). Develop and demo on a **free tier**; Anthropic / Ollama are
+  optional alternatives. This is also the better story: the intelligence is in the
+  architecture, not the vendor.
+- *Finding:* Google's Gemini API free tier works from this machine with no card.
+  `gemini-2.5-flash` and older are gone for new keys; the API itself points to
+  `gemini-3.6-flash`. Verified live: a Tamil question ("நாளை காலை கடலுக்கு போகலாமா?") came
+  back correctly identified, translated, and answered in Tamil, as JSON. **2.6 s with
+  reasoning off** (`thinkingBudget: 0`), 4.3 s with default reasoning. `gemini-3.8-flash`
+  timed out at 45 s; `3.5-flash-lite` rejects the thinking-off flag. So: `gemini-3.6-flash`,
+  thinking off for the planner, streaming for synthesis.
+- *Finding:* 2.6 s is above the 600 ms planner budget in CLAUDE.md. Mitigations planned:
+  a deterministic fast path for the common question shapes (location + day-part + safety
+  → no LLM call needed for the plan), and streaming so the first token of the explanation
+  lands early. The budget is a target for the demo, not a reason to pay for a faster model.
+- *Incident, caught:* the key was pasted into `.env.example` — a **tracked** file — instead
+  of `.env`. It was not yet committed. Moved to `.env` (gitignored, verified), template
+  restored. Lesson recorded: say "create a new file called `.env`" explicitly, and check
+  `git status` before every commit for anything that looks like a credential.
+
+**Still worth getting, none blocking:** IMD API key (cyclone + lightning parameters go
+live), Copernicus account (forecast chlorophyll, better currents), Bhashini keys
+(government translation for the language round trip; Gemini is the fallback), and
+INCOIS's official small-craft thresholds document (calibration).
