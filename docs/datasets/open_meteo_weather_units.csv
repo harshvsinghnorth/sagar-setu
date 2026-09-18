@@ -1,0 +1,9 @@
+variable,unit
+time,iso8601
+wind_speed_10m,kn
+wind_gusts_10m,kn
+wind_direction_10m,°
+visibility,m
+precipitation,mm
+weather_code,wmo code
+cape,J/kg

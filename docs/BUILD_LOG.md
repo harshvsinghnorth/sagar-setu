@@ -523,3 +523,40 @@ suite: 104 tests, no network, no model.
 **Next:** Phase 4 — `api.py` (FastAPI + SSE streaming of events and answer chunks),
 then the React + MapLibre interface: chat, map with PFZ lines / EEZ / IMBL / vessel
 position / projected track, and the evidence ledger panel with staleness shown.
+
+---
+
+## Day 3 — 2026-09-18
+
+### Step 17 · Dataset dossier for the project review
+
+Paused Phase 4 to prepare for a review with the supervising professor, whose focus is on
+the datasets. Deliverables, all under `docs/`:
+
+- `docs/datasets.md` — the dossier: the idea in one paragraph, the data principle
+  (evidence ledger), a catalogue of ten datasets, a card per dataset (publisher, what we
+  take, resolution, cadence, access, limits, sample file), a section on datasets
+  **evaluated and rejected** with reasons, the data-flow diagram, and three open questions
+  to put to the professor (threshold calibration source, coastal chlorophyll product
+  choice, IMD access).
+- `docs/datasets/*.csv` — 15 extracts of real responses via `scripts/export_datasets.py`:
+  Open-Meteo hourly marine + weather for six points (2,160 rows each), the 87 PFZ lines and
+  their 42,740 vertices, 1,223 landing centres, 14 sectors, 32 boundary features, VIIRS
+  and Argo samples, the fetch manifest, and — pulled live — Copernicus chlorophyll for
+  six points (1 Jul → 27 Sep 2026) plus the **five-year daily record at Kochi (1,792
+  values)**.
+- `docs/datasets/Sagar_Setu_Datasets.xlsx` — 16 sheets: a catalogue plus one sheet per
+  extract (`scripts/build_dataset_workbook.py`). No formulas, so it opens identically
+  anywhere.
+- Two figures (`scripts/plot_datasets.py`): all datasets on one map, and five years of
+  chlorophyll off Kochi with the VIIRS coastal pixel overlaid.
+
+- *Finding, from the figure:* the south-west-monsoon upwelling bloom off Kochi recurs
+  every June–September in the Copernicus record, and **the 2026 bloom is visibly weaker
+  than 2022, 2024 and 2025**. That is the "productivity decline" causal query showing up
+  in the data unprompted. Recorded as an observation to test properly in the Analytics
+  work, not as a claim.
+- *Finding:* VIIRS at the Kochi coastal pixel reads 3–11 mg/m³ while the Copernicus 0.25°
+  mean reads ~1 — a 4 km coastal pixel and a 28 km offshore box measure different water.
+  The dossier says so and the Ocean agent's disagreement rule (show both, never average)
+  now has a concrete case behind it. Raised as a question for the professor.
