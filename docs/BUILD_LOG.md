@@ -641,3 +641,59 @@ Rule stands: regex and escape sequences go through Write/Edit only.
 Suite: 111 tests. Next: Phase 5 — Bhashini when keys arrive (Gemini covers the round
 trip today), then the stretch items the user asked for (multi-turn, A* route suggestion,
 spoken input), then Phase 6 hardening and the offline rehearsal.
+
+### Step 20 · Evaluation: "how often are we right?"
+
+The professor asked for an accuracy figure — if the system says "do not go out tomorrow",
+how often is it right, because a false alarm wastes a fisherman's day. We had no number,
+and said so. Then built the harness.
+
+- *Decision:* report a **contingency table, not one accuracy number**, because the two
+  errors are not equal: a miss (said go, was rough) is the dangerous one; a false alarm
+  (said don't go, was fine) is the wasted day. Hit rate (POD) and false-alarm ratio (FAR)
+  are reported separately, plus CSI, accuracy, the full 3×3 confusion matrix, and the
+  wave-height error (MAE / RMSE / bias).
+- *Finding:* Open-Meteo exposes **the forecast as it was issued 1, 2 and 3 days earlier**
+  for every hour (`wave_height_previous_dayN` on the marine API; the previous-runs API for
+  wind and gusts), 92 days back. That is exactly the data a backtest needs: the verdict a
+  fisherman would have seen the evening before versus the model's final analysis of the
+  morning. Visibility has no previous-run archive, so it is held neutral for both series.
+- *Finding:* no INCOIS / NIOT buoy or wave-rider feed is publicly reachable (ERDDAP has
+  no table datasets beyond Argo; the WRB pages 404). So the truth in this evaluation is
+  the model's own analysis, **not the sea** — stated in the report's first paragraph, and
+  the numbers are called an upper bound on skill. The harness runs unchanged against buoy
+  data if any is obtained (question for the professor).
+
+`src/marine/eval/backtest.py` builds, for every harbour-morning (05:00–12:00 IST) and
+each lead, the worst-of inputs from both series, runs the same engine on both, and scores.
+`scripts/eval_report.py` writes `docs/evaluation.md`. Results, 92 mornings (22 Jun →
+21 Sep 2026, peak south-west monsoon) × 5 harbours = 460 harbour-mornings, traditional
+craft:
+
+| lead | DO-NOT-SAIL hit rate / FAR | CAUTION-or-worse hit rate / FAR | 3-way agreement | Hs MAE |
+|---|---|---|---|---|
+| 1 day | **93.9% / 3.1%** (31 of 33 rough mornings warned; 1 false alarm in 32 warnings) | 90.7% / 3.4% | 93.5% | 0.056 m |
+| 2 days | 97.0% / 17.9% | 86.6% / 4.1% | 90.2% | 0.101 m |
+| 3 days | 90.9% / 30.2% | 85.2% / 10.2% | 85.0% | 0.121 m |
+
+The two day-ahead misses were graded CAUTION, never GO — the worst-of rule behaving as
+designed. Veraval (Gujarat, SW monsoon) is the stress test: a do-not-sail morning one day
+in three, hit rate 96%, zero false alarms. Chennai and Port Blair had no do-not-sail
+mornings in the period (the Bay's rough season is Oct–Dec). Skill falls with lead mostly
+through false alarms — so the interface should treat the day-ahead verdict as the decision
+and longer leads as outlook.
+
+**Prospective log started** (`scripts/daily_log.py --log` / `--verify`): each evening the
+verdict for the next morning is recorded at all five harbours; the next afternoon the
+outcome is scored. These are predictions made before the fact — the strongest evidence a
+reviewer can be given — and they accumulate into `docs/evaluation.md` automatically.
+First entries 22 Sep: Kochi GO, Chennai GO, Veraval CAUTION (convective proxy), Port Blair
+CAUTION (visibility 2.58 km), **Paradip DO NOT SAIL (2.84 m)**. Scheduling instructions
+(Windows `schtasks`) are in the script's docstring — the user runs those; I did not
+create scheduled tasks on their machine.
+
+Tests: `tests/test_eval.py` pins the contingency arithmetic and the miss / false-alarm
+separation. Suite: 115.
+
+**Needs from the user:** ask the professor / department for INCOIS or NIOT buoy data;
+run the two `schtasks` commands so the log grows without anyone remembering.

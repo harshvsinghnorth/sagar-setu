@@ -30,6 +30,11 @@ Built for the ISRO/INCOIS agentic marine intelligence problem statement (SIH 202
 | 5 · Bhashini integration, multi-turn, route suggestion | next |
 | 6 · Harden and rehearse offline | — |
 
+How often is the verdict right? See [`docs/evaluation.md`](docs/evaluation.md) — day-ahead
+do-not-sail warnings: 94% hit rate, 3% false-alarm ratio over 460 harbour-mornings of the 2026
+monsoon (forecast vs model analysis; buoy validation pending). Regenerate with
+`uv run python scripts/eval_report.py`.
+
 The full narrative of how it was built is in [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md).
 
 ## Quick start

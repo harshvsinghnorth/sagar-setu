@@ -46,3 +46,4 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.ruff.lint.per-file-ignores]
 "scripts/*" = ["E501"]  # printing scripts: long f-strings are the point
 "src/marine/agents/*" = ["E501"]  # prompts and brief lines are prose
+"src/marine/eval/*" = ["E501"]  # report strings

@@ -28,7 +28,9 @@ def search(kind: str):
             continue
         closed.append(n)
         step += 1
-        print(f"step {step}: expand {n}  g={gc}  h={H[n]}  f={f}   frontier after pop: {sorted((round(x[0], 1), x[2]) for x in frontier if x[2] not in closed)}")
+        print(
+            f"step {step}: expand {n}  g={gc}  h={H[n]}  f={f}   frontier after pop: {sorted((round(x[0], 1), x[2]) for x in frontier if x[2] not in closed)}"
+        )
         if n == "S5":
             path = []
             while n:
