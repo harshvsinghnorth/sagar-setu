@@ -25,9 +25,9 @@ Built for the ISRO/INCOIS agentic marine intelligence problem statement (SIH 202
 |---|---|
 | 1 · Verify and freeze data sources | done — `docs/data-sources.md` |
 | 2 · Tool belt + deterministic risk engine (no LLM) | done — 81 tests, `scripts/ask.py` answers in < 0.5 s warm |
-| 3 · Planner, specialists, LangGraph, verifier | next |
-| 4 · Map + interface (React + MapLibre, SSE) | — |
-| 5 · Language round-trip (Bhashini / IndicTrans2), route optimisation | — |
+| 3 · Planner, specialists, LangGraph, verifier | done — Gemini free tier by default, model-agnostic; Tamil/Hindi/English round trips |
+| 4 · Map + interface (React + MapLibre, SSE) | done — chat, verdict badge, map with PFZ/IMBL/track, evidence ledger |
+| 5 · Bhashini integration, multi-turn, route suggestion | next |
 | 6 · Harden and rehearse offline | — |
 
 The full narrative of how it was built is in [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md).
@@ -41,10 +41,20 @@ uv run python scripts/ask.py kochi              # go/no-go for tomorrow morning 
 uv run python scripts/ask.py "fort kochi" --vessel motorised --day today --part afternoon
 uv run python scripts/ask.py --lat 9.15 --lon 79.40 --heading 90 --speed 8   # Gulf of Mannar geofence
 uv run python scripts/snapshot.py               # refresh the offline snapshot
+uv run python scripts/chat.py "நாளை காலை கொச்சியில் இருந்து கடலுக்கு போகலாமா?"   # full pipeline, any language
 ```
 
-No keys are required. Copy `.env.example` to `.env` to add optional ones (Anthropic for
-Phase 3, IMD, Copernicus, Bhashini).
+The interface (two terminals):
+
+```bash
+uv run uvicorn marine.api:app --reload          # API on :8000
+cd web && npm install && npm run dev            # UI on :5173
+```
+
+Set `GEMINI_API_KEY` in `.env` (free at aistudio.google.com) for the language model; without
+it the system still answers in English from deterministic templates.
+
+Copy `.env.example` to `.env`. All keys are optional and all are free tiers.
 
 ## Data sources (verified live 2026-09-15)
 
@@ -68,6 +78,10 @@ src/marine/
   geo/             EEZ/IMBL geofencing (predictive), PFZ bearing/distance
   risk/            thresholds per vessel class, worst-of rules — no model
   tools/           typed, agent-callable functions
+  agents/          llm provider layer, planner, specialists, synthesis + verifier
+  graph.py         LangGraph state machine
+  api.py           FastAPI + SSE
+web/               React + Vite + MapLibre interface
 data/static/       boundaries, sectors, landing centres
 data/snapshots/    frozen demo data — the offline fallback
 docs/              data-sources.md (reference), BUILD_LOG.md (narrative)

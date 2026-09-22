@@ -252,7 +252,7 @@ def template_answer(b: Brief) -> str:
 SYNTHESIS_SYSTEM = """You write the reply of a marine safety assistant for small-craft fishermen on the Indian coast. You will receive a BRIEF containing a verdict computed by a deterministic safety engine and the evidence behind it.
 
 Absolute rules:
-1. The verdict (GO / CAUTION / DO NOT SAIL) is final. State it first, plainly. Never soften it, hedge it, or add your own judgement about safety.
+1. If the BRIEF has a VERDICT line, that verdict (GO / CAUTION / DO NOT SAIL) is final: state it first, plainly, and never soften it, hedge it, or add your own judgement about safety. If the BRIEF has NO VERDICT line, no safety assessment was made: do not write GO, CAUTION, DO NOT SAIL, safe, or unsafe anywhere in the reply — report the facts only.
 2. Use ONLY numbers that appear in the BRIEF. Do not compute, convert, round differently, or estimate any number. If a value is not in the BRIEF, do not mention one.
 3. If the BRIEF has a "degradation" section, one sentence of your reply MUST say that some data is old or from a stored copy (name which: wind/weather or waves) because the live source did not answer. If it lists "data gaps", say in one short sentence what could not be checked. The user must know what we could not check.
 4. Write in {language}. Simple spoken register, as to a working fisherman, not a scientist. Short sentences. No markdown headers, no bullet symbols, at most 6 sentences unless the BRIEF has many findings.
@@ -319,6 +319,7 @@ _UNIT_AFTER = re.compile(
     re.IGNORECASE,
 )
 _CONTRADICT = ("safe to go", "you can go", "it is safe", "go ahead", "fine to sail", "ok to go")
+_VERDICT_WORDS = re.compile(r"\b(GO|CAUTION|DO NOT SAIL|NO[- ]GO)\b|(?i:\b(un)?safe\b)")
 
 
 class Verification(BaseModel):
@@ -375,12 +376,21 @@ def verify(text: str, b: Brief) -> Verification:
         hit = next((c for c in _CONTRADICT if c in low), None)
         if hit:
             contradiction = f"verdict is DO NOT SAIL but the draft says '{hit}'"
+    if b.verdict is None and b.intent not in (Intent.GENERAL_KNOWLEDGE, Intent.OFF_TOPIC):
+        # No engine verdict exists, so the prose may not supply one (rule 1).
+        m = _VERDICT_WORDS.search(t)
+        if m:
+            contradiction = f"no safety verdict was computed but the draft says '{m.group(0)}'"
     return Verification(
         ok=not bad and contradiction is None,
         numbers_found=found,
         unsupported=bad,
         contradiction=contradiction,
     )
+
+
+# Sentinel passed to on_chunk when a draft was rejected and a fresh one begins.
+RESET = "\x00RESET\x00"
 
 
 class Answer(BaseModel):
@@ -421,6 +431,8 @@ async def synthesize(llm: LLM | None, b: Brief, *, on_chunk=None) -> Answer:
     for attempt in ("llm", "llm_retry"):
         try:
             chunks: list[str] = []
+            if attempt == "llm_retry" and on_chunk:
+                await on_chunk(RESET)  # the rejected draft must vanish from the screen
             async for ch in draft(llm, b, correction=correction):
                 chunks.append(ch)
                 if on_chunk:

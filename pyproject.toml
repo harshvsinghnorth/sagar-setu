@@ -15,6 +15,8 @@ dependencies = [
     "truststore>=0.9",
     "copernicusmarine>=2.4",
     "langgraph>=0.2",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
     "openpyxl>=3.1",
     "matplotlib>=3.8",
 ]

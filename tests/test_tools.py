@@ -238,9 +238,9 @@ async def test_concurrent_same_url_fetches_share_one_request(live_from_snapshot,
     calls = {"n": 0}
     real = base._network
 
-    async def counting(url, now):
+    async def counting(url, now, timeout_s=None):
         calls["n"] += 1
-        return await real(url, now)
+        return await real(url, now, timeout_s)
 
     monkeypatch.setattr(base, "_network", counting)
     ctx = ToolContext()
@@ -248,3 +248,18 @@ async def test_concurrent_same_url_fetches_share_one_request(live_from_snapshot,
     lat, lon = HARBOURS["kochi"]
     await safety_briefing(ctx, RiskQuery(lat=lat, lon=lon, start=s, end=e))
     assert calls["n"] == 2  # one marine, one weather — not four
+
+
+@pytest.mark.parametrize(
+    "name,expected",
+    [
+        ("இராமேஸ்வரத்தில்", "Rameswaram"),  # Tamil, locative suffix
+        ("கொச்சியில் இருந்து", "Kochi"),
+        ("वेरावल से", "Veraval"),  # Hindi, "from Veraval"
+        ("पारादीप", "Paradip"),
+        ("കൊച്ചി", "Kochi"),  # Malayalam
+    ],
+)
+def test_resolve_indic_script_names_deterministically(name, expected):
+    r = resolve_location(LocationQuery(name=name))
+    assert r is not None and r.name == expected

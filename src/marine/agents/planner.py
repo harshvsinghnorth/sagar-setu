@@ -81,7 +81,8 @@ def tasks_for(plan: Plan) -> list[Task]:
     """The typed DAG. Tasks with no shared dependency run in parallel."""
     i = plan.intent
     t: list[Task] = []
-    if i in (Intent.SAFETY, Intent.CONDITIONS):
+    # A boundary question is a safety question: the engine grades the crossing.
+    if i in (Intent.SAFETY, Intent.CONDITIONS, Intent.BOUNDARY):
         t.append(Task(id="ocean", agent="ocean_weather", tool="fan_out"))
     if i in (Intent.SAFETY, Intent.PFZ, Intent.BOUNDARY):
         t.append(
@@ -93,7 +94,7 @@ def tasks_for(plan: Plan) -> list[Task]:
         )
     if i in (Intent.CHLOROPHYLL, Intent.PFZ):
         t.append(Task(id="analytics", agent="analytics", tool="get_chlorophyll+anomaly"))
-    if i == Intent.SAFETY:
+    if i in (Intent.SAFETY, Intent.BOUNDARY):
         t.append(
             Task(id="risk", agent="risk", tool="assess_sailing_risk", depends_on=["ocean", "geo"])
         )
@@ -338,7 +339,7 @@ Classify `intent`:
 Rules:
 - `language`: ISO 639-1 of the user's message (ta, hi, ml, te, kn, mr, gu, or, bn, en).
 - `english_query`: faithful English translation.
-- `location_name`: the place exactly as written (transliterate Indic script to Latin), or null.
+- `location_name`: the place name in LATIN SCRIPT (English spelling, e.g. "Rameswaram", "Kochi", "Veraval"), with any case suffix removed — never Tamil/Devanagari/Malayalam script — or null.
 - `day` / `part`: default tomorrow / morning when not stated. Fishermen leave before dawn: "early morning" = 03:00–08:00.
 - `vessel`: traditional (canoe, catamaran, vallam, fibre boat, < 12 m), motorised (12–20 m), mechanised (trawler, > 20 m), or null.
 - `heading_deg` / `speed_kt` only if stated."""

@@ -22,6 +22,7 @@ class NoaaViirsChlorophyll(JsonSource):
     snapshot_key = "noaa_viirs_chl"
     ttl = timedelta(hours=12)
     base_confidence = 0.9  # gap-filled product: some pixels are interpolated
+    timeout_s = 6.0  # observed 1–3 s; not a safety input, so it may exceed the 2 s budget
 
     def url(self, q: PointQuery) -> str:
         # Request the trailing 30 days so the same URL serves a baseline and the latest value.

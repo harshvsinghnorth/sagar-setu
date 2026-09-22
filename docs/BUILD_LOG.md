@@ -560,3 +560,84 @@ the datasets. Deliverables, all under `docs/`:
   mean reads ~1 — a 4 km coastal pixel and a 28 km offshore box measure different water.
   The dossier says so and the Ocean agent's disagreement rule (show both, never average)
   now has a concrete case behind it. Raised as a question for the professor.
+
+---
+
+## Day 4 — 2026-09-21/22
+
+### Step 18 · AI practice assignment (side task)
+
+Answered the course's AI practice assignment around Sagar Setu
+(`docs/AI_Practice_Assignment_Sagar_Setu.docx`): PEAS table and agent classification
+(model-based, goal-based, knowledge-based core — deliberately not utility-based), search
+problems in the project, KRR, explainability; plus an A* case study run for real
+(`scripts/assignment_q2_astar.py` — admissibility and consistency checked, A* vs UCS vs
+greedy; greedy is lured into the S4 trap exactly as the question hints), a CSP
+formulation, medical-agent architectures, and Rock-Paper-Scissors.
+
+### Step 19 · Phase 4 — API and interface
+
+**`src/marine/api.py` — FastAPI + SSE.** `POST /ask` streams `agent` events as each node
+finishes, `chunk` events as the answer is written, then one `result` with everything the
+interface renders (verdict, ledger, degradation, PFZ and boundary geometry, projected
+track), then `done`. `GET /geo/static` serves the EEZ outline and IMBL lines simplified to
+~1 km (228 KB instead of 3 MB). On startup a background task pre-warms the PFZ advisory
+and the five harbours' forecasts so the first demo question is warm.
+- The graph got `ask_streaming()` (LangGraph `astream` with `stream_mode="updates"`) so
+  node events reach the client before the answer exists, and request-level `overrides`
+  (vessel class from the UI selector; GPS position/heading/speed if a device supplies
+  them) that fill gaps the question left.
+
+**`web/` — React + Vite + TypeScript + MapLibre.** Free OSM raster tiles, no token.
+- Chat column: streamed answer, agent trace with per-node timings, the **verdict badge
+  rendered from the engine's result, never parsed from the prose**, reasons, all seven
+  parameters with evidence ids, a degradation banner driven by the ledger, vessel-class
+  selector (persisted — the brief's "ask once at onboarding").
+- Map: EEZ, IMBL (dashed), harbours, PFZ lines with rank/distance/compass labels, bearing
+  lines from the harbour to each zone, the projected track and the predicted crossing
+  point. Labels are HTML markers rather than symbol layers so no glyph server is needed —
+  one less network dependency in a demo.
+- Evidence ledger panel: every row with id, value, valid-for time (IST), a **freshness
+  chip** (green < 15 min, amber < 2 h, red older / snapshot), source, grid distance and a
+  confidence bar; rows the verdict cited are highlighted and listed first; missing
+  variables listed with their reason. `show all` expands to the full hourly series.
+
+**Bugs the interface exposed** (all fixed, all with tests):
+- *Rule-1 bug:* for a boundary question — no verdict computed — the model's answer began
+  "GO." because the prompt said "state the verdict first". Two fixes: a heading question is
+  a safety question, so the DAG now runs the ocean fetch and the engine for `boundary`
+  intent (Rameswaram heading 090 → CAUTION, "change heading before then"); and the
+  verifier rejects verdict words (GO / CAUTION / DO NOT SAIL / safe / unsafe) whenever the
+  brief has no verdict. Uppercase-only for the tokens so "go 42 km south-west" still passes.
+- *Streaming showed a rejected draft:* the first draft streams to the screen before the
+  verifier rejects it. Added a `RESET` sentinel → `reset` SSE event → the UI clears the
+  draft before the retry (or the template) streams in.
+- *Indic place names:* the Tamil demo question came back from the model as
+  `இராமேஸ்வரத்தில்` (Tamil script, locative suffix) instead of "Rameswaram"; the resolver
+  could not match it and the system asked "which harbour?". Fixed with a deterministic
+  `INDIC_STEMS` table (Tamil / Hindi / Malayalam stems for the known harbours, suffix-
+  insensitive) plus a firmer planner instruction. The demo no longer depends on the model
+  transliterating correctly.
+- *NOAA VIIRS timing out:* it takes 1–3 s, so under the 2 s budget it fell to the snapshot
+  on most requests and the banner said "not current". Added a per-source `timeout_s`;
+  chlorophyll is not a safety input, so it gets 6 s. Safety inputs keep 2 s.
+- CSS: the ledger table forced horizontal page scroll; grid tracks now `minmax(0, 1fr)`.
+
+**Tooling:** the Bash tool's backslash collapse struck again twice (`\b` → backspace,
+`\x00` → NUL byte in source). Both caught by tests; both fixed with a byte-level script.
+Rule stands: regex and escape sequences go through Write/Edit only.
+
+**Verified in the browser** (Vite dev server + uvicorn `--reload`):
+- English Kochi safety question: fast path, CAUTION, verified, 6.2 s.
+- English Rameswaram heading 090 at 8 kt: CAUTION with steepness, convective proxy and
+  the 94.5 min crossing; track and crossing marker on the map.
+- PFZ question at Paradip: "no PFZ advisory near Paradip today" (true for the 21 Sep
+  advisory), chlorophyll anomaly z = 1.52 shown; the model's first draft was rejected and
+  the retry took 29 s — free-tier variance, hidden by the reset event but noted.
+- **Tamil Rameswaram heading question through the UI: CAUTION badge, Tamil answer with
+  every number verified, track + crossing on the map, ledger with cited rows first.
+  7.9 s.** All five demo items from the brief on one screen.
+
+Suite: 111 tests. Next: Phase 5 — Bhashini when keys arrive (Gemini covers the round
+trip today), then the stretch items the user asked for (multi-turn, A* route suggestion,
+spoken input), then Phase 6 hardening and the offline rehearsal.

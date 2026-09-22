@@ -155,7 +155,7 @@ def snapshot_lookup(
 _inflight: dict[str, asyncio.Future] = {}
 
 
-async def try_live(url: str, ttl: timedelta) -> FetchOutcome | str:
+async def try_live(url: str, ttl: timedelta, timeout_s: float | None = None) -> FetchOutcome | str:
     """Fresh cache, else live network within the 2 s budget. Returns an error string on failure.
     Concurrent callers of the same URL (wind + visibility share one weather request) await
     one in-flight fetch instead of firing twice."""
@@ -168,17 +168,17 @@ async def try_live(url: str, ttl: timedelta) -> FetchOutcome | str:
     fut: asyncio.Future = asyncio.get_running_loop().create_future()
     _inflight[url] = fut
     try:
-        result = await _network(url, now)
+        result = await _network(url, now, timeout_s)
         fut.set_result(result)
         return result
     finally:
         _inflight.pop(url, None)
 
 
-async def _network(url: str, now: datetime) -> FetchOutcome | str:
+async def _network(url: str, now: datetime, timeout_s: float | None = None) -> FetchOutcome | str:
     t0 = time.perf_counter()
     try:
-        r = await client().get(url)
+        r = await client().get(url, timeout=timeout_s or settings.fetch_timeout_s)
         if r.status_code == 200:
             payload = r.json()
             cache_write(url, payload, now)
@@ -222,6 +222,9 @@ class JsonSource(ABC):
     snapshot_key: str | None = None
     ttl: timedelta = timedelta(hours=1)
     base_confidence: float = 1.0
+    # Safety inputs keep the 2 s budget (settings.fetch_timeout_s). A slower, non-critical
+    # source may declare a longer one rather than falling to the snapshot every time.
+    timeout_s: float | None = None
 
     @abstractmethod
     def url(self, q: PointQuery) -> str: ...
@@ -243,7 +246,7 @@ class JsonSource(ABC):
         return obs
 
     async def fetch_live(self, q: PointQuery) -> list[Observation] | str:
-        out = await try_live(self.url(q), self.ttl)
+        out = await try_live(self.url(q), self.ttl, self.timeout_s)
         if isinstance(out, str):
             return out
         return self._stamp(self.parse(out.payload, q), out)

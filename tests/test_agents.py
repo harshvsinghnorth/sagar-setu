@@ -253,3 +253,17 @@ async def test_graph_survives_llm_failure(live_from_snapshot):
         "Is it safe to go out from Kochi tomorrow morning?", llm=Broken(), ctx=ToolContext()
     )
     assert out["answer"].source == "template_fallback" and out["answer"].verification.ok
+
+
+def test_verify_rejects_verdict_words_when_no_verdict_exists():
+    b = Brief(intent=Intent.PFZ, language="en", location="Kochi", allowed_numbers={42.1})
+    assert not verify("GO. The nearest zone is 42.1 km away.", b).ok
+    assert not verify("It is safe; the zone is 42.1 km away.", b).ok
+    assert verify("Go 42.1 km south-west to the nearest zone.", b).ok  # lower-case verb is fine
+
+
+def test_dag_for_boundary_question_runs_ocean_and_risk():
+    t = tasks_for(
+        fast_plan("how far is the sri lanka border from rameswaram heading 90 at 8 knots")
+    )
+    assert {x.id for x in t} == {"ocean", "geo", "risk", "synthesis"}

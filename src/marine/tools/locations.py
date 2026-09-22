@@ -58,8 +58,47 @@ ALIASES: dict[str, str] = {
 }
 
 
+# Harbour names as they appear in Tamil / Hindi / Malayalam questions, keyed by stem so the
+# case suffix (இராமேஸ்வரத்தில் = "in Rameswaram", वेरावल से = "from Veraval") does not matter.
+# Deterministic, so the demo never depends on the model transliterating correctly.
+INDIC_STEMS: dict[str, str] = {
+    "இராமேஸ்வர": "rameswaram",
+    "ராமேஸ்வர": "rameswaram",
+    "கொச்சி": "kochi",
+    "சென்னை": "chennai",
+    "தூத்துக்குடி": "tuticorin",
+    "நாகப்பட்டின": "nagapattinam",
+    "கடலூர்": "cuddalore",
+    "கன்னியாகுமரி": "kanyakumari",
+    "காசிமேடு": "kasimedu",
+    "பாரதீப்": "paradip",
+    "कोच्चि": "kochi",
+    "कोचीन": "kochi",
+    "कोच्ची": "kochi",
+    "वेरावल": "veraval",
+    "चेन्नई": "chennai",
+    "पारादीप": "paradip",
+    "पाराद्वीप": "paradip",
+    "पोर्ट ब्लेयर": "port blair",
+    "रामेश्वरम": "rameswaram",
+    "मुंबई": "sassoon dock",
+    "पोरबंदर": "porbandar",
+    "विशाखापत्तनम": "visakhapatnam",
+    "विशाखापट्टनम": "visakhapatnam",
+    "കൊച്ചി": "kochi",
+    "വൈപ്പിൻ": "vypeen",
+    "ബേപ്പൂർ": "beypore",
+    "വിഴിഞ്ഞം": "vizhinjam",
+}
+
+
 def _norm(s: str) -> str:
-    key = re.sub(r"[^a-z0-9]+", " ", s.lower()).strip()
+    raw = s.strip()
+    if re.search(r"[^\x00-\x7f]", raw):
+        for stem, canon in INDIC_STEMS.items():
+            if raw.startswith(stem) or stem in raw:
+                return canon
+    key = re.sub(r"[^a-z0-9]+", " ", raw.lower()).strip()
     return ALIASES.get(key, key)
 
 

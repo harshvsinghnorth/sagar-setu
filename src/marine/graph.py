@@ -22,9 +22,17 @@ from langgraph.graph import END, START, StateGraph
 from marine.agents import specialists
 from marine.agents.llm import LLM, LLMUnavailable, get_llm
 from marine.agents.planner import Intent, Plan, make_plan, tasks_for
-from marine.agents.synthesis import Answer, Brief, Verification, build_brief, synthesize
+from marine.agents.synthesis import (
+    RESET,
+    Answer,
+    Brief,
+    Verification,
+    build_brief,
+    synthesize,
+)
 from marine.risk.rules import RiskVerdict
 from marine.tools import ToolContext
+from marine.tools.locations import ResolvedLocation
 
 
 class Event(TypedDict):
@@ -48,6 +56,7 @@ class State(TypedDict, total=False):
     answer: Answer
     events: Annotated[list[Event], operator.add]
     started: float
+    overrides: dict
 
 
 def _ev(node: str, status: str, t0: float, detail: str = "") -> Event:
@@ -59,6 +68,27 @@ def _ev(node: str, status: str, t0: float, detail: str = "") -> Event:
 async def plan_node(state: State) -> dict:
     t0 = time.perf_counter()
     plan = await make_plan(state["query"], state.get("llm"))
+    # Request-level overrides from the interface: the vessel class chosen at onboarding, and
+    # a GPS position / heading / speed when the device supplies them. They fill gaps the
+    # question left; an explicit value in the question still wins for heading and speed.
+    ov = state.get("overrides") or {}
+    if ov.get("vessel") and plan.vessel is None:
+        plan.vessel = ov["vessel"]
+    if plan.heading_deg is None and ov.get("heading_deg") is not None:
+        plan.heading_deg = ov["heading_deg"]
+    if plan.speed_kt is None and ov.get("speed_kt") is not None:
+        plan.speed_kt = ov["speed_kt"]
+    if plan.location is None and ov.get("lat") is not None and ov.get("lon") is not None:
+        plan.location = ResolvedLocation(
+            name=ov.get("location_name") or f"{ov['lat']:.2f}N {ov['lon']:.2f}E",
+            lat=ov["lat"],
+            lon=ov["lon"],
+            match="device",
+            score=1.0,
+        )
+        if plan.intent == Intent.CLARIFY:
+            plan.intent = ov.get("fallback_intent", Intent.SAFETY)
+            plan.clarify_question = None
     detail = f"{plan.source}; intent={plan.intent}; lang={plan.language}" + (
         f"; location={plan.location.name}" if plan.location else ""
     )
@@ -140,7 +170,7 @@ async def analytics_node(state: State) -> dict:
 def risk_node(state: State) -> dict:
     t0 = time.perf_counter()
     plan = state["plan"]
-    if plan.intent != Intent.SAFETY or plan.location is None:
+    if plan.intent not in (Intent.SAFETY, Intent.BOUNDARY) or plan.location is None:
         return {"verdict": None}
     v = specialists.risk(state["ctx"], plan)
     return {
@@ -179,6 +209,7 @@ async def synthesis_node(state: State) -> dict:
     llm: LLM | None = state.get("llm")
     ans = await synthesize(llm, brief, on_chunk=state.get("on_chunk"))
     if ans.source.startswith("template") and state.get("on_chunk"):
+        await state["on_chunk"](RESET)
         await state["on_chunk"](ans.text)
     detail = f"{ans.source}; verified={ans.verification.ok}" + (
         f"; unsupported={ans.verification.unsupported}" if ans.verification.unsupported else ""
@@ -208,27 +239,74 @@ def build_graph():
 GRAPH = build_graph()
 
 
-async def ask(
-    query: str, *, llm: LLM | None | str = "auto", ctx: ToolContext | None = None, on_chunk=None
-) -> State:
-    """Run one question end to end. `llm="auto"` picks the configured provider; `None` means
-    deterministic-only (templates)."""
+def _resolve_llm(llm: LLM | None | str) -> LLM | None:
     if isinstance(llm, str):
         try:
             llm = get_llm(llm)
             if llm.name == "none":
-                llm = None
+                return None
         except LLMUnavailable:
-            llm = None
-    t0 = time.perf_counter()
-    state: State = {
+            return None
+    return llm
+
+
+def _initial_state(query: str, llm, ctx, on_chunk, overrides) -> State:
+    return {
         "query": query,
-        "llm": llm,
+        "llm": _resolve_llm(llm),
         "ctx": ctx or ToolContext(),
         "on_chunk": on_chunk,
+        "overrides": overrides or {},
         "events": [],
-        "started": t0,
+        "started": time.perf_counter(),
     }
+
+
+async def ask(
+    query: str,
+    *,
+    llm: LLM | None | str = "auto",
+    ctx: ToolContext | None = None,
+    on_chunk=None,
+    overrides: dict | None = None,
+) -> State:
+    """Run one question end to end. `llm="auto"` picks the configured provider; `None` means
+    deterministic-only (templates)."""
+    state = _initial_state(query, llm, ctx, on_chunk, overrides)
+    t0 = state["started"]
     out = await GRAPH.ainvoke(state)
     out["events"] = out["events"] + [_ev("total", "done", t0)]
     return out
+
+
+async def ask_streaming(
+    query: str,
+    *,
+    llm: LLM | None | str = "auto",
+    ctx: ToolContext | None = None,
+    on_chunk=None,
+    on_event=None,
+    overrides: dict | None = None,
+) -> State:
+    """Like `ask`, but calls `on_event(event)` as each node finishes, so an API can stream
+    agent progress before the answer exists. Returns the final state."""
+    state = _initial_state(query, llm, ctx, on_chunk, overrides)
+    t0 = state["started"]
+    final: State = dict(state)  # type: ignore[assignment]
+    async for update in GRAPH.astream(state, stream_mode="updates"):
+        for _node, delta in update.items():
+            if not delta:
+                continue
+            for ev in delta.get("events", []):
+                if on_event:
+                    await on_event(ev)
+            for k, v in delta.items():
+                if k == "events":
+                    final["events"] = final.get("events", []) + v
+                else:
+                    final[k] = v
+    total = _ev("total", "done", t0)
+    final["events"] = final.get("events", []) + [total]
+    if on_event:
+        await on_event(total)
+    return final
