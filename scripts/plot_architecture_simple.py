@@ -3,7 +3,9 @@
   architecture.png   the main diagram: what the parts are and how they connect
   flow.png           the same journey with measured timings
 
-The detailed engineering diagram lives in scripts/plot_architecture.py.
+Deliberately sparse. Five boxes, one line of explanation each, two badges' worth of
+colour. Anything that needed a third line of text belongs in the document, not the
+picture. The detailed engineering diagram lives in scripts/plot_architecture.py.
 """
 
 from __future__ import annotations
@@ -32,25 +34,25 @@ INDIC = fm.FontProperties(fname=_indic[0]) if _indic else None
 plt.rcParams.update({"font.family": "DejaVu Sans"})
 
 
-def node(ax, x, y, w, h, title, sub=None, *, fc="#ffffff", ec=GREY, lw=1.6,
-         tsize=12.5, ssize=9.5, badge=None, bcol=None):
+def node(ax, x, y, w, h, title, sub=None, *, fc="#ffffff", ec=GREY, lw=1.8,
+         tsize=13.5, ssize=10.5, badge=None, bcol=None):
     """Title anchored to the top of the box, subtitle beneath it — never overlapping."""
     ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0,rounding_size=1.1",
                                 facecolor=fc, edgecolor=ec, linewidth=lw, zorder=2))
     if sub:
-        ax.text(x + w / 2, y + h - 1.3, title, size=tsize, weight="bold", color=INK,
+        ax.text(x + w / 2, y + h - 1.4, title, size=tsize, weight="bold", color=INK,
                 ha="center", va="top", zorder=4)
-        ax.text(x + w / 2, y + h - 4.2, sub, size=ssize, color=INK2,
-                ha="center", va="top", zorder=4, linespacing=1.55)
+        ax.text(x + w / 2, y + h - 4.6, sub, size=ssize, color=INK2,
+                ha="center", va="top", zorder=4, linespacing=1.6)
     else:
         ax.text(x + w / 2, y + h / 2, title, size=tsize, weight="bold", color=INK,
                 ha="center", va="center", zorder=4)
     if badge:
-        bw, bh = 8.8, 2.6
-        bx, by = x - bw - 1.6, y + h / 2 - bh / 2
+        bw, bh = 9.0, 2.8
+        bx, by = x - bw - 1.8, y + h / 2 - bh / 2
         ax.add_patch(FancyBboxPatch((bx, by), bw, bh, boxstyle="round,pad=0,rounding_size=0.55",
                                     facecolor=bcol, edgecolor="none", zorder=5))
-        ax.text(bx + bw / 2, by + bh / 2, badge, size=8.5, weight="bold", color="white",
+        ax.text(bx + bw / 2, by + bh / 2, badge, size=9, weight="bold", color="white",
                 ha="center", va="center", zorder=6)
 
 
@@ -66,92 +68,74 @@ def side(ax, p0, p1, *, color=GREY, lw=2.0, ls="solid", ms=15):
 
 # ---------------------------------------------------------------- main diagram
 
+X, W = 20.0, 46.0          # the single column of steps
+CX = X + W / 2             # its centre line
+
+
 def architecture() -> None:
-    fig, ax = plt.subplots(figsize=(11.5, 14.2), dpi=150)
+    fig, ax = plt.subplots(figsize=(10.0, 11.0), dpi=150)
     ax.set_xlim(0, 100)
-    ax.set_ylim(0, 124)
+    ax.set_ylim(-1, 108)
     ax.axis("off")
 
-    ax.text(50, 120.5, "Sagar Setu — how the system works", size=19, weight="bold",
-            ha="center", color=INK)
-    ax.text(50, 117.0, "A fisherman asks in his own language. The answer comes back in it, with a map.",
-            size=11, ha="center", color=INK2)
+    ax.text(53, 106, "Sagar Setu — how the system works",
+            size=19, weight="bold", ha="center", va="top", color=INK)
 
-    L, W = 27.0, 46.0        # centre column
-    CX = L + W / 2           # 50
+    # ---- the question
+    ax.text(CX, 99.4, "A question, in any language", size=11, color=INK,
+            ha="center", va="center", weight="bold")
+    ax.text(CX, 96.4, '"Is it safe to go out tomorrow morning?"', size=10, color=INK2,
+            ha="center", va="center", style="italic")
+    down(ax, CX, 94.2, 90.8)
 
-    node(ax, L + 4, 106.0, W - 8, 7.5, "A question, in any language",
-         "\"Is it safe to go out tomorrow morning?\"",
-         fc=GREY_BG, ec=GREY, lw=1.4, tsize=12, ssize=9.5)
-    down(ax, CX, 106.0, 102.9)
+    # ---- the five steps
+    node(ax, X, 80.0, W, 10.8, "1.   Understand the question",
+         "Which language, which place, which day",
+         fc=BLUE_BG, ec=BLUE, badge="AI", bcol=BLUE)
+    down(ax, CX, 80.0, 76.6)
 
-    node(ax, L, 93.0, W, 9.5, "1.  Understand the question",
-         "Works out the language, the place, the time,\nand what needs to be looked up",
-         fc=BLUE_BG, ec=BLUE, lw=1.9, badge="AI", bcol=BLUE)
-    down(ax, CX, 93.0, 89.4)
+    node(ax, X, 63.5, W, 12.6, "2.   Collect the data",
+         "Three collectors at the same time, from\nINCOIS · Open-Meteo · Copernicus · NOAA",
+         fc=GREEN_BG, ec=GREEN, badge="AI", bcol=BLUE)
+    down(ax, CX, 63.5, 60.4)
 
-    node(ax, L, 77.0, W, 12.0, "2.  Collect the data",
-         "Three collectors work at the same time:\nsea conditions  ·  maps and borders\nfish and plankton",
-         fc=GREEN_BG, ec=GREEN, lw=1.9)
+    # ---- the load-bearing line
+    ax.plot([4, 68], [58.6, 58.6], color=RED, lw=3.0, ls=(0, (7, 5)), zorder=3)
+    ax.text(CX, 56.6, "No AI below this line — only fixed rules",
+            size=12, weight="bold", color=RED, ha="center", va="top")
 
-    node(ax, 1.5, 77.0, 21.0, 12.0, "Data sources",
-         "INCOIS · Open-Meteo\nCopernicus · NOAA\nMarine Regions",
-         fc="#ffffff", ec=GREEN, lw=1.5, tsize=11, ssize=9)
-    side(ax, (22.8, 83.0), (26.6, 83.0), color=GREEN)
+    down(ax, CX, 52.0, 48.6)
+    node(ax, X, 35.8, W, 12.8, "3.   Decide if it is safe",
+         "Seven checks against a safety table.\nThe worst one decides — never an average.",
+         fc=RED_BG, ec=RED, badge="NO AI", bcol=RED)
 
-    down(ax, CX, 77.0, 74.0)
+    ax.text(CX, 33.4, "GO      ·      CAUTION      ·      DO NOT SAIL",
+            size=11, weight="bold", color=RED, ha="center", va="center")
+    down(ax, CX, 31.4, 28.0, color=RED)
 
-    # the one idea — the line stops short of the ledger
-    ax.plot([6, 74], [72.8, 72.8], color=RED, lw=2.4, ls=(0, (7, 4)), zorder=6)
-    ax.text(40, 70.2, "Below this line there is no AI — only fixed rules",
-            size=11.5, weight="bold", color=RED, ha="center")
-    down(ax, CX, 68.4, 65.8)
+    node(ax, X, 17.2, W, 10.8, "4.   Write the answer",
+         "In plain words, in the same language",
+         fc=BLUE_BG, ec=BLUE, badge="AI", bcol=BLUE)
+    down(ax, CX, 17.2, 13.8)
 
-    node(ax, L, 53.4, W, 12.0, "3.  Decide if it is safe",
-         "Checks seven things — waves, wind, visibility and so on —\nagainst a published safety table.\nThe worst one decides. Never an average.",
-         fc=RED_BG, ec=RED, lw=2.1, badge="NO AI", bcol=RED)
-    ax.text(CX, 50.8, "GO      ·      CAUTION      ·      DO NOT SAIL",
-            size=12, weight="bold", color=RED, ha="center", va="center")
-    down(ax, CX, 49.0, 46.4, color=RED)
+    node(ax, X, 1.0, W, 12.8, "5.   Check every number",
+         "Anything not in the ledger is removed\nand the answer is written again",
+         fc=RED_BG, ec=RED, badge="NO AI", bcol=RED)
 
-    node(ax, L, 36.5, W, 9.5, "4.  Write the answer",
-         "Puts the decision into plain words,\nin the fisherman's own language",
-         fc=BLUE_BG, ec=BLUE, lw=1.9, badge="AI", bcol=BLUE)
-    down(ax, CX, 36.5, 33.9)
+    # ---- the ledger, a rail beside the whole thing
+    lx, lw_ = 72.0, 25.0
+    ly, lh = 1.0, 75.0
+    ax.add_patch(FancyBboxPatch((lx, ly), lw_, lh, boxstyle="round,pad=0,rounding_size=1.1",
+                                facecolor="#f7fbff", edgecolor=BLUE, linewidth=1.8, zorder=2))
+    ax.text(lx + lw_ / 2, ly + lh / 2 + 9.0, "Evidence\nledger", size=14, weight="bold",
+            color=BLUE, ha="center", va="center", linespacing=1.5, zorder=4)
+    ax.text(lx + lw_ / 2, ly + lh / 2 - 6.0,
+            "Every number the\nsystem finds, with\nits source and how\nfresh it is.\n\n"
+            "The answer can only\nuse what is in here.",
+            size=10, color=INK2, ha="center", va="center", linespacing=1.7, zorder=4)
 
-    node(ax, L, 24.0, W, 9.5, "5.  Check every number",
-         "Any number not in the ledger is thrown out\nand the answer is written again",
-         fc=RED_BG, ec=RED, lw=1.9, badge="NO AI", bcol=RED)
-    down(ax, CX, 24.0, 21.4)
-
-    node(ax, L + 4, 11.5, W - 8, 9.5, "The answer, on screen",
-         "In the same language, with a map\nand the evidence underneath",
-         fc=GREY_BG, ec=GREY, lw=1.4, tsize=12, ssize=9.5)
-
-    # ---- the evidence ledger, to the right --------------------------------
-    LX, LW, LY, LH = 76.5, 22.0, 24.0, 65.0
-    node(ax, LX, LY, LW, LH, "", None, fc=BLUE_BG, ec=BLUE, lw=1.9)
-    cx = LX + LW / 2
-    ax.text(cx, 84.5, "Evidence ledger", size=13, weight="bold", color=BLUE, ha="center")
-    ax.text(cx, 79.5, "Every number the system\nfinds is written down here:",
-            size=9.5, color=INK2, ha="center", va="top", linespacing=1.55)
-    ax.text(LX + 2.6, 72.0, "·  where it came from\n·  what time it is for\n·  how fresh it is",
-            size=9.5, color=INK2, ha="left", va="top", linespacing=1.75)
-    ax.text(cx, 60.0, "Nothing can be shown\nto the fisherman unless\nit is in here.",
-            size=10, color=INK, ha="center", va="top", linespacing=1.6, style="italic")
-    ax.text(cx, 47.0, "Steps 3, 4 and 5\nall read from it.",
-            size=9.5, color=INK2, ha="center", va="top", linespacing=1.6)
-    ax.text(cx, 36.0, "A typical question\nrecords about\n130 numbers.",
-            size=9.5, color=INK2, ha="center", va="top", linespacing=1.6)
-
-    side(ax, (73.4, 83.0), (76.3, 83.0), color=BLUE)           # collectors write into it
-    for y in (59.4, 41.25, 28.75):                             # steps 3, 4, 5 read from it
-        side(ax, (76.3, y), (73.4, y), color=BLUE, lw=1.5, ls=(0, (2.5, 2.5)), ms=12)
-
-    ax.text(50, 4.0,
-            "The AI understands the question and explains the answer. It never decides whether it is safe to go to sea —\n"
-            "that decision is made by fixed rules, so anyone can check it.",
-            size=10.5, color=INK, ha="center", va="bottom", linespacing=1.7, weight="bold")
+    side(ax, (X + W, 69.8), (lx, 69.8), color=BLUE)              # written into
+    side(ax, (lx, 7.4), (X + W, 7.4), color=BLUE, ls=(0, (2, 2)))  # read back from
 
     fig.savefig(OUT / "architecture.png", bbox_inches="tight", facecolor="white")
     plt.close(fig)

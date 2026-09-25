@@ -773,3 +773,10 @@ What changed:
 - *Finding worth keeping:* every diagram in this project has now been debugged by reading
   the rendered image back, never by trusting the layout code. Four iterations on the
   detailed figure, two on the simple one. Matplotlib will happily draw text outside a box.
+
+- *Follow-up:* still too busy. Stripped it again — the question and answer became plain
+  captions rather than boxes, the separate "Data sources" box folded into one line inside
+  step 2, and the evidence ledger's six lines of explanation cut to two. Five boxes, one
+  or two short lines each, one red line. Rule adopted for this figure: anything needing a
+  third line of text belongs in the document, not the picture. 0.24 MB, down from 0.90.
+
