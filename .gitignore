@@ -7,3 +7,4 @@ data/cache/
 .env
 web/node_modules/
 web/dist/
+data/eval/daily_log.txt

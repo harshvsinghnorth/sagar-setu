@@ -697,3 +697,36 @@ separation. Suite: 115.
 
 **Needs from the user:** ask the professor / department for INCOIS or NIOT buoy data;
 run the two `schtasks` commands so the log grows without anyone remembering.
+
+### Step 21 · Architecture submission
+
+A course assignment asked for the project's main proposed architecture, showing the major
+components and their interactions. Produced three artefacts, all generated from the real
+module layout rather than sketched:
+
+- `scripts/plot_architecture.py` → `docs/architecture/architecture.png` — an eight-layer
+  component diagram (client · API · orchestration · decision · tools · geo · data access ·
+  sources) with the evidence ledger drawn as a cross-cutting right rail, the LLM provider
+  layer and the evaluation harness as side boxes, and **the load-bearing line drawn
+  explicitly**: a dashed red rule across the figure separating "models plan and explain"
+  above from "ordinary Python fetches and decides" below. Request path downward, result
+  path upward, ledger writes as dotted arrows, plus a tool-call lane showing that all data
+  access funnels through the tool belt.
+- `docs/architecture/request_flow.png` — the eight steps of one Tamil question with
+  measured timings and a per-step badge marking model vs code vs "code · no model".
+- `docs/architecture.md` and `docs/Sagar_Setu_Architecture.docx` (2 300 words, 8 tables,
+  both figures embedded) — component catalogue per layer, the interaction narrative, the
+  `Observation` schema, key design decisions with the alternatives rejected, and the
+  non-functional properties.
+
+- *Finding:* DejaVu Sans has no Tamil glyphs, so the Tamil example question rendered as
+  boxes. Windows ships Nirmala UI, which covers Tamil and Devanagari; the script now
+  locates it via `font_manager` and uses it for Indic strings, falling back silently.
+- *Finding:* drawing the diagram surfaced a genuine layout problem in my own first attempt —
+  an arrow from the tool belt to the data-access layer ran straight through the
+  `geodesy.py` box, and the specialist→tools arrows crossed the risk-engine box. Both were
+  rerouted (a lane at x = 67.5 for tool calls, a gap between the geo boxes). Worth noting
+  because the exercise of drawing the real dependencies is what exposed them.
+- Layout was iterated against the rendered PNG four times — overlapping labels, text
+  overflowing boxes, and a heading colliding with a flow lane were each fixed by reading
+  the image, not by guessing.
