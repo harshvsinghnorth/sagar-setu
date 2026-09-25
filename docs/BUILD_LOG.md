@@ -712,7 +712,7 @@ module layout rather than sketched:
   above from "ordinary Python fetches and decides" below. Request path downward, result
   path upward, ledger writes as dotted arrows, plus a tool-call lane showing that all data
   access funnels through the tool belt.
-- `docs/architecture/request_flow.png` — the eight steps of one Tamil question with
+- `docs/architecture/request_flow_detailed.png` — the eight steps of one Tamil question with
   measured timings and a per-step badge marking model vs code vs "code · no model".
 - `docs/architecture.md` and `docs/Sagar_Setu_Architecture.docx` (2 300 words, 8 tables,
   both figures embedded) — component catalogue per layer, the interaction narrative, the
@@ -730,3 +730,46 @@ module layout rather than sketched:
 - Layout was iterated against the rendered PNG four times — overlapping labels, text
   overflowing boxes, and a heading colliding with a flow lane were each fixed by reading
   the image, not by guessing.
+
+### Step 22 · Rewriting the architecture submission for a non-technical reader
+
+Feedback on Step 21: *"This document needs to be simple. So that it is easy for professor
+to understand. Don't make such complex diagrams that nobody will understand or read."*
+
+Fair, and worth recording as a lesson rather than just a fix. The Step 21 diagram was
+accurate — eight layers, every module named, real dependency arrows — and that is exactly
+what made it unreadable. It was a diagram for someone who already knew the system. The
+submission needs a diagram for someone deciding whether the system is sensible.
+
+What changed:
+
+- New `scripts/plot_architecture_simple.py` → `docs/architecture/architecture.png` and
+  `flow.png`. Five numbered steps down the page instead of eight layers: understand the
+  question → collect the data → decide if it is safe → write the answer → check every
+  number. Each box carries an **AI** or **NO AI** badge, so the one thing the reader must
+  take away — that no model decides safety — is visible without reading a word of prose.
+  The red dashed line survived the redraw, relabelled in plain English: *"Below this line
+  there is no AI — only fixed rules."* The evidence ledger stays as a right-hand rail,
+  with one solid arrow in and three dotted arrows out.
+- The Step 21 figures are kept as `architecture_detailed.png` and
+  `request_flow_detailed.png` — still correct, still in the repo, now the appendix rather
+  than the submission.
+- `docs/architecture.md` cut from 2 300 words and 8 tables to ~900 words and 2 tables; the
+  long version preserved verbatim as `docs/architecture-detailed.md` and linked from the
+  top of the short one. `docs/Sagar_Setu_Architecture.docx` rebuilt from the same text:
+  7 short sections, both simple figures, 0.33 MB (was 0.90 MB).
+- Vocabulary pass over the whole document. "Orchestration layer" → "the server".
+  "Deterministic risk engine" → "safety rules (no AI)". "Specialist agents fan out in a
+  single superstep" → "three collectors run at the same time, not one after another".
+  Nothing was softened or made vaguer — the claims are identical, the words are shorter.
+
+- *Finding:* the simple figure needed two rounds of overlap fixes of its own, read back
+  off the rendered PNG each time. Titles were overlapping their subtitles (fixed by
+  anchoring the title with `va="top"` near the box top and the subtitle at a fixed offset
+  below, instead of centring both); the AI badges collided with the titles (moved outside
+  the box, to its left); the red line ran through the ledger text (line shortened to stop
+  before the rail); and the last line of three subtitles spilled below their boxes (box
+  heights now derived from the line count: 7.5 / 9.5 / 12.0).
+- *Finding worth keeping:* every diagram in this project has now been debugged by reading
+  the rendered image back, never by trusting the layout code. Four iterations on the
+  detailed figure, two on the simple one. Matplotlib will happily draw text outside a box.

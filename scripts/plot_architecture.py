@@ -674,9 +674,9 @@ def architecture() -> None:
         ha="right",
     )
 
-    fig.savefig(OUT / "architecture.png", bbox_inches="tight", facecolor="white")
+    fig.savefig(OUT / "architecture_detailed.png", bbox_inches="tight", facecolor="white")
     plt.close(fig)
-    print("wrote architecture.png")
+    print("wrote architecture_detailed.png")
 
 
 # ---------------------------------------------------------------- request flow
@@ -815,9 +815,9 @@ def request_flow() -> None:
         color=INK2,
         ha="left",
     )
-    fig.savefig(OUT / "request_flow.png", bbox_inches="tight", facecolor="white")
+    fig.savefig(OUT / "request_flow_detailed.png", bbox_inches="tight", facecolor="white")
     plt.close(fig)
-    print("wrote request_flow.png")
+    print("wrote request_flow_detailed.png")
 
 
 if __name__ == "__main__":

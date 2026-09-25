@@ -8,3 +8,6 @@ data/cache/
 web/node_modules/
 web/dist/
 data/eval/daily_log.txt
+
+# Word lock files
+~$*
