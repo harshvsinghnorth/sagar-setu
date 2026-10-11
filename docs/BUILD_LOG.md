@@ -780,3 +780,48 @@ What changed:
   or two short lines each, one red line. Rule adopted for this figure: anything needing a
   third line of text belongs in the document, not the picture. 0.24 MB, down from 0.90.
 
+
+### Step 23 · Mid-term review: literature, research gap, synopsis and deck
+
+A mid-term presentation (13 Oct 2026) marked on four criteria: comprehensiveness of the
+literature review (10), research gap (5), objective / problem definition (5), proposed
+methodology including tools and dataset (5). Fifteen of the twenty-five visible marks sit
+in literature and gap — the two things the project had never written down.
+
+- `docs/synopsis.md` → `docs/Sagar_Setu_Synopsis.docx`, ~3,500 words: abstract, problem
+  definition, six numbered objectives, an eleven-part literature review, six enumerated
+  research gaps, methodology, the backtest results, remaining work and 15 references.
+- `docs/Sagar_Setu_MidTerm.pptx`, 10 slides, built by `scripts/build_midterm_deck.js`
+  (pptxgenjs, themed, with speaker notes on every slide).
+
+**Every reference was verified against its source** rather than recalled — author lists,
+venues, volumes and page numbers fetched from the publisher or repository record. Three
+candidate citations were dropped because they could not be confirmed to exist. A fabricated
+citation in an academic submission would be worse than a thin bibliography.
+
+- *Finding — the calibration target exists, and we had missed it.* INCOIS publishes
+  **Small Vessel Advisory and Forecast Services (SVAS)**, an impact-based advisory giving a
+  **Boat Safety Index** for potential vessel-overturning zones ten days ahead. It is
+  computed from significant wave height, wave steepness, directional spread and rapid
+  wind-sea development, and issued per **beam-width** class (< 4 m, 6 m, 7 m). Three
+  consequences: (1) it independently confirms that steepness belongs in our table; (2) we
+  are missing directional spread entirely — Open-Meteo does not expose it, Copernicus does;
+  (3) our vessel classes key on *length*, but INCOIS keys on *beam*, which is the better
+  discriminator for capsizing. Recorded in `src/marine/risk/thresholds.py`. SVAS still
+  publishes no numeric thresholds, so `CALIBRATION` stays provisional.
+- *Finding:* the closest architectural relative in the literature is ClimSight's XCLIM-AI
+  extension, which reports its largest gains in actionability when climate indicators are
+  **computed deterministically rather than generated**. That is independent, published
+  support for this project's central constraint, arrived at separately.
+- *Finding:* no LibreOffice on this machine, so the skill's PDF-render QA path fails.
+  PowerPoint COM automation (`$ppt.Presentations.Open(...).Export(dir,"PNG")`) renders with
+  the real fonts, which is strictly better QA than LibreOffice substitution. Two defects
+  were found that way and fixed: misaligned label/description baselines on the status slide
+  (text boxes of differing heights both vertically centring their content), and loose
+  vertical gaps on three slides.
+- Deck validated clean by the skill's `validate.py`; all ten slides inspected as rendered
+  images.
+
+**Needs from the user:** the three asks are now on the closing slide — IMD API key
+(institutional letter), INCOIS's numeric small-craft criteria behind the Boat Safety Index,
+and INCOIS/NIOT buoy observations to replace model analysis as evaluation truth.

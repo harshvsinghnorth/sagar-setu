@@ -9,6 +9,24 @@ documents, and the citation recorded here. Until then every verdict carries
 Known reference points to check against when calibrating (from memory, unverified):
 - IMD issues a "fishermen warning" when sustained wind is expected to reach ~45 km/h (24 kt).
 - INCOIS High Wave Alert is issued for significant wave height around 3 m and above.
+
+The calibration target, located 2026-10-11 while writing the literature review:
+INCOIS **Small Vessel Advisory and Forecast Services (SVAS)**, which publishes a *Boat
+Safety Index* for exactly this problem — potential vessel-overturning zones, ten days
+ahead. https://incois.gov.in/portal/osf/SVA_overview.jsp
+
+What SVAS confirms about our parameter choice:
+- BSI is computed from significant wave height, **wave steepness**, **directional spread**
+  and the rapid development of wind sea — so steepness belongs in the table, and we are
+  missing directional spread entirely (Open-Meteo does not expose it; Copernicus does).
+- Advisories are issued per **beam width**: < 4 m, 6 m, 7 m. Our vessel classes are keyed
+  on *length* (< 12 m / 12-20 m / > 20 m). Beam is the better discriminator for capsizing;
+  worth revisiting once we can ask the user for it.
+- An INCOIS small-craft presentation notes capsizing is "not a phase-averaged phenomenon",
+  which is the argument for a threshold table rather than a fitted model.
+
+What is still missing: SVAS publishes no numeric BSI thresholds or formula, so this
+remains provisional. Obtaining those numbers is tracked as an outstanding blocker.
 """
 
 from __future__ import annotations
