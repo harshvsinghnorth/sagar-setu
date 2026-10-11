@@ -825,3 +825,26 @@ citation in an academic submission would be worse than a thin bibliography.
 **Needs from the user:** the three asks are now on the closing slide — IMD API key
 (institutional letter), INCOIS's numeric small-craft criteria behind the Boat Safety Index,
 and INCOIS/NIOT buoy observations to replace model analysis as evaluation truth.
+
+### Step 24 · Presentation script
+
+Spoken script for the 13 Oct mid-term review, generated in two formats from one source so
+they cannot drift: `scripts/build_script_doc.js` writes both `docs/presentation-script.md`
+and `docs/Sagar_Setu_Presentation_Script.docx`.
+
+Contents: a pre-flight checklist, the four things to land, a slide-by-slide script with
+per-slide timings, stage directions and scripted bridge lines, a timing table with explicit
+instructions on what to cut if the slot shrinks to eight minutes, twelve anticipated
+questions with answers, the three asks, a map of the synopsis, and a table of figures to
+know cold.
+
+- Measured 1,559 spoken words — 10.4 to 12.5 minutes depending on pace, against a stated
+  13:15 that allows for pauses. The timing claim is checked, not guessed
+  (`scratchpad/count_speech.py`).
+- The Q&A section answers the uncomfortable questions rather than avoiding them: why not
+  let the model decide; is this just an API wrapper; how do you know 93.9 % is real when
+  you have no buoy data; and why an ISRO/INCOIS project leans on a European data source.
+  That last one is the weakest point in the project's story and the script says so plainly.
+- *Note:* the Bash backslash-collapsing problem bit again while counting words with an
+  inline regex. Confirms the standing rule — anything containing backslashes goes through
+  Write to a file, never a shell heredoc.
