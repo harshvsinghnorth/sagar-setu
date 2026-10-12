@@ -108,10 +108,11 @@ instrument. Second, SVAS is delivered as a colour-coded map on a web portal. It 
 ### 2.3 Fishing-zone advisories and their measured benefit
 
 INCOIS issues Potential Fishing Zone (PFZ) advisories from sea-surface temperature and
-ocean-colour chlorophyll fronts. Pillai and Nair [4], validating advisories along the
-Kerala coast, found catch per unit effort and net profit both higher inside notified zones
-than outside, with the benefit strongly dependent on how soon after the satellite pass the
-boat fished. Reported multipliers vary widely between studies and most evidence comes from
+ocean-colour chlorophyll fronts. Pillai and Nair [4] validated these advisories along the
+Kerala coast over 2006–2010, using both catch data from active fishers and controlled
+experiments run simultaneously inside and outside notified zones. Catch per unit effort was
+higher inside the zones — roughly two to six times the catch, and two to seven times the
+monetary benefit. Reported multipliers vary widely between studies and most evidence comes from
 institute-affiliated researchers, so the effect size should be treated with caution — but
 the direction is consistent and the product has two decades of operational history. This
 work therefore **consumes the PFZ advisory and does not attempt to re-derive it**.

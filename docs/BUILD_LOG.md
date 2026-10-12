@@ -848,3 +848,44 @@ know cold.
 - *Note:* the Bash backslash-collapsing problem bit again while counting words with an
   inline regex. Confirms the standing rule — anything containing backslashes goes through
   Write to a file, never a shell heredoc.
+
+### Step 25 · Deck rebuilt around the marking scheme; a citation corrected
+
+Feedback: the Step 23 deck "doesn't cover what we want to cover properly". Correct. It was
+a pitch deck — story-led, stat callouts — for a review marked on literature (10), gap (5),
+problem/objectives (5) and methodology (5). It gave the 10-mark literature criterion two
+narrative slides with no study-by-study survey, put the six gaps only in the synopsis, and
+had **no dataset slide** for a supervisor whose focus is datasets.
+
+Rebuilt (`scripts/build_midterm_deck.js`) as 10 slides + references:
+problem definition → **three literature-survey tables** (study · contribution · method/data
+· finding · *limitation for our problem*) → comparison matrix → **gap → evidence →
+objective** table (G1–G6 → O1–O6) → methodology I (steps, technique, AI or not, with the
+architecture figure) → **methodology II: dataset table** (9 sources, status incl. the two
+that fail) → evaluation and status → references. The red "limitation" column on every
+survey row is what makes the gap traceable to the literature instead of asserted.
+
+`scripts/build_script_doc.js` rewritten slide-for-slide to match: 1,330 spoken words
+(~10 min) plus table-pointing time; new Q&A on literature selection and on how this differs
+from INCOIS SVAS.
+
+- *Correction:* re-reading Pillai & Nair (2010) against its abstract while building the
+  survey table showed the synopsis had blended two Kerala studies. The 2010 paper covers
+  2006–2010 and reports CPUE higher inside PFZ zones, ~2–6× catch and ~2–7× monetary
+  benefit. The claim that benefit decays with delay after the satellite pass belongs to a
+  different study and has been removed from `synopsis.md` and the Word build.
+- *Not yet done:* visual QA of the rebuilt deck. PowerPoint is running on this machine in
+  "Product Activation Failed" mode with the deck open, and in that state COM automation
+  refuses to open files (HRESULT 0x80048240). The deck passes `validate.py`. It needs a
+  rendered check before presenting — the survey and dataset tables are dense and PowerPoint
+  grows rows to fit text.
+
+### Step 26 · Two-page plain-language project brief
+
+`scripts/build_brief_doc.js` → `docs/Sagar_Setu_Project_Brief.docx`, for a non-technical
+reader: the idea, why it matters, how it works (and the one rule), what has been done, the
+data, the tech stack, future objectives, and honest limitations. 984 words, A4, 10 pt.
+
+- Page count is **estimated** at ~1.6 pages, not measured: Word is also running unactivated
+  and refuses COM `Documents.Open` ("This command is not available"). Measure with
+  `ComputeStatistics(2)` once Word is closed.
