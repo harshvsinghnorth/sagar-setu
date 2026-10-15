@@ -183,6 +183,8 @@ Last review, you asked how often we are right. Prediction is the verdict from th
 
 Day ahead, **93.9 %** of dangerous mornings were warned, and only **3.1 %** of warnings wasted a good day. **Both misses were graded caution — none were graded go.** It fails toward safety.
 
+In the table below, the hit rate looks like it rises at two days and falls at three. **It doesn't really move: there were only 33 dangerous mornings, so one morning is about three points.** The two-day forecast caught one extra morning because it warned more often — seven false alarms instead of one. **The real trend is CSI: 91, then 80, then 65 percent.**
+
 The limitation: truth here is model analysis, not a buoy, so this is an **upper bound**.
 
 Four of six phases are complete. Three things would materially improve it: **an IMD API key, which needs a letter on college letterhead**; INCOIS's small-craft criteria; and buoy data from INCOIS or NIOT.
@@ -234,6 +236,10 @@ SVAS gives a boat safety index as a colour map, in English, with unpublished thr
 **Q. Where does 93.9 % come from? Is that a real measurement?**
 
 It is a backtest over 92 mornings at five harbours through this monsoon — 460 harbour-mornings. For each, I take the forecast available the evening before, run it through my safety engine, and compare that verdict with the verdict from the same model's final analysis. That is standard warning verification from Jolliffe and Stephenson. It regenerates with one command.
+
+**Q. Why does the hit rate go up at two days and then down at three? Shouldn't it fall steadily?**
+
+It looks odd, but it is the sample size. Only 33 of the 460 mornings were dangerous, so the hit rates are 31, 32 and 30 out of 33 — the 2-day “rise” is one morning. The 95 % confidence intervals are roughly 80–98, 85–99 and 76–97 percent, so they overlap almost completely; statistically the hit rate is flat. The 2-day forecast caught that one extra morning by warning more often: 39 warnings instead of 32, and false alarms went from 1 to 7. Hit rate on its own rewards over-warning — if we said “do not sail” every day we would score 100 %. That is why warning systems are scored with FAR and CSI as well. CSI, which counts both misses and false alarms, falls steadily: 91, 80, 65 percent — exactly what you expect as forecast error grows with lead time. A full-year backtest would give more dangerous mornings and narrower intervals; that is planned.
 
 **Q. But you have no buoy data. So how do you know you are right?**
 

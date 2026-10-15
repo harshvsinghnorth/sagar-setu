@@ -937,3 +937,30 @@ ChatGPT text. Corrections that surfaced:
 - *Note:* files written through the Write tool store `\uXXXX` escapes as literal
   characters, so string replacements must match the literal glyphs — three Python
   `str.replace` calls silently missed for that reason and were redone with Edit.
+
+### Step 28 · Explaining the non-monotonic hit rate
+
+The day-ahead → 2-day → 3-day hit rates read 93.9 % → 97.0 % → 90.9 %, which looks abnormal
+and will be questioned. Recomputed from the contingency counts rather than argued:
+
+| Lead | Warned | Wilson 95 % CI | Warnings | False alarms | CSI |
+|---|---|---|---|---|---|
+| 1 d | 31 / 33 | 80.4–98.3 % | 32 | 1 | 91.2 % |
+| 2 d | 32 / 33 | 84.7–99.5 % | 39 | 7 | 80.0 % |
+| 3 d | 30 / 33 | 76.4–96.9 % | 43 | 13 | 65.2 % |
+
+Only 33 of 460 harbour-mornings were do-not-sail, so one morning ≈ 3 points of POD; the
+2-day "rise" is one morning, and the intervals overlap almost entirely. The 2-day forecast
+bought that extra hit by warning more (39 vs 32 warnings, false alarms 1 → 7). CSI falls
+monotonically, tracking wave-height MAE (0.06 → 0.10 → 0.12 m); because the worst parameter
+decides, added forecast noise surfaces mostly as false alarms rather than misses.
+
+The numbers were not changed. The presentation was: synopsis §5 and slide 9 now show the
+counts (warned of 33, false alarms) and CIs next to the percentages, with a short "reading
+the hit rate" note; the script gains a line on slide 9 and a prepared Q&A answer.
+
+- Open-Meteo caps `past_days` at 92, so a larger sample needs the Previous Runs API with
+  explicit date ranges — a full year spanning both monsoons would add Bay of Bengal rough
+  seasons (Chennai and Port Blair had zero do-not-sail mornings in this window). Noted as
+  planned in §5; not started.
+- Removed the forced page break before §5 that left page 10 nearly empty.

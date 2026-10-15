@@ -300,19 +300,23 @@ ch.push(p([
 ]));
 
 // ------------------------------------------------------------------ 5
-ch.push(new Paragraph({ children: [new PageBreak()] }));
 ch.push(h1("5.  Progress and Preliminary Results"));
 ch.push(p("Four of six planned phases are complete: data-source verification and snapshotting; the typed tool belt and risk engine; the LangGraph agent system with planner and verifier; and the FastAPI + MapLibre interface. The implementation is approximately 4,700 lines of Python and 630 of TypeScript, with 115 passing unit tests concentrated on the risk and geospatial modules."));
 ch.push(p([b("Verdict skill, 92 days × 5 harbours, pooled (do-not-sail event):")], { spacing: { before: 170, after: 120 } }));
-ch.push(table([1900, 900, 1600, 2000, 1200, 1426], [
-  ["Forecast lead", "n", "Hit rate (POD)", "False-alarm ratio", "CSI", "3-way agreement"],
-  [[b("1 day ahead")], "460", [b("93.9 %")], [b("3.1 %")], "91.2 %", "93.5 %"],
-  ["2 days ahead", "460", "97.0 %", "17.9 %", "80.0 %", "90.2 %"],
-  ["3 days ahead", "460", "90.9 %", "30.2 %", "65.2 %", "85.0 %"],
-], 19));
+ch.push(table([1350, 1350, 1700, 1050, 1000, 1250, 1326], [
+  ["Forecast lead", "Dangerous mornings warned", "Hit rate (POD) [95 % CI]", "Warnings issued", "False alarms", "False-alarm ratio", "CSI"],
+  [[b("1 day ahead")], [b("31 of 33")], [b("93.9 %"), " [80–98 %]"], "32", [b("1")], [b("3.1 %")], [b("91.2 %")]],
+  ["2 days ahead", "32 of 33", "97.0 % [85–99 %]", "39", "7", "17.9 %", "80.0 %"],
+  ["3 days ahead", "30 of 33", "90.9 % [76–97 %]", "43", "13", "30.2 %", "65.2 %"],
+], 18, 1));
+ch.push(caption("n = 460 harbour-mornings per lead. 95 % intervals are Wilson score intervals."));
 ch.push(p([
-  "The two day-ahead misses were graded ", i("caution"), ", never ", i("go"), " — the asymmetry the worst-of rule is designed to produce. Skill degrades with lead time mainly through false alarms, which argues for presenting the day-ahead verdict as the decision and longer leads as outlook.",
-], { spacing: { before: 170, after: 130 } }));
+  b("Reading the hit rate. "),
+  "Only 33 of the 460 harbour-mornings were do-not-sail mornings, so each one is worth about three points of hit rate. The apparent rise from 93.9 % to 97.0 % at two days is a single extra morning — 32 of 33 instead of 31 — and the three confidence intervals overlap almost entirely: on this sample the hit rate is flat within noise. The two-day forecast caught that extra morning by warning more often: 39 warnings against 32, with false alarms rising from 1 to 7. Hit rate read alone rewards over-warning — a system that always said ", i("do not sail"), " would score 100 % — which is why it is reported alongside the false-alarm ratio and the critical success index [10]. CSI, which counts misses and false alarms together, falls steadily with lead time (91.2 % → 80.0 % → 65.2 %), tracking the growth in wave-height forecast error (mean absolute error 0.06 → 0.10 → 0.12 m). A noisier forecast pushes more mornings across the 2.5 m limit in both directions, and because the worst parameter decides, most of those errors surface as false alarms (1 → 7 → 13) rather than misses (2 → 1 → 3).",
+], { spacing: { before: 60, after: 130 } }));
+ch.push(p([
+  "The two day-ahead misses were graded ", i("caution"), ", never ", i("go"), " — the asymmetry the worst-of rule is designed to produce. The day-ahead verdict is therefore presented as the decision, and longer leads as outlook. A larger sample — a full year spanning both monsoons, when the Bay of Bengal harbours also see rough seas — would narrow these intervals and is planned.",
+], { spacing: { before: 0, after: 130 } }));
 ch.push(p("Measured end-to-end latency for a Tamil question is approximately 8 s, of which the two language-model stages account for 7.4 s and the safety decision for 0.0001 s."));
 ch.push(image("flow.png", PAGE_W));
 ch.push(caption("Figure 2 — one Tamil question, measured end to end."));

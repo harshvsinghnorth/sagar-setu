@@ -358,15 +358,32 @@ modules.
 
 **Verdict skill, 92 days × 5 harbours, pooled (do-not-sail event):**
 
-| Forecast lead | n | hit rate (POD) | false-alarm ratio (FAR) | CSI | 3-way agreement |
-|---|---|---|---|---|---|
-| 1 day ahead | 460 | **93.9 %** | **3.1 %** | 91.2 % | 93.5 % |
-| 2 days ahead | 460 | 97.0 % | 17.9 % | 80.0 % | 90.2 % |
-| 3 days ahead | 460 | 90.9 % | 30.2 % | 65.2 % | 85.0 % |
+| Forecast lead | Dangerous mornings warned | Hit rate (POD) [95 % CI] | Warnings issued | False alarms | False-alarm ratio | CSI |
+|---|---|---|---|---|---|---|
+| 1 day ahead | **31 of 33** | **93.9 %** [80–98 %] | 32 | **1** | **3.1 %** | **91.2 %** |
+| 2 days ahead | 32 of 33 | 97.0 % [85–99 %] | 39 | 7 | 17.9 % | 80.0 % |
+| 3 days ahead | 30 of 33 | 90.9 % [76–97 %] | 43 | 13 | 30.2 % | 65.2 % |
+
+*n = 460 harbour-mornings per lead. 95 % intervals are Wilson score intervals.*
+
+**Reading the hit rate.** Only 33 of the 460 harbour-mornings were do-not-sail mornings, so
+each one is worth about three points of hit rate. The apparent rise from 93.9 % to 97.0 % at
+two days is a single extra morning — 32 of 33 instead of 31 — and the three confidence
+intervals overlap almost entirely: on this sample the hit rate is flat within noise. The
+two-day forecast caught that extra morning by warning more often: 39 warnings against 32,
+with false alarms rising from 1 to 7. Hit rate read alone rewards over-warning — a system
+that always said *do not sail* would score 100 % — which is why it is reported alongside the
+false-alarm ratio and the critical success index [10]. CSI, which counts misses and false
+alarms together, falls steadily with lead time (91.2 % → 80.0 % → 65.2 %), tracking the growth
+in wave-height forecast error (mean absolute error 0.06 → 0.10 → 0.12 m). A noisier forecast
+pushes more mornings across the 2.5 m limit in both directions, and because the worst
+parameter decides, most of those errors surface as false alarms (1 → 7 → 13) rather than
+misses (2 → 1 → 3).
 
 The two day-ahead misses were graded *caution*, never *go* — the asymmetry the worst-of rule
-is designed to produce. Skill degrades with lead time mainly through false alarms, which
-argues for presenting the day-ahead verdict as the decision and longer leads as outlook.
+is designed to produce. The day-ahead verdict is therefore presented as the decision, and
+longer leads as outlook. A larger sample — a full year spanning both monsoons, when the Bay of
+Bengal harbours also see rough seas — would narrow these intervals and is planned.
 
 Measured end-to-end latency for a Tamil question is approximately 8 s, of which the two
 language-model stages account for 7.4 s and the safety decision for 0.0001 s.

@@ -401,7 +401,7 @@ pres.addSection({ title: "Evaluation" });
   s.addText("Evaluation method and preliminary results", { placeholder: "title" });
   tag(s, "PROGRESS");
 
-  const MW = 4.95, CH = 2.75;              // method card width, card height
+  const MW = 4.95, CH = 2.5;               // method card width, card height
   card(s, PAD, BODY_Y, MW, CH);
   tx(s, "Method", { x: PAD + 0.26, y: BODY_Y + 0.16, w: MW - 0.5, h: 0.34, fontSize: 16, bold: true, color: H.accent1, margin: 0 });
   s.addText([
@@ -430,23 +430,28 @@ pres.addSection({ title: "Evaluation" });
   const rowOf = (r, ri) => r.map((t, i) => ({ text: t, options: { fontSize: 12.5, bold: ri === 0,
     color: ri === 0 ? H.dk1 : "2E3E4C", fill: { color: ri === 0 ? "E4F3EA" : "FFFFFF" },
     align: i ? "center" : "left", valign: "middle" } }));
+  const TY = BODY_Y + CH + 0.18;
   s.addTable([
-    ["Forecast lead", "n", "Hit rate (POD)", "False-alarm ratio", "CSI", "3-way agreement"].map(hd),
-    ...[["1 day ahead", "460", "93.9 %", "3.1 %", "91.2 %", "93.5 %"],
-        ["2 days ahead", "460", "97.0 %", "17.9 %", "80.0 %", "90.2 %"],
-        ["3 days ahead", "460", "90.9 %", "30.2 %", "65.2 %", "85.0 %"]].map(rowOf),
-  ], { x: PAD, y: BODY_Y + CH + 0.2, w: CW, colW: [2.6, 1.2, 2.2, 2.4, 1.6, 2.233], rowH: 0.34,
+    ["Forecast lead", "Warned (of 33)", "Hit rate (POD)", "False alarms", "False-alarm ratio", "CSI (overall skill)"].map(hd),
+    ...[["1 day ahead", "31 of 33", "93.9 %", "1", "3.1 %", "91.2 %"],
+        ["2 days ahead", "32 of 33", "97.0 %", "7", "17.9 %", "80.0 %"],
+        ["3 days ahead", "30 of 33", "90.9 %", "13", "30.2 %", "65.2 %"]].map(rowOf),
+  ], { x: PAD, y: TY, w: CW, colW: [2.15, 2.45, 1.85, 1.6, 2.0, 2.183], rowH: 0.34,
        border: BORDER, margin: [2, 6, 2, 6], fontFace: "Calibri" });
+  tx(s, [
+    { text: "Only 33 dangerous mornings: one morning ≈ 3 points of hit rate. ", options: { bold: true, color: H.dk1 } },
+    { text: "The 2-day “rise” is one extra catch, bought with 6 more false alarms.", options: { color: "3A4A58" } },
+  ], { x: PAD, y: TY + 1.42, w: CW, h: 0.32, fontSize: 11.5, margin: 0, valign: "middle" });
 
-  card(s, PAD, 5.78, CW, 0.5, GAP_BG);
+  card(s, PAD, 5.88, CW, 0.46, GAP_BG);
   tx(s, "Limitation: truth is model analysis, not a buoy measurement — these figures are an upper bound on real skill.",
-    { x: PAD + 0.28, y: 5.78, w: CW - 0.56, h: 0.5, valign: "middle", fontSize: 13, bold: true, color: GAP_INK, margin: 0 });
+    { x: PAD + 0.28, y: 5.88, w: CW - 0.56, h: 0.46, valign: "middle", fontSize: 13, bold: true, color: GAP_INK, margin: 0 });
   tx(s, [
     { text: "Status: ", options: { bold: true, color: H.dk1 } },
     { text: "phases 1–4 of 6 complete · 115 unit tests · ₹0 cost.   ", options: { color: "2E3E4C" } },
     { text: "Needed: ", options: { bold: true, color: H.dk1 } },
     { text: "IMD API key (college letter) · INCOIS small-craft criteria · INCOIS/NIOT buoy data.", options: { color: "2E3E4C" } },
-  ], { x: PAD, y: 6.38, w: CW, h: 0.5, fontSize: 13, margin: 0, valign: "middle" });
+  ], { x: PAD, y: 6.42, w: CW, h: 0.46, fontSize: 13, margin: 0, valign: "middle" });
   s.addNotes("The professor asked last time how often we are right — this is the answer. Stress the asymmetry: the misses fell to caution, never to go. The table shows skill falling with lead time, mainly through false alarms, which is why the day-ahead verdict is the decision. State the limitation before it is asked. Close on the three needs, leading with the IMD letter.");
 }
 
