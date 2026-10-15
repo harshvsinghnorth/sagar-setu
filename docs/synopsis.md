@@ -79,176 +79,171 @@ beach at 4 a.m. holding a ₹6,000 Android phone.
 
 ## 2. Literature Review
 
-### 2.1 Operational ocean forecasting for Indian waters
+Eight studies were selected from a wider survey of twenty, on two criteria: each bears
+directly on one component of the system, and preference was given to recent work — half of
+the eight were published in 2023 or later. They fall into two groups. The first covers the
+fisherman's three information needs and the systems already built to meet them. The second
+covers the language-model techniques this work depends on, and their known failure modes.
 
-INCOIS operates the Ocean State Forecast (OSF) service, issuing wave height, period,
-direction, currents and sea-surface temperature for the Indian Ocean. Nair et al. [1]
-report the system's performance against wave-rider buoys, ship-mounted wave-height meters
-and satellite altimeters, finding a scatter index generally below 15 % for significant wave
-height, and a correlation of 0.98 with an RMS error of 0.35 m at Gopalpur during Cyclone
-Phailin. The service is operational, validated and publicly reachable — which is why this
-work consumes it rather than attempting to improve on it.
+### 2.1 Localised marine weather for small-boat fishers
 
-### 2.2 Small-craft safety advisories
+Kurup et al. [1] tested whether a localised marine weather service could support safer
+artisanal fishing on the coast of Kerala. Using the Weather Research and Forecasting (WRF)
+model downscaled to a 5 km grid, and issuing forecasts for 25 km × 25 km zones, they found
+three coastal sub-regions with distinct wind regimes, and that such localised forecasts
+complement the official forecasts, which are issued for large ocean areas. The study
+establishes that a small-boat decision needs local, not regional, information.
 
-INCOIS's **Small Vessel Advisory and Forecast Service (SVAS)** [2] is the closest existing
-product to the safety half of this work. It is an impact-based service that identifies
-potential vessel-overturning zones up to **ten days in advance** using a **Boat Safety
-Index** computed from significant wave height, wave steepness, directional spread and the
-rapid development of wind sea. Advisories are issued per vessel **beam-width category —
-under 4 m, 6 m and 7 m** — covering the fishing fleets of all nine coastal states.
+**Limitation for this problem.** The output is a better *forecast* — of wind. Turning
+it, together with waves, visibility and storm risk, into a go / no-go decision for a
+particular boat is still left to the fisherman.
 
-Two observations follow. First, SVAS validates the parameter choice made in this work:
-steepness and vessel size, not wave height alone, govern capsizing. An INCOIS presentation
-on small-craft advisories [3] notes that capsizing is *not a phase-averaged phenomenon*,
-which is precisely why a threshold table rather than a regression is the defensible
-instrument. Second, SVAS is delivered as a colour-coded map on a web portal. It answers
-*where*, for a reader who already knows to look, in English. It does not answer a question.
+### 2.2 Fishing-zone advisories
 
-### 2.3 Fishing-zone advisories and their measured benefit
+Sarangi et al. [2] generated Potential Fishing Zones for the western Bay of Bengal from six
+satellite-derived parameters — chlorophyll, sea-surface-temperature fronts, relative winds,
+current vectors, Ekman transport and eddies — using feature propagation to keep forecasts
+available under cloud. Validated against Fishery Survey of India catch data for 2016–2018,
+chlorophyll (food availability) correlated most strongly with catch, followed by fronts and
+eddies.
 
-INCOIS issues Potential Fishing Zone (PFZ) advisories from sea-surface temperature and
-ocean-colour chlorophyll fronts. Pillai and Nair [4] validated these advisories along the
-Kerala coast over 2006–2010, using both catch data from active fishers and controlled
-experiments run simultaneously inside and outside notified zones. Catch per unit effort was
-higher inside the zones — roughly two to six times the catch, and two to seven times the
-monetary benefit. Reported multipliers vary widely between studies and most evidence comes from
-institute-affiliated researchers, so the effect size should be treated with caution — but
-the direction is consistent and the product has two decades of operational history. This
-work therefore **consumes the PFZ advisory and does not attempt to re-derive it**.
+**Limitation for this problem.** The result is a zone map, with no connection to sea safety,
+to the user's boat, or to the maritime boundary. The study also shows what producing a
+validated PFZ product properly requires, which is why this work **consumes the INCOIS PFZ
+advisory rather than re-deriving it**.
 
-### 2.4 The last-mile dissemination problem
+### 2.3 Decision-support systems already serving Indian fishers
 
-Delivery has been studied more than it has been solved. The Fisher Friend Mobile
-Application distributes advisories in nine Indian languages across seven coastal states;
-INCOIS operates multilingual SMS and a 24×7 helpline; a telecom pilot extended mobile
-signal roughly 30 km offshore specifically to carry ocean-state forecasts [5]. INCOIS's own
-service review notes that helpline numbers "need to be popularised among fishers."
+Two systems are the closest existing relatives of this work.
 
-Every one of these channels is **broadcast**. A bulletin is pushed; a map is published; an
-SMS arrives. None of them accepts *"I am leaving Rameswaram at five tomorrow morning,
-heading ninety degrees at eight knots in a nine-metre boat — is that sensible?"* The
-information is multilingual, but the interaction is not conversational, and the specific
-combination of vessel, heading, time and place that determines the real answer cannot be
-expressed.
+**Thoondil** (Saka et al. [3]) was developed by the National Centre for Coastal Research
+and put into operation by the Tamil Nadu Department of Fisheries after a series of
+cyclones. It pairs a web-GIS dashboard for administrators, which tracks fishers at sea and
+supports two-way communication, with an Android app offering offline maps with routes to
+the nearest port, weather information, potential fishing zones and incident reporting. It
+is available in the local language, passed 15,000 downloads within months, and has been
+extended to Kozhikode in Kerala.
 
-### 2.5 Machine-learned weather forecasting
+The **Fisher Friend Mobile Application** (Anabel et al. [4]), developed by the M. S.
+Swaminathan Research Foundation with INCOIS, is a decision-support system for small-scale
+fishers that brings together potential fishing zones with GPS navigation, ocean-state
+forecasts, danger-zone and disaster alerts and market prices in several Indian languages.
 
-Data-driven global forecast models now match or exceed physics-based numerical weather
-prediction on headline scores — GraphCast [6] and Pangu-Weather [7] being the prominent
-examples. This literature is relevant chiefly as a road deliberately not taken. Training a
-competitive forecast model requires decades of reanalysis, substantial compute, and
-validation infrastructure that a student project cannot supply, and the operational product
-it would compete with is already validated and free. The contribution available here is in
-*reasoning over* official forecasts, not in replacing them.
+Together they show that mobile delivery, local language and the combination of weather with
+fishing zones work in practice, and that a state government will operate such a tool.
 
-### 2.6 Language models as tool-using agents
+**Limitation for this problem.** Both are menu-and-screen applications: the fisherman
+navigates categories and combines the layers himself. Neither is described as accepting a
+free-form question about a specific boat, place and time, issuing a vessel-specific go /
+no-go verdict, or showing the source of each number it displays.
 
-The technique that makes this work possible is the use of language models as planners that
-call external tools rather than as sources of fact. ReAct [8] interleaves reasoning traces
-with tool actions; Toolformer [9] shows models can learn when to call an API;
-retrieval-augmented generation [10] established the general pattern of grounding generation
-in retrieved external evidence rather than parametric memory.
+### 2.4 The maritime boundary problem
 
-### 2.7 Domain advisory systems built on language models
+Vincent [5] analyses the persistent Palk Bay fishing conflict across the India–Sri Lanka
+International Maritime Boundary Line and argues that it requires joint Indo–Sri Lankan
+governance. The study establishes that the boundary problem is recurring and structural
+rather than incidental.
 
-Two recent systems are the closest architectural relatives of this work.
+**Limitation for this problem.** It is a governance analysis and offers no aid to the
+individual fisherman. This work does not address the political dispute; it addresses the
+narrower technical need of knowing how far the boundary is and whether the current heading
+will cross it.
 
-**ClimSight** (Kuznetsov et al. [11]) couples an LLM with local climate data through an
-agent-based architecture that routes queries to specialised modules, using retrieval to
-ground responses in climate models and reports. A subsequent extension, XCLIM-AI, couples
-the LLM interpretation layer with *deterministic computation* of climate indicators,
-reporting that the largest gains in actionability and uncertainty reporting appear when
-deterministic indicator computation is integrated rather than generated. That finding is
-the single strongest external support for the architecture proposed here.
+### 2.5 Grounding language models in external evidence
 
-**WildfireGPT** (Xie et al. [12]) is a retrieval-augmented multi-agent LLM system for
-natural-hazard decision support, grounded in hazard projections, observational datasets and
-scientific literature, and evaluated across ten expert-led case studies.
+Retrieval-augmented generation (Lewis et al. [6]) combines a language model's parametric
+memory with passages retrieved at query time, improving factual question answering and
+addressing the difficulty language models have in providing provenance and updating their
+knowledge. This is the principle the system rests on: tomorrow's wave height cannot come
+from a model's training data and must be fetched when the question is asked.
 
-Both ground their output in **retrieved documents**, and both answer **analytical** questions
-for planners and researchers. Neither issues an operational go/no-go decision to a layperson
-who will act on it within hours, and neither grounds in live numeric observations carrying
-per-value provenance.
+**Limitation for this problem.** Retrieval grounds answers in text passages, not live
+numeric observations, and does not by itself guarantee that every generated claim is
+supported.
 
-### 2.8 Hallucination and the limits of grounding
+### 2.6 Hallucination persists despite retrieval
 
-Lin et al. [13] survey hallucination in LLM-based agents, proposing a taxonomy across the
-agent workflow — reasoning, execution, perception, memorisation and communication — and
-cataloguing eighteen triggering causes. They observe that agent errors can be "physically
-consequential" and cascade through long task chains. Related work on tool-use failure
-identifies **tool bypass**, in which a model simulates a tool's output instead of calling it
-— a failure mode that defeats auditing precisely when auditing matters most.
+RAGTruth (Niu et al. [7]) is a corpus of nearly 18,000 naturally generated responses from
+a range of language models working in retrieval-augmented settings, manually annotated for
+hallucination at both case and word level. It benchmarks hallucination rates across models
+and shows that **unsupported content persists even when the correct evidence has been
+retrieved**.
 
-This literature is why prompt instructions such as *"only use the data provided"* are
-treated in this work as insufficient. The system is designed so that an unsupported number
-is **mechanically removed**, not merely discouraged.
+**Limitation for this problem.** If retrieval does not guarantee faithfulness, a safety
+decision cannot be delegated to the model. This is the direct justification for the
+architecture's two research choices: the verdict comes from fixed rules, and every number
+in the generated answer is checked mechanically against the evidence ledger.
 
-### 2.9 Indian-language NLP
+### 2.7 Indian-language translation
 
-IndicTrans2 (Gala et al. [14]) is the first open translation model covering all 22 scheduled
-Indian languages, released with the Bharat Parallel Corpus Collection (230 M bitext pairs)
-and the IN22 benchmark. With Bhashini, the National Language Translation Mission's API
-layer, it makes multilingual operation a solved engineering problem rather than a research
-one — removing the usual excuse for shipping marine advisories in English.
+IndicTrans2 (Gala et al. [8]) is the first open translation model covering all 22 scheduled
+Indian languages, released with the Bharat Parallel Corpus Collection (230 M sentence pairs)
+and the IN22 benchmark.
 
-### 2.10 Forecast verification methodology
+**Limitation for this problem.** Translation capability is no longer the bottleneck; no
+fisher-facing system yet offers conversation through it.
 
-Warning systems are conventionally scored with the 2×2 contingency table — probability of
-detection, false-alarm ratio, critical success index — as set out by Jolliffe and
-Stephenson [15]. This framework is adopted here, because the quantity a fisherman acts on is
-a categorical warning, not a wave height, and because misses and false alarms carry utterly
-different costs and must therefore be reported separately rather than merged into a single
-accuracy figure.
+### 2.8 Summary of reviewed work
 
-### 2.11 Summary of reviewed systems
-
-| System | Conversational | Indian languages | Live numeric data | Deterministic safety verdict | Per-number provenance | Safety + fish + boundary together | Verdict-level accuracy reported |
+| Work | Small-boat safety info | Fishing zones | Border awareness | Indian languages | Answers a free-form question | Go / no-go by fixed rules | Every number verified |
 |---|---|---|---|---|---|---|---|
-| INCOIS OSF [1] | ✗ | partial | ✓ | n/a (forecast, not verdict) | ✗ | ✗ | ✗ (RMSE/SI reported) |
-| INCOIS SVAS [2] | ✗ | ✗ | ✓ | ✓ (Boat Safety Index) | ✗ | ✗ | ✗ |
-| INCOIS PFZ [4] | ✗ | ✓ (10) | ✓ | n/a | ✗ | ✗ | ✓ (catch-based) |
-| Fisher Friend app [5] | ✗ (broadcast) | ✓ (9) | ✓ | ✗ | ✗ | partial | ✗ |
-| ClimSight [11] | ✓ | ✗ | partial | ✗ (LLM-generated) | ✗ (document-level) | ✗ | ✗ |
-| WildfireGPT [12] | ✓ | ✗ | partial | ✗ (LLM-generated) | ✗ (document-level) | ✗ | expert case studies |
-| **Sagar Setu (proposed)** | **✓** | **✓** | **✓** | **✓** | **✓** | **✓** | **✓ (POD/FAR/CSI)** |
+| Kurup et al. [1] | ✓ (wind) | ✗ | ✗ | — | ✗ | ✗ | ✗ |
+| Sarangi et al. [2] | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Thoondil — Saka et al. [3] | ✓ | ✓ | — | ✓ | ✗ | ✗ | ✗ |
+| Fisher Friend — Anabel et al. [4] | ✓ | ✓ | partial | ✓ | ✗ | ✗ | ✗ |
+| RAG systems [6], [7] | ✗ | ✗ | ✗ | partial | ✓ | ✗ | ✗ |
+| IndicTrans2 [8] | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **Sagar Setu (proposed)** | **✓** | **✓** | **✓** | **✓** | **✓** | **✓** | **✓** |
+
+*✓ addressed · ✗ not addressed · partial · — not described in the reviewed source.
+Vincent [5] establishes the boundary problem but proposes no tool, so is not tabulated.*
 
 ---
 
 ## 3. Research Gap
 
-> **India has excellent marine data products and workable one-way delivery channels, but no
-> published system lets a fisherman ask one question in his own language and receive a single
-> operational decision — safety, fishing and boundary together — that is provably derived from
-> those products rather than generated by a model.**
+> **The reviewed work addresses the parts of the problem separately — localised weather,
+> fishing zones, the boundary, mobile delivery, retrieval-grounded language models. We found
+> no published system that lets a fisherman ask one question in his own language and
+> receive a single operational decision — safety, fishing and border together — that is
+> derived verifiably from official data rather than generated by a model.**
 
 Six specific gaps follow from the review.
 
-**G1 — Fragmentation.** Safety (SVAS), fishing zones (PFZ) and maritime boundaries are three
-separate products with three interfaces and no shared query. No published work reasons
-across all three for a single user question.
+**G1 — Fragmentation [1]–[5].** Kurup et al. address wind, Sarangi et al. fishing zones,
+Vincent the boundary. Thoondil and Fisher Friend bundle several of these, but as separate
+screens that the fisherman must read and combine himself.
 
-**G2 — Interaction mode.** All existing dissemination is broadcast: bulletins, SMS, map
-portals, helplines. None accepts a free-form query carrying the vessel, heading, speed and
-departure time that actually determine the answer.
+**G2 — Interaction mode [3], [4].** The existing systems are menu-driven. Neither accepts a
+free-form question carrying the vessel, place, heading and departure time that actually
+determine the answer.
 
-**G3 — Language depth.** Existing products reach nine or ten languages as *translated
-output*. With IndicTrans2 [14] covering 22 languages, the limiting factor is no longer
-translation capability but the absence of a conversational marine system to attach it to.
+**G3 — Language depth [3], [4], [8].** Existing apps offer local-language content. With
+IndicTrans2 covering 22 languages, the limit is no longer translation but the absence of a
+conversational fisher system to attach it to.
 
-**G4 — Verifiability.** ClimSight [11] and WildfireGPT [12] ground generation in retrieved
-documents. Agent hallucination surveys [13] show that fabrication and tool bypass remain
-open problems. No marine advisory system publishes a per-observation provenance ledger with
-a mechanical post-generation check that deletes unsupported numbers.
+**G4 — Verifiability [6], [7].** Retrieval grounds answers in evidence, but RAGTruth shows
+unsupported content persists even with retrieval. No fisher-facing system shows per-number
+provenance or checks its numbers mechanically.
 
-**G5 — Structural safety separation.** No published marine advisory architecture *prevents*
-the language model from making the go/no-go call. XCLIM-AI's deterministic-computation layer
-[11] is the nearest published idea, and it computes climate indicators for analysts, not
-operational safety verdicts for fishermen.
+**G5 — Structural safety separation [6], [7].** Given G4, any system that lets a language
+model generate the safety call inherits its hallucination risk. No reviewed system keeps the
+go / no-go decision in tested, deterministic rules separate from the model.
 
-**G6 — Evaluation at the level of action.** Validation literature reports RMSE and scatter
-index for wave height [1]. A fisherman does not act on RMSE; he acts on a verdict. Hit rate
-and false-alarm ratio for the *verdict itself* are not reported anywhere in this domain.
+**G6 — Evaluation at the level of action [1], [2].** Kurup et al. validate a forecast and
+Sarangi et al. validate zones against catch. Neither evaluates a go / no-go *decision*, the
+thing a fisherman acts on, with warning statistics such as hit rate and false-alarm ratio
+[10].
+
+| Gap | Evidence | Objective |
+|---|---|---|
+| G1 Fragmentation | [1]–[5] | O1 |
+| G2 Broadcast / menu interaction | [3], [4] | O1 |
+| G3 Language depth | [3], [4], [8] | O4 |
+| G4 Verifiability | [6], [7] | O3 |
+| G5 Safety separation | [6], [7] | O2 |
+| G6 Evaluation stops at the forecast | [1], [2] | O6 |
+| Operational constraint: unreliable connectivity at sea (Thoondil ships offline maps for this reason) | [3] | O5 |
 
 ---
 
@@ -309,21 +304,25 @@ Seven parameters, three vessel classes (traditional < 12 m, motorised 12–20 m,
 system sends a boat out under a thunderhead because the waves happened to be calm. Missing
 wave or wind data can never produce a *go*.
 
-These values are provisional starting points. Calibrating them against the INCOIS Boat
-Safety Index parameter set [2] — which independently selects steepness, directional spread
-and beam width — is an identified task, not a completed one.
+These values are provisional starting points. INCOIS's Small Vessel Advisory Service [9]
+computes a Boat Safety Index from wave height, wave steepness, directional spread and the
+rapid growth of wind sea, issued per vessel beam-width class (< 4 m, 6 m, 7 m). It
+independently selects steepness and vessel size, as this work does, and is the calibration
+target; its numeric thresholds are not published, so calibration is an identified task, not
+a completed one.
 
 ### 4.4 Data sources
 
 | Source | Provides | Access |
 |---|---|---|
-| INCOIS ERDDAP | SST, winds, currents, Argo profiles | Open REST / griddap |
-| INCOIS PFZ | Potential Fishing Zone advisories, 12 sectors | Web product, scraped and cached |
-| Open-Meteo Marine | Wave height/period/direction, swell, currents | Free, no key — the reliability floor |
-| Copernicus Marine | Chlorophyll-a, physics reanalysis | Free account |
-| NOAA CoastWatch | Chlorophyll-a fallback | Open |
+| Open-Meteo Marine + Weather | Wave height/period/direction, swell, currents, wind, gusts, visibility | Free, no key — the reliability floor |
+| INCOIS PFZ (GeoServer WFS) | Daily Potential Fishing Zone advisories by sector | Open, cached daily |
+| INCOIS static layers | 14 PFZ sectors, 1,223 named landing centres | Open, committed |
 | Marine Regions (VLIZ) | Indian EEZ, IMBL, boundary polygons | Static GeoJSON |
+| NOAA CoastWatch | Chlorophyll-a | Open |
+| Copernicus Marine | Chlorophyll-a, physics | Free account |
 | IMD | Cyclone track, lightning, district warnings | **Pending access key** |
+| INCOIS ERDDAP | SST and chlorophyll archive | Open, but stale (SST ends 2011) — not used |
 
 Every fetch follows a four-step chain: **fresh cache → live (2 s budget) → stale cache →
 frozen snapshot**, with confidence 0.95 / 1.00 / 0.70 / 0.50 respectively. The system
@@ -340,7 +339,7 @@ free tier, Ollama, or none). Total external cost to date: **₹0**.
 Prediction: the verdict computed from the forecast available the evening before. Truth: the
 verdict computed from the same model's final analysis for that morning. Sample: 92 mornings
 × 5 harbours = 460 harbour-mornings per lead time, across the 2026 south-west monsoon.
-Scored with POD, FAR, CSI and a 3×3 confusion matrix [15].
+Scored with POD, FAR, CSI and a 3×3 confusion matrix [10].
 
 This is forecast-versus-analysis, which is an **upper bound** on true skill; no public
 INCOIS or NIOT buoy feed is available to us. The harness runs unchanged against buoy data
@@ -380,7 +379,7 @@ language-model stages account for 7.4 s and the safety decision for 0.0001 s.
 |---|---|---|
 | 5 | Bhashini round trip with IndicTrans2 fallback; A* route optimisation; causal productivity query | In progress |
 | 6 | Offline hardening, error states, five-location regression, rehearsal | Pending |
-| — | Calibrate thresholds against INCOIS SVAS criteria [2] | **Blocked** — criteria not published numerically |
+| — | Calibrate thresholds against INCOIS SVAS criteria [9] | **Blocked** — criteria not published numerically |
 | — | IMD API key for lightning and cyclone parameters | **Blocked** — requires institutional letter |
 | — | Buoy observations to replace analysis as evaluation truth | **Blocked** — requires INCOIS/NIOT data access |
 
@@ -388,32 +387,26 @@ language-model stages account for 7.4 s and the safety decision for 0.0001 s.
 
 ## References
 
-[1] B. T. M. Nair, P. Sirisha, K. G. Sandhya, *et al.*, "Performance of the ocean state forecast system at Indian National Centre for Ocean Information Services," *Current Science*, vol. 105, no. 2, pp. 175–181, 2013.
+### Literature reviewed
 
-[2] Indian National Centre for Ocean Information Services, "Small Vessel Advisory and Forecast Services (SVAS)," INCOIS Ocean State Forecast portal. [Online]. Available: https://incois.gov.in/portal/osf/SVA_overview.jsp
+[1] P. H. Kurup, S. Abhilash, S. Mavath, V. K. Mini, N. Alamirew, and M. Martin, "Validation of localised coastal wind forecasts for artisan fishers of southwestern India," *Weather*, vol. 79, no. 7, pp. 231–241, 2024. doi: 10.1002/wea.4554
 
-[3] A. N. Deshmukh, "Small Craft Advisory," ITCOocean training material, INCOIS, Hyderabad.
+[2] R. K. Sarangi, M. Jishad, R. Sharma, *et al.*, "Multiple ocean parameter-based potential fishing zone (PFZ) location generation and validation in the Western Bay of Bengal," *Environmental Monitoring and Assessment*, vol. 196, no. 1, art. 98, 2024. doi: 10.1007/s10661-023-12259-6
 
-[4] V. N. Pillai and P. G. Nair, "Potential fishing zone (PFZ) advisories — Are they beneficial to the coastal fisherfolk? A case study along Kerala coast, South India," *Biological Forum*, vol. 2, no. 2, pp. 46–55, 2010.
+[3] S. K. Saka, A. E. Mathew, V. Ganesh, *et al.*, "A Web-GIS and mobile-based application for a safe ocean for fishers," *Marine Technology Society Journal*, vol. 55, no. 3, pp. 50–57, 2021. doi: 10.4031/MTSJ.55.3.10
 
-[5] M. S. Swaminathan Research Foundation, "Fisher Friend Mobile Application," and INCOIS multilingual advisory dissemination services. [Online]. Available: https://incois.gov.in
+[4] N. J. Anabel, S. Velvizhi, and D. Suvitha, "Fisher Friend Mobile Application: a decision support system for small scale fishers in India," *CSI Transactions on ICT*, vol. 6, no. 3–4, pp. 257–267, 2018. doi: 10.1007/s40012-018-0212-1
 
-[6] R. Lam, A. Sanchez-Gonzalez, M. Willson, *et al.*, "Learning skillful medium-range global weather forecasting," *Science*, vol. 382, no. 6677, pp. 1416–1421, 2023.
+[5] S. Vincent, "Palk Bay fishing problem requires Indo-Sri Lankan joint-governance," *Maritime Affairs: Journal of the National Maritime Foundation of India*, vol. 16, no. 2, pp. 71–88, 2020. doi: 10.1080/09733159.2020.1838717
 
-[7] K. Bi, L. Xie, H. Zhang, X. Chen, X. Gu, and Q. Tian, "Accurate medium-range global weather forecasting with 3D neural networks," *Nature*, vol. 619, pp. 533–538, 2023.
+[6] P. Lewis, E. Perez, A. Piktus, *et al.*, "Retrieval-augmented generation for knowledge-intensive NLP tasks," in *Adv. Neural Inf. Process. Syst. (NeurIPS)*, vol. 33, pp. 9459–9474, 2020.
 
-[8] S. Yao, J. Zhao, D. Yu, *et al.*, "ReAct: Synergizing reasoning and acting in language models," in *Proc. ICLR*, 2023.
+[7] C. Niu, Y. Wu, J. Zhu, S. Xu, K. Shum, R. Zhong, J. Song, and T. Zhang, "RAGTruth: A hallucination corpus for developing trustworthy retrieval-augmented language models," in *Proc. 62nd Annu. Meeting Assoc. Comput. Linguistics (ACL)*, vol. 1, pp. 10862–10878, 2024.
 
-[9] T. Schick, J. Dwivedi-Yu, R. Dessì, *et al.*, "Toolformer: Language models can teach themselves to use tools," in *Adv. Neural Inf. Process. Syst. (NeurIPS)*, vol. 36, 2023.
+[8] J. Gala, P. A. Chitale, R. AK, *et al.*, "IndicTrans2: Towards high-quality and accessible machine translation models for all 22 scheduled Indian languages," *Transactions on Machine Learning Research (TMLR)*, 2023. arXiv:2305.16307
 
-[10] P. Lewis, E. Perez, A. Piktus, *et al.*, "Retrieval-augmented generation for knowledge-intensive NLP tasks," in *Adv. Neural Inf. Process. Syst. (NeurIPS)*, vol. 33, pp. 9459–9474, 2020.
+### Methodology references
 
-[11] I. Kuznetsov, A. A. Jost, D. Pantiukhin, B. Shapkin, T. Jung, and N. Koldunov, "Transforming climate services with LLMs and multi-source data integration," *npj Climate Action*, vol. 4, no. 1, art. 97, 2025. doi: 10.1038/s44168-025-00300-y
+[9] Indian National Centre for Ocean Information Services, "Small Vessel Advisory and Forecast Services (SVAS)," INCOIS Ocean State Forecast portal. [Online]. Available: https://incois.gov.in/portal/osf/SVA_overview.jsp
 
-[12] Y. Xie, B. Jiang, T. Mallick, *et al.*, "A RAG-based multi-agent LLM system for natural hazard resilience and adaptation," arXiv:2504.17200, 2025.
-
-[13] X. Lin, Y. Ning, J. Zhang, *et al.*, "LLM-based agents suffer from hallucinations: A survey of taxonomy, methods, and directions," arXiv:2509.18970, 2025.
-
-[14] J. Gala, P. A. Chitale, R. AK, *et al.*, "IndicTrans2: Towards high-quality and accessible machine translation models for all 22 scheduled Indian languages," *Transactions on Machine Learning Research (TMLR)*, 2023. arXiv:2305.16307
-
-[15] I. T. Jolliffe and D. B. Stephenson, *Forecast Verification: A Practitioner's Guide in Atmospheric Science*, 2nd ed. Chichester, UK: Wiley-Blackwell, 2012.
+[10] I. T. Jolliffe and D. B. Stephenson, *Forecast Verification: A Practitioner's Guide in Atmospheric Science*, 2nd ed. Chichester, UK: Wiley-Blackwell, 2012.

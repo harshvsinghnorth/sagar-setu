@@ -35,8 +35,13 @@ const h2 = (t) => new Paragraph({
   children: [new TextRun({ text: t, font: FONT })],
 });
 
-const bullet = (c, level = 0) => new Paragraph({
-  numbering: { reference: "bullets", level }, spacing: { after: 100, line: 276 }, children: runs(c),
+/** "Limitation for this problem" paragraph — the bridge from each study to the gap. */
+const lim = (t) => new Paragraph({
+  spacing: { before: 40, after: 150, line: 276 },
+  indent: { left: 300 },
+  border: { left: { style: BorderStyle.SINGLE, size: 12, color: "B03A2E", space: 10 } },
+  children: [new TextRun({ text: "Limitation for this problem.  ", font: FONT, size: 21, bold: true, color: "8E2B21" }),
+             new TextRun({ text: t, font: FONT, size: 21, color: "5A2A24" })],
 });
 
 const quote = (c) => new Paragraph({
@@ -53,25 +58,25 @@ const code = (lines) => new Paragraph({
   children: lines.flatMap((l, n) => (n ? [new TextRun({ break: 1 }), mono(l)] : [mono(l)])),
 });
 
-const cell = (content, w, head, size) =>
+const cell = (content, w, head, size, center) =>
   new TableCell({
     width: { size: w, type: WidthType.DXA },
     shading: head ? { type: ShadingType.CLEAR, fill: "DCE6F1", color: "auto" } : undefined,
-    margins: { top: 70, bottom: 70, left: 110, right: 110 },
+    margins: { top: 70, bottom: 70, left: 100, right: 100 },
     children: [new Paragraph({
-      spacing: { after: 0 }, alignment: head ? AlignmentType.CENTER : AlignmentType.LEFT,
+      spacing: { after: 0 }, alignment: head || center ? AlignmentType.CENTER : AlignmentType.LEFT,
       children: (Array.isArray(content) ? content : [content]).map((r) =>
         typeof r === "string" ? new TextRun({ text: r, font: FONT, size, bold: !!head }) : r),
     })],
   });
 
-const table = (widths, rows, size = 18) =>
+const table = (widths, rows, size = 18, centerFrom = 99) =>
   new Table({
     width: { size: widths.reduce((a, c) => a + c, 0), type: WidthType.DXA },
     columnWidths: widths,
     rows: rows.map((r, ri) => new TableRow({
       tableHeader: ri === 0,
-      children: r.map((c, ci) => cell(c, widths[ci], ri === 0, size)),
+      children: r.map((c, ci) => cell(c, widths[ci], ri === 0, size, ci >= centerFrom)),
     })),
   });
 
@@ -153,86 +158,80 @@ ch.push(table([760, 8266], [
 // ------------------------------------------------------------------ 2
 ch.push(new Paragraph({ children: [new PageBreak()] }));
 ch.push(h1("2.  Literature Review"));
+ch.push(p("Eight studies were selected from a wider survey of twenty, on two criteria: each bears directly on one component of the system, and preference was given to recent work — half of the eight were published in 2023 or later. They fall into two groups. The first covers the fisherman's three information needs and the systems already built to meet them. The second covers the language-model techniques this work depends on, and their known failure modes."));
 
-ch.push(h2("2.1  Operational ocean forecasting for Indian waters"));
-ch.push(p("INCOIS operates the Ocean State Forecast (OSF) service, issuing wave height, period, direction, currents and sea-surface temperature for the Indian Ocean. Nair et al. [1] report the system's performance against wave-rider buoys, ship-mounted wave-height meters and satellite altimeters, finding a scatter index generally below 15 % for significant wave height, and a correlation of 0.98 with an RMS error of 0.35 m at Gopalpur during Cyclone Phailin. The service is operational, validated and publicly reachable — which is why this work consumes it rather than attempting to improve on it."));
+ch.push(h2("2.1  Localised marine weather for small-boat fishers"));
+ch.push(p("Kurup et al. [1] tested whether a localised marine weather service could support safer artisanal fishing on the coast of Kerala. Using the Weather Research and Forecasting (WRF) model downscaled to a 5 km grid, and issuing forecasts for 25 km × 25 km zones, they found three coastal sub-regions with distinct wind regimes, and that such localised forecasts complement the official forecasts, which are issued for large ocean areas. The study establishes that a small-boat decision needs local, not regional, information."));
+ch.push(lim("The output is a better forecast — of wind. Turning it, together with waves, visibility and storm risk, into a go / no-go decision for a particular boat is still left to the fisherman."));
 
-ch.push(h2("2.2  Small-craft safety advisories"));
+ch.push(h2("2.2  Fishing-zone advisories"));
+ch.push(p("Sarangi et al. [2] generated Potential Fishing Zones for the western Bay of Bengal from six satellite-derived parameters — chlorophyll, sea-surface-temperature fronts, relative winds, current vectors, Ekman transport and eddies — using feature propagation to keep forecasts available under cloud. Validated against Fishery Survey of India catch data for 2016–2018, chlorophyll (food availability) correlated most strongly with catch, followed by fronts and eddies."));
+ch.push(lim("The result is a zone map, with no connection to sea safety, to the user's boat, or to the maritime boundary. The study also shows what producing a validated PFZ product properly requires — which is why this work consumes the INCOIS PFZ advisory rather than re-deriving it."));
+
+ch.push(h2("2.3  Decision-support systems already serving Indian fishers"));
+ch.push(p("Two systems are the closest existing relatives of this work."));
 ch.push(p([
-  "INCOIS's ", b("Small Vessel Advisory and Forecast Service (SVAS)"), " [2] is the closest existing product to the safety half of this work. It is an impact-based service that identifies potential vessel-overturning zones up to ", b("ten days in advance"), " using a ", b("Boat Safety Index"), " computed from significant wave height, wave steepness, directional spread and the rapid development of wind sea. Advisories are issued per vessel ", b("beam-width category — under 4 m, 6 m and 7 m"), " — covering the fishing fleets of all nine coastal states.",
+  b("Thoondil"), " (Saka et al. [3]) was developed by the National Centre for Coastal Research and put into operation by the Tamil Nadu Department of Fisheries after a series of cyclones. It pairs a web-GIS dashboard for administrators, which tracks fishers at sea and supports two-way communication, with an Android app offering offline maps with routes to the nearest port, weather information, potential fishing zones and incident reporting. It is available in the local language, passed 15,000 downloads within months, and has been extended to Kozhikode in Kerala.",
 ]));
 ch.push(p([
-  "Two observations follow. First, SVAS validates the parameter choice made in this work: steepness and vessel size, not wave height alone, govern capsizing. An INCOIS presentation on small-craft advisories [3] notes that capsizing is ", i("not a phase-averaged phenomenon"), ", which is precisely why a threshold table rather than a regression is the defensible instrument. Second, SVAS is delivered as a colour-coded map on a web portal. It answers ", i("where"), ", for a reader who already knows to look, in English. It does not answer a question.",
+  "The ", b("Fisher Friend Mobile Application"), " (Anabel et al. [4]), developed by the M. S. Swaminathan Research Foundation with INCOIS, is a decision-support system for small-scale fishers that brings together potential fishing zones with GPS navigation, ocean-state forecasts, danger-zone and disaster alerts and market prices in several Indian languages.",
 ]));
+ch.push(p("Together they show that mobile delivery, local language and the combination of weather with fishing zones work in practice, and that a state government will operate such a tool."));
+ch.push(lim("Both are menu-and-screen applications: the fisherman navigates categories and combines the layers himself. Neither is described as accepting a free-form question about a specific boat, place and time, issuing a vessel-specific go / no-go verdict, or showing the source of each number it displays."));
 
-ch.push(h2("2.3  Fishing-zone advisories and their measured benefit"));
+ch.push(h2("2.4  The maritime boundary problem"));
+ch.push(p("Vincent [5] analyses the persistent Palk Bay fishing conflict across the India–Sri Lanka International Maritime Boundary Line and argues that it requires joint Indo–Sri Lankan governance. The study establishes that the boundary problem is recurring and structural rather than incidental."));
+ch.push(lim("It is a governance analysis and offers no aid to the individual fisherman. This work does not address the political dispute; it addresses the narrower technical need of knowing how far the boundary is and whether the current heading will cross it."));
+
+ch.push(h2("2.5  Grounding language models in external evidence"));
+ch.push(p("Retrieval-augmented generation (Lewis et al. [6]) combines a language model's parametric memory with passages retrieved at query time, improving factual question answering and addressing the difficulty language models have in providing provenance and updating their knowledge. This is the principle the system rests on: tomorrow's wave height cannot come from a model's training data and must be fetched when the question is asked."));
+ch.push(lim("Retrieval grounds answers in text passages, not live numeric observations, and does not by itself guarantee that every generated claim is supported."));
+
+ch.push(h2("2.6  Hallucination persists despite retrieval"));
 ch.push(p([
-  "INCOIS issues Potential Fishing Zone (PFZ) advisories from sea-surface temperature and ocean-colour chlorophyll fronts. Pillai and Nair [4] validated these advisories along the Kerala coast over 2006–2010, using both catch data from active fishers and controlled experiments run simultaneously inside and outside notified zones. Catch per unit effort was higher inside the zones — roughly two to six times the catch, and two to seven times the monetary benefit. Reported multipliers vary widely between studies and most evidence comes from institute-affiliated researchers, so the effect size should be treated with caution — but the direction is consistent and the product has two decades of operational history. This work therefore ", b("consumes the PFZ advisory and does not attempt to re-derive it"), ".",
+  "RAGTruth (Niu et al. [7]) is a corpus of nearly 18,000 naturally generated responses from a range of language models working in retrieval-augmented settings, manually annotated for hallucination at both case and word level. It benchmarks hallucination rates across models and shows that ", b("unsupported content persists even when the correct evidence has been retrieved"), ".",
 ]));
+ch.push(lim("If retrieval does not guarantee faithfulness, a safety decision cannot be delegated to the model. This is the direct justification for the architecture's two research choices: the verdict comes from fixed rules, and every number in the generated answer is checked mechanically against the evidence ledger."));
 
-ch.push(h2("2.4  The last-mile dissemination problem"));
-ch.push(p("Delivery has been studied more than it has been solved. The Fisher Friend Mobile Application distributes advisories in nine Indian languages across seven coastal states; INCOIS operates multilingual SMS and a 24×7 helpline; a telecom pilot extended mobile signal roughly 30 km offshore specifically to carry ocean-state forecasts [5]. INCOIS's own service review notes that helpline numbers “need to be popularised among fishers.”"));
-ch.push(p([
-  "Every one of these channels is ", b("broadcast"), ". A bulletin is pushed; a map is published; an SMS arrives. None of them accepts ", i("“I am leaving Rameswaram at five tomorrow morning, heading ninety degrees at eight knots in a nine-metre boat — is that sensible?”"), " The information is multilingual, but the interaction is not conversational, and the specific combination of vessel, heading, time and place that determines the real answer cannot be expressed.",
-]));
+ch.push(h2("2.7  Indian-language translation"));
+ch.push(p("IndicTrans2 (Gala et al. [8]) is the first open translation model covering all 22 scheduled Indian languages, released with the Bharat Parallel Corpus Collection (230 M sentence pairs) and the IN22 benchmark."));
+ch.push(lim("Translation capability is no longer the bottleneck; no fisher-facing system yet offers conversation through it."));
 
-ch.push(h2("2.5  Machine-learned weather forecasting"));
-ch.push(p("Data-driven global forecast models now match or exceed physics-based numerical weather prediction on headline scores — GraphCast [6] and Pangu-Weather [7] being the prominent examples. This literature is relevant chiefly as a road deliberately not taken. Training a competitive forecast model requires decades of reanalysis, substantial compute, and validation infrastructure that a student project cannot supply, and the operational product it would compete with is already validated and free. The contribution available here is in reasoning over official forecasts, not in replacing them."));
-
-ch.push(h2("2.6  Language models as tool-using agents"));
-ch.push(p("The technique that makes this work possible is the use of language models as planners that call external tools rather than as sources of fact. ReAct [8] interleaves reasoning traces with tool actions; Toolformer [9] shows models can learn when to call an API; retrieval-augmented generation [10] established the general pattern of grounding generation in retrieved external evidence rather than parametric memory."));
-
-ch.push(h2("2.7  Domain advisory systems built on language models"));
-ch.push(p("Two recent systems are the closest architectural relatives of this work."));
-ch.push(p([
-  b("ClimSight"), " (Kuznetsov et al. [11]) couples an LLM with local climate data through an agent-based architecture that routes queries to specialised modules, using retrieval to ground responses in climate models and reports. A subsequent extension, XCLIM-AI, couples the LLM interpretation layer with ", i("deterministic computation"), " of climate indicators, reporting that the largest gains in actionability and uncertainty reporting appear when deterministic indicator computation is integrated rather than generated. That finding is the single strongest external support for the architecture proposed here.",
-]));
-ch.push(p([
-  b("WildfireGPT"), " (Xie et al. [12]) is a retrieval-augmented multi-agent LLM system for natural-hazard decision support, grounded in hazard projections, observational datasets and scientific literature, and evaluated across ten expert-led case studies.",
-]));
-ch.push(p([
-  "Both ground their output in ", b("retrieved documents"), ", and both answer ", b("analytical"), " questions for planners and researchers. Neither issues an operational go/no-go decision to a layperson who will act on it within hours, and neither grounds in live numeric observations carrying per-value provenance.",
-]));
-
-ch.push(h2("2.8  Hallucination and the limits of grounding"));
-ch.push(p([
-  "Lin et al. [13] survey hallucination in LLM-based agents, proposing a taxonomy across the agent workflow — reasoning, execution, perception, memorisation and communication — and cataloguing eighteen triggering causes. They observe that agent errors can be “physically consequential” and cascade through long task chains. Related work on tool-use failure identifies ", b("tool bypass"), ", in which a model simulates a tool's output instead of calling it — a failure mode that defeats auditing precisely when auditing matters most.",
-]));
-ch.push(p([
-  "This literature is why prompt instructions such as ", i("“only use the data provided”"), " are treated in this work as insufficient. The system is designed so that an unsupported number is ", b("mechanically removed"), ", not merely discouraged.",
-]));
-
-ch.push(h2("2.9  Indian-language NLP"));
-ch.push(p("IndicTrans2 (Gala et al. [14]) is the first open translation model covering all 22 scheduled Indian languages, released with the Bharat Parallel Corpus Collection (230 M bitext pairs) and the IN22 benchmark. With Bhashini, the National Language Translation Mission's API layer, it makes multilingual operation a solved engineering problem rather than a research one — removing the usual excuse for shipping marine advisories in English."));
-
-ch.push(h2("2.10  Forecast verification methodology"));
-ch.push(p("Warning systems are conventionally scored with the 2×2 contingency table — probability of detection, false-alarm ratio, critical success index — as set out by Jolliffe and Stephenson [15]. This framework is adopted here, because the quantity a fisherman acts on is a categorical warning, not a wave height, and because misses and false alarms carry utterly different costs and must therefore be reported separately rather than merged into a single accuracy figure."));
-
-ch.push(h2("2.11  Summary of reviewed systems"));
-const col = [1750, 790, 900, 840, 1180, 1030, 1200, 1150];
-ch.push(table(col, [
-  ["System", "Conver-\nsational", "Indian\nlanguages", "Live\nnumeric\ndata", "Deterministic\nsafety verdict", "Per-number\nprovenance", "Safety + fish\n+ boundary", "Verdict-level\naccuracy"],
-  ["INCOIS OSF [1]", N, "partial", Y, "n/a", N, N, "RMSE only"],
-  ["INCOIS SVAS [2]", N, N, Y, Y, N, N, N],
-  ["INCOIS PFZ [4]", N, Y + " (10)", Y, "n/a", N, N, "catch-based"],
-  ["Fisher Friend app [5]", N, Y + " (9)", Y, N, N, "partial", N],
-  ["ClimSight [11]", Y, N, "partial", N, "document", N, N],
-  ["WildfireGPT [12]", Y, N, "partial", N, "document", N, "case studies"],
-  [[b("Sagar Setu")], [b(Y)], [b(Y)], [b(Y)], [b(Y)], [b(Y)], [b(Y)], [b("POD/FAR/CSI")]],
-], 16));
-ch.push(caption("Table 1 — where the proposed system sits relative to reviewed work."));
+ch.push(h2("2.8  Summary of reviewed work"));
+ch.push(table([1950, 930, 880, 900, 900, 1060, 1060, 1020], [
+  ["Work", "Small-boat safety info", "Fishing zones", "Border awareness", "Indian languages", "Answers a free-form question", "Go / no-go by fixed rules", "Every number verified"],
+  ["Kurup et al. [1]", Y + " (wind)", N, N, "—", N, N, N],
+  ["Sarangi et al. [2]", N, Y, N, N, N, N, N],
+  ["Thoondil — Saka et al. [3]", Y, Y, "—", Y, N, N, N],
+  ["Fisher Friend — Anabel et al. [4]", Y, Y, "partial", Y, N, N, N],
+  ["RAG systems [6], [7]", N, N, N, "partial", Y, N, N],
+  ["IndicTrans2 [8]", N, N, N, Y, N, N, N],
+  [[b("Sagar Setu (proposed)")], [b(Y)], [b(Y)], [b(Y)], [b(Y)], [b(Y)], [b(Y)], [b(Y)]],
+], 16, 1));
+ch.push(caption("Table 1 — ✓ addressed · ✗ not addressed · — not described in the reviewed source. Vincent [5] establishes the boundary problem but proposes no tool, so is not tabulated."));
 
 // ------------------------------------------------------------------ 3
 ch.push(new Paragraph({ children: [new PageBreak()] }));
 ch.push(h1("3.  Research Gap"));
-ch.push(quote([b("India has excellent marine data products and workable one-way delivery channels, but no published system lets a fisherman ask one question in his own language and receive a single operational decision — safety, fishing and boundary together — that is provably derived from those products rather than generated by a model.")]));
+ch.push(quote([b("The reviewed work addresses the parts of the problem separately — localised weather, fishing zones, the boundary, mobile delivery, retrieval-grounded language models. We found no published system that lets a fisherman ask one question in his own language and receive a single operational decision — safety, fishing and border together — that is derived verifiably from official data rather than generated by a model.")]));
 ch.push(p("Six specific gaps follow from the review."));
-ch.push(bullet([b("G1 — Fragmentation. "), "Safety (SVAS), fishing zones (PFZ) and maritime boundaries are three separate products with three interfaces and no shared query. No published work reasons across all three for a single user question."]));
-ch.push(bullet([b("G2 — Interaction mode. "), "All existing dissemination is broadcast: bulletins, SMS, map portals, helplines. None accepts a free-form query carrying the vessel, heading, speed and departure time that actually determine the answer."]));
-ch.push(bullet([b("G3 — Language depth. "), "Existing products reach nine or ten languages as translated output. With IndicTrans2 [14] covering 22 languages, the limiting factor is no longer translation capability but the absence of a conversational marine system to attach it to."]));
-ch.push(bullet([b("G4 — Verifiability. "), "ClimSight [11] and WildfireGPT [12] ground generation in retrieved documents. Agent hallucination surveys [13] show that fabrication and tool bypass remain open problems. No marine advisory system publishes a per-observation provenance ledger with a mechanical post-generation check that deletes unsupported numbers."]));
-ch.push(bullet([b("G5 — Structural safety separation. "), "No published marine advisory architecture prevents the language model from making the go/no-go call. XCLIM-AI's deterministic-computation layer [11] is the nearest published idea, and it computes climate indicators for analysts, not operational safety verdicts for fishermen."]));
-ch.push(bullet([b("G6 — Evaluation at the level of action. "), "Validation literature reports RMSE and scatter index for wave height [1]. A fisherman does not act on RMSE; he acts on a verdict. Hit rate and false-alarm ratio for the verdict itself are not reported anywhere in this domain."]));
+const gapP = (code, title, refs, text) => p([b(`${code} — ${title} ${refs}.  `), text], { spacing: { after: 110, line: 276 } });
+ch.push(gapP("G1", "Fragmentation", "[1]–[5]", "Kurup et al. address wind, Sarangi et al. fishing zones, Vincent the boundary. Thoondil and Fisher Friend bundle several of these, but as separate screens that the fisherman must read and combine himself."));
+ch.push(gapP("G2", "Interaction mode", "[3], [4]", "The existing systems are menu-driven. Neither accepts a free-form question carrying the vessel, place, heading and departure time that actually determine the answer."));
+ch.push(gapP("G3", "Language depth", "[3], [4], [8]", "Existing apps offer local-language content. With IndicTrans2 covering 22 languages, the limit is no longer translation but the absence of a conversational fisher system to attach it to."));
+ch.push(gapP("G4", "Verifiability", "[6], [7]", "Retrieval grounds answers in evidence, but RAGTruth shows unsupported content persists even with retrieval. No fisher-facing system shows per-number provenance or checks its numbers mechanically."));
+ch.push(gapP("G5", "Structural safety separation", "[6], [7]", "Given G4, any system that lets a language model generate the safety call inherits its hallucination risk. No reviewed system keeps the go / no-go decision in tested, deterministic rules separate from the model."));
+ch.push(gapP("G6", "Evaluation at the level of action", "[1], [2]", "Kurup et al. validate a forecast and Sarangi et al. validate zones against catch. Neither evaluates a go / no-go decision — the thing a fisherman acts on — with warning statistics such as hit rate and false-alarm ratio [10]."));
+ch.push(table([3700, 1900, 3426], [
+  ["Gap", "Evidence", "Objective"],
+  ["G1  Fragmentation", "[1]–[5]", [b("O1"), "  one conversational interface"]],
+  ["G2  Broadcast / menu interaction", "[3], [4]", [b("O1"), "  one conversational interface"]],
+  ["G3  Language depth", "[3], [4], [8]", [b("O4"), "  Indian-language Q&A"]],
+  ["G4  Verifiability", "[6], [7]", [b("O3"), "  evidence ledger + verifier"]],
+  ["G5  Safety separation", "[6], [7]", [b("O2"), "  deterministic safety verdict"]],
+  ["G6  Evaluation stops at the forecast", "[1], [2]", [b("O6"), "  verdict-level evaluation"]],
+  ["Constraint: unreliable connectivity at sea (Thoondil ships offline maps for this reason)", "[3]", [b("O5"), "  honest degradation"]],
+], 18));
 
 // ------------------------------------------------------------------ 4
 ch.push(h1("4.  Proposed Methodology"));
@@ -271,18 +270,19 @@ ch.push(table([2750, 1600, 2300, 2376], [
 ch.push(p([
   b("The worst parameter decides. Never an average."), " Averaging across six parameters is how a system sends a boat out under a thunderhead because the waves happened to be calm. Missing wave or wind data can never produce a ", i("go"), ".",
 ], { spacing: { before: 160, after: 130 } }));
-ch.push(p("These values are provisional starting points. Calibrating them against the INCOIS Boat Safety Index parameter set [2] — which independently selects steepness, directional spread and beam width — is an identified task, not a completed one."));
+ch.push(p("These values are provisional starting points. INCOIS's Small Vessel Advisory Service [9] computes a Boat Safety Index from wave height, wave steepness, directional spread and the rapid growth of wind sea, issued per vessel beam-width class (< 4 m, 6 m, 7 m). It independently selects steepness and vessel size, as this work does, and is the calibration target; its numeric thresholds are not published, so calibration is an identified task, not a completed one."));
 
 ch.push(h2("4.4  Data sources"));
-ch.push(table([2300, 4100, 2626], [
+ch.push(table([2500, 4000, 2526], [
   ["Source", "Provides", "Access"],
-  ["INCOIS ERDDAP", "SST, winds, currents, Argo profiles", "Open REST / griddap"],
-  ["INCOIS PFZ", "Potential Fishing Zone advisories, 12 sectors", "Web product, scraped and cached"],
-  ["Open-Meteo Marine", "Wave height/period/direction, swell, currents", "Free, no key — the reliability floor"],
-  ["Copernicus Marine", "Chlorophyll-a, physics reanalysis", "Free account"],
-  ["NOAA CoastWatch", "Chlorophyll-a fallback", "Open"],
+  ["Open-Meteo Marine + Weather", "Wave height/period/direction, swell, currents, wind, gusts, visibility", "Free, no key — the reliability floor"],
+  ["INCOIS PFZ (GeoServer WFS)", "Daily Potential Fishing Zone advisories by sector", "Open, cached daily"],
+  ["INCOIS static layers", "14 PFZ sectors, 1,223 named landing centres", "Open, committed"],
   ["Marine Regions (VLIZ)", "Indian EEZ, IMBL, boundary polygons", "Static GeoJSON"],
+  ["NOAA CoastWatch", "Chlorophyll-a", "Open"],
+  ["Copernicus Marine", "Chlorophyll-a, physics", "Free account"],
   ["IMD", "Cyclone track, lightning, district warnings", [b("Pending access key")]],
+  ["INCOIS ERDDAP", "SST and chlorophyll archive", "Open, but stale (SST ends 2011) — not used"],
 ], 18));
 ch.push(p([
   "Every fetch follows a four-step chain: ", b("fresh cache → live (2 s budget) → stale cache → frozen snapshot"), ", with confidence 0.95 / 1.00 / 0.70 / 0.50 respectively. The system produces a complete, honest answer with the network unplugged, and says that it is doing so.",
@@ -294,7 +294,7 @@ ch.push(p([
 ]));
 
 ch.push(h2("4.6  Evaluation method"));
-ch.push(p("Prediction: the verdict computed from the forecast available the evening before. Truth: the verdict computed from the same model's final analysis for that morning. Sample: 92 mornings × 5 harbours = 460 harbour-mornings per lead time, across the 2026 south-west monsoon. Scored with POD, FAR, CSI and a 3×3 confusion matrix [15]."));
+ch.push(p("Prediction: the verdict computed from the forecast available the evening before. Truth: the verdict computed from the same model's final analysis for that morning. Sample: 92 mornings × 5 harbours = 460 harbour-mornings per lead time, across the 2026 south-west monsoon. Scored with POD, FAR, CSI and a 3×3 confusion matrix [10]."));
 ch.push(p([
   "This is forecast-versus-analysis, which is an ", b("upper bound"), " on true skill; no public INCOIS or NIOT buoy feed is available to us. The harness runs unchanged against buoy data if access is obtained — this is the single most valuable thing the department could help secure.",
 ]));
@@ -323,30 +323,30 @@ ch.push(table([1100, 5400, 2526], [
   ["Phase", "Work", "Status"],
   ["5", "Bhashini round trip with IndicTrans2 fallback; A* route optimisation; causal productivity query", "In progress"],
   ["6", "Offline hardening, error states, five-location regression, rehearsal", "Pending"],
-  ["—", "Calibrate thresholds against INCOIS SVAS criteria [2]", [b("Blocked"), " — criteria not published numerically"]],
+  ["—", "Calibrate thresholds against INCOIS SVAS criteria [9]", [b("Blocked"), " — criteria not published numerically"]],
   ["—", "IMD API key for lightning and cyclone parameters", [b("Blocked"), " — requires institutional letter"]],
   ["—", "Buoy observations to replace analysis as evaluation truth", [b("Blocked"), " — requires INCOIS/NIOT data access"]],
 ], 18));
 
 // ------------------------------------------------------------------ refs
 ch.push(h1("References"));
-[
-  "B. T. M. Nair, P. Sirisha, K. G. Sandhya, et al., “Performance of the ocean state forecast system at Indian National Centre for Ocean Information Services,” Current Science, vol. 105, no. 2, pp. 175–181, 2013.",
-  "Indian National Centre for Ocean Information Services, “Small Vessel Advisory and Forecast Services (SVAS),” INCOIS Ocean State Forecast portal. Available: https://incois.gov.in/portal/osf/SVA_overview.jsp",
-  "A. N. Deshmukh, “Small Craft Advisory,” ITCOocean training material, INCOIS, Hyderabad.",
-  "V. N. Pillai and P. G. Nair, “Potential fishing zone (PFZ) advisories — Are they beneficial to the coastal fisherfolk? A case study along Kerala coast, South India,” Biological Forum, vol. 2, no. 2, pp. 46–55, 2010.",
-  "M. S. Swaminathan Research Foundation, “Fisher Friend Mobile Application,” and INCOIS multilingual advisory dissemination services. Available: https://incois.gov.in",
-  "R. Lam, A. Sanchez-Gonzalez, M. Willson, et al., “Learning skillful medium-range global weather forecasting,” Science, vol. 382, no. 6677, pp. 1416–1421, 2023.",
-  "K. Bi, L. Xie, H. Zhang, X. Chen, X. Gu, and Q. Tian, “Accurate medium-range global weather forecasting with 3D neural networks,” Nature, vol. 619, pp. 533–538, 2023.",
-  "S. Yao, J. Zhao, D. Yu, et al., “ReAct: Synergizing reasoning and acting in language models,” in Proc. ICLR, 2023.",
-  "T. Schick, J. Dwivedi-Yu, R. Dessì, et al., “Toolformer: Language models can teach themselves to use tools,” in Adv. Neural Inf. Process. Syst. (NeurIPS), vol. 36, 2023.",
+ch.push(h2("Literature reviewed"));
+const LIT = [
+  "P. H. Kurup, S. Abhilash, S. Mavath, V. K. Mini, N. Alamirew, and M. Martin, “Validation of localised coastal wind forecasts for artisan fishers of southwestern India,” Weather, vol. 79, no. 7, pp. 231–241, 2024. doi: 10.1002/wea.4554",
+  "R. K. Sarangi, M. Jishad, R. Sharma, et al., “Multiple ocean parameter-based potential fishing zone (PFZ) location generation and validation in the Western Bay of Bengal,” Environmental Monitoring and Assessment, vol. 196, no. 1, art. 98, 2024. doi: 10.1007/s10661-023-12259-6",
+  "S. K. Saka, A. E. Mathew, V. Ganesh, et al., “A Web-GIS and mobile-based application for a safe ocean for fishers,” Marine Technology Society Journal, vol. 55, no. 3, pp. 50–57, 2021. doi: 10.4031/MTSJ.55.3.10",
+  "N. J. Anabel, S. Velvizhi, and D. Suvitha, “Fisher Friend Mobile Application: a decision support system for small scale fishers in India,” CSI Transactions on ICT, vol. 6, no. 3–4, pp. 257–267, 2018. doi: 10.1007/s40012-018-0212-1",
+  "S. Vincent, “Palk Bay fishing problem requires Indo-Sri Lankan joint-governance,” Maritime Affairs: Journal of the National Maritime Foundation of India, vol. 16, no. 2, pp. 71–88, 2020. doi: 10.1080/09733159.2020.1838717",
   "P. Lewis, E. Perez, A. Piktus, et al., “Retrieval-augmented generation for knowledge-intensive NLP tasks,” in Adv. Neural Inf. Process. Syst. (NeurIPS), vol. 33, pp. 9459–9474, 2020.",
-  "I. Kuznetsov, A. A. Jost, D. Pantiukhin, B. Shapkin, T. Jung, and N. Koldunov, “Transforming climate services with LLMs and multi-source data integration,” npj Climate Action, vol. 4, no. 1, art. 97, 2025. doi: 10.1038/s44168-025-00300-y",
-  "Y. Xie, B. Jiang, T. Mallick, et al., “A RAG-based multi-agent LLM system for natural hazard resilience and adaptation,” arXiv:2504.17200, 2025.",
-  "X. Lin, Y. Ning, J. Zhang, et al., “LLM-based agents suffer from hallucinations: A survey of taxonomy, methods, and directions,” arXiv:2509.18970, 2025.",
+  "C. Niu, Y. Wu, J. Zhu, S. Xu, K. Shum, R. Zhong, J. Song, and T. Zhang, “RAGTruth: A hallucination corpus for developing trustworthy retrieval-augmented language models,” in Proc. 62nd Annu. Meeting Assoc. Comput. Linguistics (ACL), vol. 1, pp. 10862–10878, 2024.",
   "J. Gala, P. A. Chitale, R. AK, et al., “IndicTrans2: Towards high-quality and accessible machine translation models for all 22 scheduled Indian languages,” Transactions on Machine Learning Research (TMLR), 2023. arXiv:2305.16307",
+];
+LIT.forEach((t, n) => ch.push(ref(n + 1, t)));
+ch.push(h2("Methodology references"));
+[
+  "Indian National Centre for Ocean Information Services, “Small Vessel Advisory and Forecast Services (SVAS),” INCOIS Ocean State Forecast portal. Available: https://incois.gov.in/portal/osf/SVA_overview.jsp",
   "I. T. Jolliffe and D. B. Stephenson, Forecast Verification: A Practitioner's Guide in Atmospheric Science, 2nd ed. Chichester, UK: Wiley-Blackwell, 2012.",
-].forEach((t, n) => ch.push(ref(n + 1, t)));
+].forEach((t, n) => ch.push(ref(LIT.length + n + 1, t)));
 
 // ------------------------------------------------------------------ build
 const doc = new Document({

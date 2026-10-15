@@ -889,3 +889,51 @@ data, the tech stack, future objectives, and honest limitations. 984 words, A4, 
 - Page count is **estimated** at ~1.6 pages, not measured: Word is also running unactivated
   and refuses COM `Documents.Open` ("This command is not available"). Measure with
   `ComputeStatistics(2)` once Word is closed.
+
+### Step 27 · Literature review rebuilt on eight recent, verified studies
+
+The user supplied a ChatGPT literature review of 20 papers and asked for the synopsis and
+deck to be remade around the 7–8 most relevant and recent of them.
+
+**Selection (8 of 20), one or two per system component, half from 2023 or later:**
+Kurup et al. 2024 (*Weather*, localised wind forecasts for small-boat fishers) · Sarangi et
+al. 2024 (*Environ. Monit. Assess.*, multi-parameter PFZ) · Saka et al. 2021 (*MTSJ*, the
+**Thoondil** app run by Tamil Nadu Fisheries) · Anabel et al. 2018 (*CSI Trans. ICT*, Fisher
+Friend) · Vincent 2020 (*Maritime Affairs*, Palk Bay / IMBL) · Lewis et al. 2020 (RAG) ·
+Niu et al. 2024 (*ACL*, RAGTruth) · Gala et al. 2023 (*TMLR*, IndicTrans2).
+INCOIS SVAS and Jolliffe & Stephenson are kept as *methodology* references [9]–[10]; the
+threshold calibration and the POD/FAR evaluation depend on them.
+
+**Every one was verified against its DOI record via the Crossref API**, not taken from the
+ChatGPT text. Corrections that surfaced:
+- Sarangi et al. is vol. 196, issue 1, **article 98** (online Dec 2023), not "pp. 1–14".
+- Anabel et al.'s co-authors are S. Velvizhi and D. Suvitha; vol. 6, issue 3–4, pp. 257–267.
+- Saka et al. — search engines did not find it; the DOI resolved and Crossref returned the
+  title, all 13 authors, pages 50–57, and an abstract describing **Thoondil**, which turns
+  out to be the closest operational system to this project.
+- Vincent 2020 — not found by search; found via a Crossref bibliographic query (16(2), 71–88).
+- Two of ChatGPT's 20 were uncitable as given: "Nair et al. — PFZ advisories, are they
+  beneficial" (no year/venue; actually Pillai & Nair 2010, and its fuel/search-time claim is
+  not in the abstract) and "Validation of PFZ forecasts from Andaman and Nicobar" (no authors).
+
+**Changes:**
+- `synopsis.md` / `build_synopsis_doc.js`: §2 rewritten as seven subsections, each study
+  ending in an explicit *limitation for this problem*; new comparison matrix (7 capability
+  columns); §3 gaps G1–G6 re-evidenced against the new references, plus a gap → evidence →
+  objective table; gap statement softened from "no published system" to **"we found no
+  published system"** (the one piece of the ChatGPT advice worth adopting). 12 pages.
+- Deck (`build_midterm_deck.js`): 10 slides — the three literature slides became two,
+  four studies each; gap matrix, gap → objective table and references rebuilt.
+- Script re-synced slide for slide; Q&A gains "How is this different from Thoondil or
+  Fisher Friend?" and now argues from RAGTruth rather than the dropped survey.
+- Brief: "15 verified papers" → "8 recent, verified studies".
+
+**Rendered QA (PowerPoint and Word finally closed, so COM automation worked again):**
+- Brief measured at exactly **2 pages** (`ComputeStatistics`), replacing Step 26's estimate.
+- Slide 9: "93.9 %" wrapped, stranding the "%" on its own line. Fixed with a non-breaking
+  space and narrower method card; the freed space now holds the 1/2/3-day lead table.
+- Slides 3–4: tables left ~1.7 in of dead space; rows now sized to fill, text up to 14 pt.
+- Script: 1,285 spoken words, 8.6–10.3 min at speaking pace.
+- *Note:* files written through the Write tool store `\uXXXX` escapes as literal
+  characters, so string replacements must match the literal glyphs — three Python
+  `str.replace` calls silently missed for that reason and were redone with Edit.

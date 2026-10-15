@@ -74,7 +74,7 @@ ch.push(p("**Four of six planned stages are complete, and the system works end t
   "**Stage 3 — the AI layer.** Understands questions, gathers data in parallel, writes answers and checks every number.",
   "**Stage 4 — the website.** Chat, live map with fishing zones and sea borders, and the evidence table under each answer.",
   "**Accuracy measured.** Over 92 days at five harbours (460 mornings) in the 2026 monsoon, the day-ahead verdict **warned 93.9 % of dangerous mornings**, with only **3.1 % false alarms**, and **never said GO on a dangerous morning**.",
-  "**Research and documents.** A literature review of 15 verified papers, a synopsis report, an architecture document and a presentation.",
+  "**Research and documents.** A literature review of 8 recent, verified studies, a synopsis report, an architecture document and a presentation.",
   "**Cost so far: ₹0.** Every data source is free, the AI runs on a free tier, and it runs on a laptop.",
 ].forEach((t) => ch.push(bullet(t)));
 

@@ -100,21 +100,23 @@ function survey(slide, rows) {
   const head = ["Study", "Contribution", "Method / data", "Key finding", "Limitation for our problem"];
   const colW = [2.05, 2.25, 2.85, 2.45, 2.633];
   const hdr = head.map((t, i) => ({ text: t, options: {
-    fontSize: 12, bold: true, color: "FFFFFF", fill: { color: i === 4 ? H.accent3 : H.accent1 },
+    fontSize: 13.5, bold: true, color: "FFFFFF", fill: { color: i === 4 ? H.accent3 : H.accent1 },
     valign: "middle" } }));
   const body = rows.map((r) => r.map((t, i) => {
     if (i === 0) {
       const [who, where] = t.split("|");
       return { text: [
-        { text: who, options: { bold: true, color: H.dk1, fontSize: 12, breakLine: true } },
-        { text: where, options: { color: H.accent6, fontSize: 10.5 } },
+        { text: who, options: { bold: true, color: H.dk1, fontSize: 14.5, breakLine: true } },
+        { text: where, options: { color: H.accent6, fontSize: 12 } },
       ], options: { valign: "middle" } };
     }
     return { text: t, options: {
-      fontSize: 11.5, color: i === 4 ? GAP_INK : "2E3E4C",
+      fontSize: 14, color: i === 4 ? GAP_INK : "2E3E4C",
       fill: { color: i === 4 ? GAP_BG : "FFFFFF" }, valign: "middle" } };
   }));
-  slide.addTable([hdr, ...body], { x: PAD, y: BODY_Y, w: CW, colW, rowH: 0.36,
+  // Four studies per slide: rows sized to fill the space above the takeaway bar.
+  const rowH = [0.5, ...rows.map(() => (5.95 - BODY_Y - 0.5) / rows.length)];
+  slide.addTable([hdr, ...body], { x: PAD, y: BODY_Y, w: CW, colW, rowH,
     border: BORDER, margin: [3, 5, 3, 5], fontFace: "Calibri" });
 }
 
@@ -178,146 +180,108 @@ pres.addSection({ title: "Problem definition" });
 pres.addSection({ title: "Literature survey" });
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Literature survey" });
-  s.addText("Literature survey I — Indian marine information services", { placeholder: "title" });
-  tag(s, "LITERATURE 1 / 3");
+  s.addText("Literature survey I — the fisherman's needs", { placeholder: "title" });
+  tag(s, "LITERATURE 1 / 2");
   survey(s, [
-    ["Nair et al., 2013|Current Science [1]",
-     "Validated INCOIS's operational Ocean State Forecast",
-     "Forecast wave height vs wave-rider buoys, ship-borne wave meters, satellite altimeters",
-     "Scatter index < 15 %; r = 0.98, RMSE 0.35 m at Gopalpur (Cyclone Phailin)",
-     "Validates the forecast field, not any decision; reports RMSE, not verdict skill"],
-    ["INCOIS SVAS|INCOIS portal [2], [3]",
-     "Boat-specific overturning advisory, ten days ahead",
-     "Boat Safety Index from wave height, steepness, directional spread, wind-sea growth; beam < 4 / 6 / 7 m",
-     "Steepness and beam govern capsizing — not wave height alone",
-     "Colour-coded map, English only; thresholds unpublished; separate from fishing zones and borders"],
-    ["Pillai & Nair, 2010|Biological Forum [4]",
-     "Validated PFZ advisories on the Kerala coast, 2006–2010",
-     "Active fishers' catch data plus controlled experiments inside and outside notified zones",
-     "CPUE higher inside zones: ~2–6× catch, ~2–7× monetary benefit",
-     "Regional, institute-affiliated evidence; advisory is a bulletin, not interactive"],
-    ["MSSRF Fisher Friend;|INCOIS dissemination [5]",
-     "Getting advisories to fishermen",
-     "Mobile app in 9 languages, multilingual SMS, 24×7 helpline, ~30 km offshore mobile pilot",
-     "Language reach achieved; offshore connectivity remains the constraint",
-     "Broadcast only — no channel accepts a question about a specific boat, place and time"],
+    ["Kurup et al., 2024|Weather 79(7) [1]",
+     "Localised coastal wind forecasts for artisan fishers, Kerala",
+     "WRF model downscaled to a 5 km grid; forecasts issued per 25 × 25 km zone",
+     "Localised forecasts complement official ones issued for large ocean areas",
+     "Forecasts wind only; turning it into a go / no-go call is left to the fisher"],
+    ["Sarangi et al., 2024|Environ. Monit. Assess. 196 [2]",
+     "Multi-parameter fishing-zone generation, western Bay of Bengal",
+     "Chlorophyll, SST fronts, winds, currents, Ekman transport, eddies; FSI catch data 2016–18",
+     "Chlorophyll correlates most with catch, then fronts and eddies",
+     "A zone map only — not linked to safety, the boat or the border"],
+    ["Saka et al., 2021|MTS Journal 55(3) [3]  ·  Thoondil",
+     "Fisher safety app run by Tamil Nadu Fisheries",
+     "Android app: offline maps to nearest port, weather, PFZ, incident reports; web-GIS boat tracking",
+     "Operational, local language, 15,000+ downloads in months",
+     "Menu screens; no free-form questions; no go / no-go verdict described"],
+    ["Anabel et al., 2018|CSI Trans. ICT 6(3–4) [4]  ·  Fisher Friend",
+     "Decision-support app for small-scale fishers (MSSRF, INCOIS)",
+     "PFZ with GPS, ocean-state forecasts, danger-zone and disaster alerts, market prices",
+     "Multilingual one-stop delivery works in practice",
+     "The fisher reads and combines each screen himself; no source shown per number"],
   ]);
-  takeaway(s, 6.18, "India's marine data is validated and excellent. What no product does is reason across all three and answer a question.", GAP_BG, GAP_INK);
-  s.addNotes("Read the last column. Each row's limitation becomes a gap on slide 6. SVAS is the closest product to our safety half: it independently confirms wave steepness and vessel size matter — but it is a map, not a conversation.");
+  takeaway(s, 6.18, "The data and the delivery channels exist. Every system still leaves the fisherman to combine the pieces and make the call himself.", GAP_BG, GAP_INK);
+  s.addNotes("Four studies on what the fisherman needs. Kurup: better local wind forecasts, but the decision is still his. Sarangi: fishing zones done properly need six satellite parameters and catch validation — which is why we consume INCOIS's PFZ product. Thoondil and Fisher Friend are the closest existing systems: real, operational, local-language — but menu screens, no question answering, no verdict. Read the red column.");
 }
 
 // ================================================================== 4 · lit II
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Literature survey" });
-  s.addText("Literature survey II — forecasting and AI reasoning techniques", { placeholder: "title" });
-  tag(s, "LITERATURE 2 / 3");
+  s.addText("Literature survey II — the border and the AI", { placeholder: "title" });
+  tag(s, "LITERATURE 2 / 2");
   survey(s, [
-    ["Lam et al., 2023|Science [6]  ·  GraphCast",
-     "Machine-learned global medium-range weather forecasting",
-     "Graph neural network trained on decades of ERA5 reanalysis",
-     "Outperforms operational numerical prediction on most headline scores",
-     "Needs decades of reanalysis and heavy compute; produces fields, not decisions"],
-    ["Bi et al., 2023|Nature [7]  ·  Pangu-Weather",
-     "Machine-learned global medium-range weather forecasting",
-     "3D Earth-specific transformer trained on ERA5 reanalysis",
-     "Accuracy comparable to operational numerical prediction",
-     "Would replace a forecast INCOIS already provides, validated and free"],
-    ["Lewis et al., 2020|NeurIPS [10]  ·  RAG",
+    ["Vincent, 2020|Maritime Affairs 16(2) [5]",
+     "Analysis of the Palk Bay fishing conflict",
+     "Governance analysis of fishing across the India–Sri Lanka IMBL",
+     "The problem is recurring; argues for joint Indo–Sri Lankan governance",
+     "No aid to the fisherman — the boundary stays invisible at sea"],
+    ["Lewis et al., 2020|NeurIPS 33 [6]  ·  RAG",
      "Retrieval-augmented generation",
-     "Sequence-to-sequence generator combined with a dense retriever over Wikipedia",
-     "Grounding in retrieved passages improves factual question answering",
-     "Grounds in text; does not guarantee every generated claim is supported"],
-    ["Yao et al., 2023|ICLR [8]  ·  ReAct",
-     "Interleaving reasoning with tool actions",
-     "Prompted LLM alternating thoughts and API / environment actions",
-     "External tool access reduces hallucination compared with reasoning alone",
-     "Tool use is prompted, not enforced; the model still writes the final answer"],
-    ["Schick et al., 2023|NeurIPS [9]  ·  Toolformer",
-     "Models that learn when to call APIs",
-     "Self-supervised; calculator, QA, search, translation, calendar tools",
-     "Learns useful tool calls with little human annotation",
-     "The model decides when to call a tool and whether to trust it"],
-  ]);
-  takeaway(s, 6.18, "Training a forecaster is the road not taken. Tool-using agents make this approach possible — but none enforces that the answer comes from the tools.", GAP_BG, GAP_INK);
-  s.addNotes("Two halves. GraphCast and Pangu are here as the road deliberately not taken: competing with INCOIS's validated forecast needs data and compute a student project does not have. RAG, ReAct and Toolformer are the techniques that make the system possible — and their shared limitation is that grounding is encouraged, not enforced.");
-}
-
-// ================================================================== 5 · lit III
-{
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Literature survey" });
-  s.addText("Literature survey III — LLM decision support, reliability, evaluation", { placeholder: "title" });
-  tag(s, "LITERATURE 3 / 3");
-  survey(s, [
-    ["Kuznetsov et al., 2025|npj Climate Action [11]  ·  ClimSight",
-     "LLM climate-service platform",
-     "Agent routing + retrieval over climate models and reports; XCLIM-AI adds deterministic indicator computation",
-     "Largest gains when indicators are computed deterministically, not generated",
-     "Analytical questions for planners; the model writes the conclusion; English"],
-    ["Xie et al., 2025|arXiv [12]  ·  WildfireGPT",
-     "Multi-agent hazard decision support",
-     "Retrieval over hazard projections, observations and literature; ten expert case studies",
-     "Outperforms existing LLM tools in expert-led evaluation",
-     "Document-level grounding; no operational go / no-go; no per-number provenance"],
-    ["Lin et al., 2025|arXiv [13]",
-     "Survey of hallucination in LLM agents",
-     "Taxonomy across five workflow stages; eighteen triggering causes",
-     "Agent errors can be “physically consequential” and cascade",
-     "Prompting cannot guarantee faithfulness — verification must be mechanical"],
-    ["Gala et al., 2023|TMLR [14]  ·  IndicTrans2",
+     "Language model combined with a dense retriever over Wikipedia",
+     "Retrieved evidence improves factual answers and provenance",
+     "Grounds in text, not live numbers; no guarantee every claim is supported"],
+    ["Niu et al., 2024|ACL 2024 [7]  ·  RAGTruth",
+     "Hallucination corpus for retrieval-augmented models",
+     "~18,000 responses from many LLMs, annotated word by word",
+     "Unsupported content persists even with the right evidence retrieved",
+     "Retrieval is not enough — the safety call must stay out of the model"],
+    ["Gala et al., 2023|TMLR [8]  ·  IndicTrans2",
      "Open translation for all 22 scheduled languages",
-     "BPCC corpus of 230 M bitext pairs; IN22 benchmark",
+     "BPCC corpus of 230 M sentence pairs; IN22 benchmark",
      "First model to cover all 22 languages",
-     "Translation is solved; no conversational marine system uses it"],
-    ["Jolliffe & Stephenson, 2012|Wiley [15]",
-     "Forecast verification methodology",
-     "2×2 contingency table: POD, FAR, CSI",
-     "Misses and false alarms must be scored separately",
-     "Applied to forecast fields — never to safety verdicts in this domain"],
+     "Translation is solved; no fisher system offers conversation in it"],
   ]);
-  takeaway(s, 6.18, "The closest systems still let the model conclude. ClimSight's own finding points the other way — we take it to its end.", GAP_BG, GAP_INK);
-  s.addNotes("ClimSight is the single strongest support for the design: its own extension reports the biggest gains when indicators are computed deterministically. Lin et al. is why the verifier exists — prompting a model to be careful is not a guarantee.");
+  takeaway(s, 6.18, "Retrieval makes a trustworthy assistant possible; RAGTruth shows it is not sufficient. So our model never makes the safety call.", GAP_BG, GAP_INK);
+  s.addNotes("Vincent establishes the border problem is structural — we do not solve the politics, only the fisherman's need to see the line. RAG is the principle: tomorrow's waves must be fetched, not remembered. RAGTruth is the key paper: even with the right data retrieved, models still produce unsupported content. That single finding justifies both research choices — fixed rules for the verdict, and a mechanical number checker.");
 }
 
-// ================================================================== 6 · gap matrix
+// ================================================================== 5 · gap matrix
 pres.addSection({ title: "Research gap" });
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Research gap" });
   s.addText("Research gap — comparative analysis", { placeholder: "title" });
   tag(s, "RESEARCH GAP", H.accent3);
 
-  const head = ["System", "Conver-\nsational", "Indian\nlanguages", "Live numeric\ndata", "Deterministic\nsafety verdict", "Per-number\nprovenance", "Safety + fish\n+ border", "Verdict-level\nevaluation"];
-  const Y = "✓", N = "✗";
+  const head = ["Work", "Small-boat\nsafety info", "Fishing\nzones", "Border\nawareness", "Indian\nlanguages", "Answers a\nquestion", "Go / no-go by\nfixed rules", "Every number\nverified"];
+  const Y = "✓", N = "✗", D = "—";
   const body = [
-    ["INCOIS Ocean State Forecast [1]", N, "partial", Y, "n/a", N, N, "RMSE only"],
-    ["INCOIS Small Vessel Advisory [2]", N, N, Y, Y, N, N, N],
-    ["INCOIS Potential Fishing Zone [4]", N, Y + " (10)", Y, "n/a", N, N, "catch-based"],
-    ["Fisher Friend app [5]", N, Y + " (9)", Y, N, N, "partial", N],
-    ["ClimSight [11]", Y, N, "partial", N, "document", N, N],
-    ["WildfireGPT [12]", Y, N, "partial", N, "document", N, "case studies"],
+    ["Kurup et al. [1]", Y + " (wind)", N, N, D, N, N, N],
+    ["Sarangi et al. [2]", N, Y, N, N, N, N, N],
+    ["Thoondil — Saka et al. [3]", Y, Y, D, Y, N, N, N],
+    ["Fisher Friend — Anabel et al. [4]", Y, Y, "partial", Y, N, N, N],
+    ["RAG systems [6] [7]", N, N, N, "partial", Y, N, N],
+    ["IndicTrans2 [8]", N, N, N, Y, N, N, N],
   ];
-  const base = { fontSize: 12, color: "2E3E4C", align: "center", valign: "middle" };
+  const base = { fontSize: 12.5, color: "2E3E4C", align: "center", valign: "middle" };
   const rows = [
-    head.map((t, i) => ({ text: t, options: { fontSize: 11, bold: true, color: "FFFFFF",
+    head.map((t, i) => ({ text: t, options: { fontSize: 11.5, bold: true, color: "FFFFFF",
       fill: { color: H.accent1 }, align: i ? "center" : "left", valign: "middle" } })),
     ...body.map((r) => r.map((t, i) => ({ text: t, options: Object.assign({}, base,
-      i ? {} : { align: "left", color: H.dk1 },
-      t === Y ? { color: H.accent4, bold: true } : {},
+      i ? {} : { align: "left", color: H.dk1, bold: true },
+      t.startsWith(Y) ? { color: H.accent4, bold: true } : {},
       t === N ? { color: "B4C0C8" } : {}) }))),
-    ["Sagar Setu (proposed)", Y, Y, Y, Y, Y, Y, "POD / FAR / CSI"].map((t, i) => ({ text: t,
-      options: { fontSize: 12, bold: true, color: i ? H.accent4 : "FFFFFF",
+    ["Sagar Setu (proposed)", Y, Y, Y, Y, Y, Y, Y].map((t, i) => ({ text: t,
+      options: { fontSize: 13, bold: true, color: i ? H.accent4 : "FFFFFF",
         fill: { color: i ? "E4F3EA" : H.dk2 }, align: i ? "center" : "left", valign: "middle" } })),
   ];
-  s.addTable(rows, { x: PAD, y: BODY_Y, w: CW, colW: [2.95, 1.17, 1.32, 1.36, 1.5, 1.36, 1.27, 1.303],
+  s.addTable(rows, { x: PAD, y: BODY_Y, w: CW, colW: [2.75, 1.25, 1.2, 1.25, 1.25, 1.25, 1.55, 1.733],
     rowH: 0.42, border: BORDER, margin: 4, fontFace: "Calibri" });
 
-  card(s, PAD, 5.22, CW, 1.12, GAP_BG);
-  tx(s, "No published system lets a fisherman ask one question in his own language and receive a single operational decision — safety, fishing and border together — that is provably derived from official products rather than generated by a model.",
-    { x: PAD + 0.32, y: 5.22, w: CW - 0.64, h: 1.12, valign: "middle", fontSize: 14.5,
+  tx(s, "✓ addressed  ·  ✗ not addressed  ·  — not described in the source.   Vincent [5] analyses the boundary problem but proposes no tool.",
+    { x: PAD, y: 4.98, w: CW, h: 0.28, fontSize: 10.5, color: H.accent6, margin: 0 });
+
+  card(s, PAD, 5.40, CW, 1.12, GAP_BG);
+  tx(s, "We found no published system that lets a fisherman ask one question in his own language and receive a single operational decision — safety, fishing and border together — derived verifiably from official data rather than generated by a model.",
+    { x: PAD + 0.32, y: 5.40, w: CW - 0.64, h: 1.12, valign: "middle", fontSize: 14.5,
       bold: true, color: GAP_INK, margin: 0 });
-  s.addNotes("Every row of this table is a study from the three survey slides. Walk it row by row. The SVAS row is the only one with a deterministic verdict — but it fails every other column. ClimSight and WildfireGPT are conversational, but they ground in documents and let the model conclude. Nobody has the bottom row.");
+  s.addNotes("Every row is a study from the two survey slides. Each covers one or two columns. Thoondil and Fisher Friend come closest — safety information, fishing zones, local language — but neither answers a question, issues a verdict from fixed rules, or verifies its numbers. RAG systems answer questions, but RAGTruth shows they cannot be trusted with the numbers. Nobody has the bottom row.");
 }
 
-// ================================================================== 7 · gaps → objectives
+// ================================================================== 6 · gaps → objectives
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Research gap" });
   s.addText("Research gaps and objectives", { placeholder: "title" });
@@ -335,32 +299,32 @@ pres.addSection({ title: "Research gap" });
 
   const rows = [
     hdr,
-    [gap("G1", "Fragmentation — safety, fish and borders are three separate products"), ev("[2] [4] [5]"),
+    [gap("G1", "Fragmentation — weather, fishing zones and the border are separate studies and separate screens"), ev("[1]–[5]"),
       obj("O1", "Integrate all three behind one conversational interface that accepts a question", { rowspan: 2 })],
-    [gap("G2", "Broadcast only — no channel accepts a question"), ev("[5]")],
-    [gap("G3", "Language reach is translated output, not dialogue"), ev("[5] [14]"),
+    [gap("G2", "Menu-driven apps — no system accepts a free-form question"), ev("[3] [4]")],
+    [gap("G3", "Local-language content exists, but not conversation"), ev("[3] [4] [8]"),
       obj("O4", "End-to-end question answering in Indian languages, Tamil and Hindi first")],
-    [gap("G4", "Grounding is document-level; hallucination remains unsolved"), ev("[11] [12] [13]"),
+    [gap("G4", "Retrieval grounds answers, yet hallucination persists"), ev("[6] [7]"),
       obj("O3", "Evidence ledger per observation; a verifier that deletes any unsupported number")],
-    [gap("G5", "No architecture keeps the safety decision out of the model"), ev("[11] [8] [9]"),
+    [gap("G5", "No system keeps the safety call out of the model"), ev("[6] [7]"),
       obj("O2", "Deterministic, unit-tested safety verdict, structurally outside the model")],
-    [gap("G6", "Evaluation stops at forecast RMSE, never the verdict"), ev("[1] [15]"),
-      obj("O6", "Evaluate the verdict itself with POD, FAR and CSI")],
-    [gap("C", "Offshore connectivity is unreliable (operational constraint)"), ev("[5]"),
+    [gap("G6", "Validation stops at the forecast or the zone, never the decision"), ev("[1] [2]"),
+      obj("O6", "Evaluate the verdict itself with POD, FAR and CSI [10]")],
+    [gap("C", "Connectivity at sea is unreliable — Thoondil ships offline maps for this reason"), ev("[3]"),
       obj("O5", "Cache → live → stale cache → snapshot, always declaring degradation")],
   ];
   s.addTable(rows, { x: PAD, y: BODY_Y, w: CW, colW: [5.1, 1.5, 5.633], rowH: 0.56,
     border: BORDER, margin: [3, 7, 3, 7], fontFace: "Calibri" });
 
   takeaway(s, 6.18, "O2 and O3 are the research contribution. The rest is engineering that makes them usable.");
-  s.addNotes("Each gap traces to evidence on the survey slides, and each maps to one objective. O2 and O3 are the novel part — keep the safety decision out of the model, and make unsupported numbers impossible rather than unlikely.");
+  s.addNotes("Each gap traces to evidence on the survey slides, and each maps to one objective. G4 and G5 come straight from RAGTruth: if retrieval cannot guarantee the numbers, the model must not make the safety call, and every number must be checked mechanically.");
 }
 
-// ================================================================== 8 · method I
+// ================================================================== 7 · method I
 pres.addSection({ title: "Methodology" });
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Methodology" });
-  s.addText("Proposed methodology I — architecture and techniques", { placeholder: "title" });
+  s.addText("Methodology I — architecture and techniques", { placeholder: "title" });
   tag(s, "METHODOLOGY", H.accent4);
 
   const hdr = ["Step", "Technique", "Model?"].map((t, i) => ({ text: t, options: {
@@ -389,10 +353,10 @@ pres.addSection({ title: "Methodology" });
   s.addNotes("Left: the five steps and the technique used at each. Right: the same pipeline as a diagram — blue is AI, red is no AI. The red dashed line is the design: below it there is no model at all. The ledger is what makes step 5 possible.");
 }
 
-// ================================================================== 9 · method II — dataset
+// ================================================================== 8 · method II — dataset
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Methodology" });
-  s.addText("Proposed methodology II — dataset and tools", { placeholder: "title" });
+  s.addText("Methodology II — dataset and tools", { placeholder: "title" });
   tag(s, "METHODOLOGY · DATASET", H.accent4);
 
   const OK = "✓", NO = "✗";
@@ -430,78 +394,96 @@ pres.addSection({ title: "Methodology" });
   s.addNotes("Every source was tested live from this laptop before any code was written against it — documented in docs/data-sources.md. Be upfront about the two red rows: IMD needs an API key (a letter on college letterhead), and INCOIS's open ERDDAP archive is stale. Total cost of every source: zero.");
 }
 
-// ================================================================== 10 · evaluation
+// ================================================================== 9 · evaluation
 pres.addSection({ title: "Evaluation" });
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Evaluation" });
   s.addText("Evaluation method and preliminary results", { placeholder: "title" });
   tag(s, "PROGRESS");
 
-  card(s, PAD, BODY_Y, 5.6, 3.55);
-  tx(s, "Method", { x: PAD + 0.28, y: BODY_Y + 0.18, w: 5.0, h: 0.34, fontSize: 16, bold: true, color: H.accent1, margin: 0 });
+  const MW = 4.95, CH = 2.75;              // method card width, card height
+  card(s, PAD, BODY_Y, MW, CH);
+  tx(s, "Method", { x: PAD + 0.26, y: BODY_Y + 0.16, w: MW - 0.5, h: 0.34, fontSize: 16, bold: true, color: H.accent1, margin: 0 });
   s.addText([
     { text: "Prediction: ", options: { bold: true } }, { text: "verdict from the forecast available the evening before.", options: { breakLine: true } },
     { text: "Truth: ", options: { bold: true } }, { text: "verdict from the same model's analysis of that morning.", options: { breakLine: true } },
-    { text: "Sample: ", options: { bold: true } }, { text: "92 mornings × 5 harbours = 460, 2026 south-west monsoon.", options: { breakLine: true } },
-    { text: "Metrics: ", options: { bold: true } }, { text: "POD, FAR, CSI from the 2×2 contingency table [15].", options: {} },
-  ], { x: PAD + 0.28, y: BODY_Y + 0.62, w: 5.05, h: 2.75, fontSize: 13, color: "2E3E4C", isTextBox: true,
-       paraSpaceAfter: 9, lineSpacingMultiple: 1.1, valign: "top", margin: 0 });
+    { text: "Sample: ", options: { bold: true } }, { text: "92 mornings × 5 harbours = 460, 2026 monsoon.", options: { breakLine: true } },
+    { text: "Metrics: ", options: { bold: true } }, { text: "POD, FAR, CSI from the 2×2 contingency table [10].", options: {} },
+  ], { x: PAD + 0.26, y: BODY_Y + 0.58, w: MW - 0.5, h: CH - 0.7, fontSize: 12.5, color: "2E3E4C", isTextBox: true,
+       paraSpaceAfter: 6, lineSpacingMultiple: 1.05, valign: "top", margin: 0 });
 
-  const stats = [["93.9 %", "hit rate (POD)", "dangerous mornings that were warned", H.accent4],
-                 ["3.1 %", "false-alarm ratio", "warnings that wasted a good day", H.accent5],
+  // Non-breaking space keeps each number on one line with its unit.
+  const stats = [["93.9 %", "hit rate (POD)", "dangerous mornings that were warned, one day ahead", H.accent4],
+                 ["3.1 %", "false-alarm ratio", "warnings that wasted a good day", H.accent5],
                  ["0", "misses graded GO", "both misses were graded CAUTION", H.accent1]];
-  const sx = PAD + 5.85, sw = (CW - 5.85 - 0.4) / 3;
+  const sx = PAD + MW + 0.25, sw = (CW - MW - 0.25 - 0.4) / 3;
   stats.forEach(([n, l, d, col], i) => {
     const x = sx + i * (sw + 0.2);
-    card(s, x, BODY_Y, sw, 3.55);
-    tx(s, n, { x: x + 0.22, y: BODY_Y + 0.35, w: sw - 0.44, h: 0.95, fontSize: 40, bold: true, color: col, margin: 0, fontFace: "Cambria" });
-    tx(s, l, { x: x + 0.22, y: BODY_Y + 1.42, w: sw - 0.44, h: 0.36, fontSize: 13.5, bold: true, color: H.dk1, margin: 0 });
-    tx(s, d, { x: x + 0.22, y: BODY_Y + 1.84, w: sw - 0.44, h: 0.9, fontSize: 12.5, color: "3A4A58", margin: 0, valign: "top" });
+    card(s, x, BODY_Y, sw, CH);
+    tx(s, n, { x: x + 0.22, y: BODY_Y + 0.2, w: sw - 0.44, h: 0.8, fontSize: 36, bold: true, color: col, margin: 0, fontFace: "Cambria" });
+    tx(s, l, { x: x + 0.22, y: BODY_Y + 1.08, w: sw - 0.44, h: 0.34, fontSize: 13.5, bold: true, color: H.dk1, margin: 0 });
+    tx(s, d, { x: x + 0.22, y: BODY_Y + 1.46, w: sw - 0.44, h: 1.1, fontSize: 12.5, color: "3A4A58", margin: 0, valign: "top" });
   });
-  tx(s, "Day-ahead “do not sail” verdict. Skill falls with lead time, mainly through false alarms (3-day FAR 30.2 %).",
-    { x: sx, y: BODY_Y + 3.62, w: CW - 5.85, h: 0.36, fontSize: 11, color: H.accent6, margin: 0 });
 
-  card(s, PAD, 5.38, CW, 0.62, GAP_BG);
+  const hd = (t, i) => ({ text: t, options: { fontSize: 12, bold: true, color: "FFFFFF", fill: { color: H.accent1 },
+    align: i ? "center" : "left", valign: "middle" } });
+  const rowOf = (r, ri) => r.map((t, i) => ({ text: t, options: { fontSize: 12.5, bold: ri === 0,
+    color: ri === 0 ? H.dk1 : "2E3E4C", fill: { color: ri === 0 ? "E4F3EA" : "FFFFFF" },
+    align: i ? "center" : "left", valign: "middle" } }));
+  s.addTable([
+    ["Forecast lead", "n", "Hit rate (POD)", "False-alarm ratio", "CSI", "3-way agreement"].map(hd),
+    ...[["1 day ahead", "460", "93.9 %", "3.1 %", "91.2 %", "93.5 %"],
+        ["2 days ahead", "460", "97.0 %", "17.9 %", "80.0 %", "90.2 %"],
+        ["3 days ahead", "460", "90.9 %", "30.2 %", "65.2 %", "85.0 %"]].map(rowOf),
+  ], { x: PAD, y: BODY_Y + CH + 0.2, w: CW, colW: [2.6, 1.2, 2.2, 2.4, 1.6, 2.233], rowH: 0.34,
+       border: BORDER, margin: [2, 6, 2, 6], fontFace: "Calibri" });
+
+  card(s, PAD, 5.78, CW, 0.5, GAP_BG);
   tx(s, "Limitation: truth is model analysis, not a buoy measurement — these figures are an upper bound on real skill.",
-    { x: PAD + 0.28, y: 5.38, w: CW - 0.56, h: 0.62, valign: "middle", fontSize: 13, bold: true, color: GAP_INK, margin: 0 });
+    { x: PAD + 0.28, y: 5.78, w: CW - 0.56, h: 0.5, valign: "middle", fontSize: 13, bold: true, color: GAP_INK, margin: 0 });
   tx(s, [
     { text: "Status: ", options: { bold: true, color: H.dk1 } },
     { text: "phases 1–4 of 6 complete · 115 unit tests · ₹0 cost.   ", options: { color: "2E3E4C" } },
     { text: "Needed: ", options: { bold: true, color: H.dk1 } },
     { text: "IMD API key (college letter) · INCOIS small-craft criteria · INCOIS/NIOT buoy data.", options: { color: "2E3E4C" } },
-  ], { x: PAD, y: 6.20, w: CW, h: 0.55, fontSize: 13, margin: 0, valign: "middle" });
-  s.addNotes("The professor asked last time how often we are right — this is the answer. Stress the asymmetry: the misses fell to caution, never to go. State the limitation before it is asked. Close on the three needs, leading with the IMD letter.");
+  ], { x: PAD, y: 6.38, w: CW, h: 0.5, fontSize: 13, margin: 0, valign: "middle" });
+  s.addNotes("The professor asked last time how often we are right — this is the answer. Stress the asymmetry: the misses fell to caution, never to go. The table shows skill falling with lead time, mainly through false alarms, which is why the day-ahead verdict is the decision. State the limitation before it is asked. Close on the three needs, leading with the IMD letter.");
 }
 
-// ================================================================== 11 · references
+// ================================================================== 10 · references
 pres.addSection({ title: "References" });
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "References" });
   s.addText("References", { placeholder: "title" });
-  const refs = [
-    "B. T. M. Nair et al., “Performance of the ocean state forecast system at INCOIS,” Current Science, 105(2), 175–181, 2013.",
+  const LIT = [
+    "P. H. Kurup, S. Abhilash, S. Mavath, V. K. Mini, N. Alamirew and M. Martin, “Validation of localised coastal wind forecasts for artisan fishers of southwestern India,” Weather, 79(7), 231–241, 2024.",
+    "R. K. Sarangi, M. Jishad, R. Sharma et al., “Multiple ocean parameter-based potential fishing zone (PFZ) location generation and validation in the Western Bay of Bengal,” Environ. Monit. Assess., 196, 98, 2024.",
+    "S. K. Saka, A. E. Mathew, V. Ganesh et al., “A Web-GIS and mobile-based application for a safe ocean for fishers,” Marine Technology Society Journal, 55(3), 50–57, 2021.",
+    "N. J. Anabel, S. Velvizhi and D. Suvitha, “Fisher Friend Mobile Application: a decision support system for small scale fishers in India,” CSI Transactions on ICT, 6(3–4), 257–267, 2018.",
+    "S. Vincent, “Palk Bay fishing problem requires Indo-Sri Lankan joint-governance,” Maritime Affairs, 16(2), 71–88, 2020.",
+    "P. Lewis, E. Perez, A. Piktus et al., “Retrieval-augmented generation for knowledge-intensive NLP tasks,” NeurIPS 33, 9459–9474, 2020.",
+    "C. Niu, Y. Wu, J. Zhu et al., “RAGTruth: A hallucination corpus for developing trustworthy retrieval-augmented language models,” ACL 2024, 10862–10878.",
+    "J. Gala, P. A. Chitale, R. AK et al., “IndicTrans2: Towards high-quality and accessible machine translation models for all 22 scheduled Indian languages,” TMLR, 2023.",
+  ];
+  const METH = [
     "INCOIS, “Small Vessel Advisory and Forecast Services (SVAS),” incois.gov.in/portal/osf/SVA_overview.jsp",
-    "A. N. Deshmukh, “Small Craft Advisory,” ITCOocean training material, INCOIS, Hyderabad.",
-    "V. N. Pillai and P. G. Nair, “Potential fishing zone (PFZ) advisories — are they beneficial to the coastal fisherfolk? A case study along Kerala coast,” Biological Forum, 2(2), 46–55, 2010.",
-    "M. S. Swaminathan Research Foundation, “Fisher Friend Mobile Application”; INCOIS multilingual dissemination services.",
-    "R. Lam et al., “Learning skillful medium-range global weather forecasting,” Science, 382(6677), 1416–1421, 2023.",
-    "K. Bi et al., “Accurate medium-range global weather forecasting with 3D neural networks,” Nature, 619, 533–538, 2023.",
-    "S. Yao et al., “ReAct: Synergizing reasoning and acting in language models,” ICLR, 2023.",
-    "T. Schick et al., “Toolformer: Language models can teach themselves to use tools,” NeurIPS 36, 2023.",
-    "P. Lewis et al., “Retrieval-augmented generation for knowledge-intensive NLP tasks,” NeurIPS 33, 9459–9474, 2020.",
-    "I. Kuznetsov et al., “Transforming climate services with LLMs and multi-source data integration,” npj Climate Action, 4, 97, 2025.",
-    "Y. Xie et al., “A RAG-based multi-agent LLM system for natural hazard resilience and adaptation,” arXiv:2504.17200, 2025.",
-    "X. Lin et al., “LLM-based agents suffer from hallucinations: a survey of taxonomy, methods, and directions,” arXiv:2509.18970, 2025.",
-    "J. Gala et al., “IndicTrans2: Towards high-quality and accessible machine translation models for all 22 scheduled Indian languages,” TMLR, 2023.",
     "I. T. Jolliffe and D. B. Stephenson, Forecast Verification: A Practitioner's Guide in Atmospheric Science, 2nd ed., Wiley-Blackwell, 2012.",
   ];
-  const col = (list, start, x) => s.addText(list.map((r, i) => ({ text: [`[${start + i}]  `, r].join(""),
-    options: { breakLine: i < list.length - 1 } })), {
-    x, y: BODY_Y + 0.02, w: (CW - 0.35) / 2, h: 5.55, fontSize: 11, color: "2E3E4C", isTextBox: true,
-    valign: "top", paraSpaceAfter: 7, lineSpacingMultiple: 1.05, margin: 0 });
-  col(refs.slice(0, 8), 1, PAD);
-  col(refs.slice(8), 9, PAD + (CW - 0.35) / 2 + 0.35);
-  s.addNotes("Every reference was checked against its publisher or repository record.");
+  const colW = (CW - 0.35) / 2;
+  const item = (n, t, last) => ({ text: `[${n}]  ${t}`, options: { breakLine: !last } });
+  const head = (t) => ({ text: t, options: { bold: true, color: H.accent1, fontSize: 12.5, breakLine: true } });
+
+  s.addText([head("Literature reviewed"), ...LIT.slice(0, 5).map((t, i) => item(i + 1, t, i === 4))], {
+    x: PAD, y: BODY_Y + 0.02, w: colW, h: 5.55, fontSize: 11.5, color: "2E3E4C", isTextBox: true,
+    valign: "top", paraSpaceAfter: 8, lineSpacingMultiple: 1.05, margin: 0 });
+  s.addText([
+    ...LIT.slice(5).map((t, i) => item(i + 6, t, false)),
+    { text: " ", options: { breakLine: true } },
+    head("Methodology references"),
+    ...METH.map((t, i) => item(i + 9, t, i === METH.length - 1)),
+  ], { x: PAD + colW + 0.35, y: BODY_Y + 0.02 + 0.33, w: colW, h: 5.2, fontSize: 11.5, color: "2E3E4C",
+       isTextBox: true, valign: "top", paraSpaceAfter: 8, lineSpacingMultiple: 1.05, margin: 0 });
+  s.addNotes("Every reference was checked against its publisher or DOI record. Leave this slide on screen during questions.");
 }
 
 // ------------------------------------------------------------------ build
