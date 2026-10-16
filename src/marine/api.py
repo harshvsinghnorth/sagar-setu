@@ -28,7 +28,7 @@ from shapely.geometry import mapping, shape
 
 from marine.agents.llm import LLMUnavailable, get_llm
 from marine.agents.synthesis import RESET
-from marine.config import SNAPSHOT_DIR, STATIC_DIR, settings
+from marine.config import ROOT, SNAPSHOT_DIR, STATIC_DIR, settings
 from marine.fixtures import HARBOURS, KNOWN_PORTS
 from marine.geo.boundaries import IMBL_TYPES
 from marine.graph import ask_streaming
@@ -147,6 +147,28 @@ def static_geo() -> dict:
 @app.get("/geo/static")
 def geo_static() -> dict:
     return static_geo()
+
+
+QUESTION_BANK = ROOT / "data" / "question_bank"
+
+
+@app.get("/question-bank")
+def question_bank() -> dict:
+    """The fisherman question bank for the demo panel, with each question's result from the
+    latest scored run (scripts/run_question_bank.py) attached when one exists."""
+    bank = json.loads((QUESTION_BANK / "bank.json").read_text(encoding="utf-8"))
+    results = QUESTION_BANK / "results.json"
+    if results.exists():
+        run = json.loads(results.read_text(encoding="utf-8"))
+        status = {
+            r["id"]: {"understood": r.get("understood"), "behaved": r.get("behaved")}
+            for r in run.get("rows", [])
+            if "error" not in r
+        }
+        for q in bank["questions"]:
+            q["last_run"] = status.get(q["id"])
+        bank["summary"] = run.get("summary")
+    return bank
 
 
 @app.get("/health")

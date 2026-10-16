@@ -154,8 +154,14 @@ def resolve_location(q: LocationQuery) -> ResolvedLocation | None:
         return ResolvedLocation(
             **c.model_dump(exclude={"kind"}), match="fuzzy", score=round(score, 2)
         )
-    # Substring inside a longer landing-centre name ("Kasimedu" in "Kasimedu Fishing Harbour").
+    # Inside a longer landing-centre name ("Kasimedu" in "Kasimedu Fishing Harbour"), on word
+    # boundaries only: a raw substring let "i have" match "vash[i have]li" (Vashi(Haveli)).
+    single = " " not in key
     for n, c in by_name.items():
-        if key in n.split() or (len(key) >= 5 and key in n):
+        words = n.split()
+        if key in words or (
+            len(key) >= 5
+            and (f" {key} " in f" {n} " or (single and any(w.startswith(key) for w in words)))
+        ):
             return ResolvedLocation(**c.model_dump(exclude={"kind"}), match="fuzzy", score=0.7)
     return None

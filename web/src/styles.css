@@ -49,6 +49,30 @@ button, input, select { font: inherit; }
 .example { text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; cursor: pointer; }
 .example:hover { border-color: var(--blue); }
 
+.bank-open { margin-left: 8px; padding: 2px 9px; border: 1px solid var(--blue); color: var(--blue); background: #fff; border-radius: 999px; font-size: 12px; cursor: pointer; }
+.bank-open:hover, .bank-open.on { background: var(--blue); color: #fff; }
+.bank { display: flex; flex-direction: column; gap: 10px; }
+.bank-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.bank-score { font-size: 12px; margin-top: 2px; }
+.bank-close { border: none; background: none; font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink2); }
+.bank-cats { display: flex; flex-wrap: wrap; gap: 6px; }
+.bank-cats button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+.bank-cats button.on { border-color: var(--blue); background: #eaf2fc; }
+.bank-list { display: flex; flex-direction: column; gap: 6px; }
+.bank-q { display: flex; flex-direction: column; gap: 3px; text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; cursor: pointer; }
+.bank-q:hover:not(:disabled) { border-color: var(--blue); }
+.bank-q:disabled { opacity: 0.55; cursor: progress; }
+.bank-tags { display: flex; gap: 6px; align-items: center; font-size: 11px; }
+.bank-id { font-weight: 600; color: var(--ink2); }
+.bank-lang { padding: 0 6px; border-radius: 4px; background: #eef0ec; }
+.bank-style { padding: 0 6px; border-radius: 4px; background: var(--caution-bg); color: var(--caution); }
+.bank-mark { margin-left: auto; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+.bank-mark.ok { background: var(--go); }
+.bank-mark.warn { background: var(--caution); }
+.bank-mark.miss { background: var(--nogo); }
+.bank-text { font-size: 14px; }
+.bank-en { font-size: 12px; font-style: italic; }
+
 .turn { margin-bottom: 22px; }
 .q { background: var(--bg); border-radius: 12px 12px 12px 4px; padding: 8px 12px; display: inline-block; max-width: 95%; }
 .a { margin-top: 10px; white-space: pre-wrap; line-height: 1.55; font-size: 15px; }

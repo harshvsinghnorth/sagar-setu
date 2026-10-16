@@ -98,6 +98,12 @@ def build_brief(
         knowledge_answer=plan.knowledge_answer,
     )
     nums: set[float] = set(ledger.values())
+    if plan.intent == Intent.GENERAL_KNOWLEDGE:
+        # "What does a 2 metre swell mean?" — the 2 is the asker's own premise, not a
+        # measurement the model invented. Only for general knowledge: for a forecast question,
+        # echoing the asker's number ("0.5 m tomorrow, right?") would look like confirmation.
+        q = (plan.english_query or "").translate(_DIGIT_MAP)
+        nums |= {float(m.group(1).replace(",", ".")) for m in _NUM.finditer(q)}
     if ocean:
         b.window = describe_window(ocean.window_start, ocean.window_end)
         nums |= {ocean.window_start.astimezone().hour, ocean.window_end.astimezone().hour}
@@ -198,7 +204,19 @@ def build_brief(
         {f"{s}: {p}" for s, p in ledger.sources().items() if p in ("stale_cache", "snapshot")}
         - set(b.degradation)
     )
-    b.allowed_numbers = {float(x) for x in nums if x is not None}
+    # Every observation line in the brief prints its grid distance ("grid 1.8 km away"), which
+    # is part of the ledger record but not its value — without this the deterministic template
+    # failed its own verification whenever it quoted a chlorophyll line.
+    nums |= {o.distance_km for o in ledger.observations}
+    # …and its age ("fetched 14 min ago"), rounded exactly as _fmt_obs prints it.
+    now = datetime.now(UTC)
+    for o in ledger.observations:
+        secs = o.age(now).total_seconds()
+        nums |= {round(secs / 60), round(secs / 3600)}
+    allowed = {float(x) for x in nums if x is not None}
+    # The scanner reads "-0.62" as 0.62 (a leading hyphen is too often a dash or a range), so a
+    # negative ledger value must also be accepted by its magnitude.
+    b.allowed_numbers = allowed | {abs(x) for x in allowed if x < 0}
     return b
 
 
@@ -258,7 +276,8 @@ Absolute rules:
 4. Write in {language}. Simple spoken register, as to a working fisherman, not a scientist. Short sentences. No markdown headers, no bullet symbols, at most 6 sentences unless the BRIEF has many findings.
 5. Give the practical bearing and distance for fishing zones as a fisherman would use them (compass point and km).
 6. Do not add safety tips, disclaimers or advice beyond what the BRIEF supports.
-7. Do not mention the evidence ids like obs_0012, the source names, or the word BRIEF."""
+7. Do not mention the evidence ids like obs_0012, the source names, or the word BRIEF.
+8. Keep each number with the unit the BRIEF gives it, translated correctly: kt = knots (a SPEED — wind, gusts, boat speed; never seconds), s = seconds (wave period), m = metres, km = kilometres, mg/m3 = milligrams per cubic metre. Knots in Tamil is நாட், in Hindi नॉट, in Malayalam നോട്ട്."""
 
 
 def brief_text(b: Brief) -> str:

@@ -1,0 +1,2329 @@
+{
+  "summary": {
+    "run_at": "2026-10-16T07:50:09+00:00",
+    "questions": 49,
+    "scored": 49,
+    "errors": [],
+    "llm_unavailable": [],
+    "understood": "49/49 (100 %)",
+    "behaved": "49/49 (100 %)",
+    "by_language": {
+      "en": "28/28 (100 %)",
+      "hi": "9/9 (100 %)",
+      "ml": "1/1 (100 %)",
+      "ta": "11/11 (100 %)"
+    },
+    "by_category": {
+      "boundary": "6/6 (100 %)",
+      "chlorophyll": "4/4 (100 %)",
+      "clarify": "3/3 (100 %)",
+      "conditions": "6/6 (100 %)",
+      "general_knowledge": "5/5 (100 %)",
+      "off_topic": "4/4 (100 %)",
+      "pfz": "7/7 (100 %)",
+      "safety": "14/14 (100 %)"
+    },
+    "by_style": {
+      "code-mixed": "1/1 (100 %)",
+      "colloquial": "2/2 (100 %)",
+      "misspelled": "2/2 (100 %)",
+      "plain": "44/44 (100 %)"
+    },
+    "fields": {
+      "language": "49/49 (100 %)",
+      "intent": "49/49 (100 %)",
+      "location": "37/37 (100 %)",
+      "day": "21/21 (100 %)",
+      "part": "12/12 (100 %)",
+      "vessel": "4/4 (100 %)",
+      "heading_deg": "3/3 (100 %)",
+      "speed_kt": "3/3 (100 %)"
+    },
+    "behaviour": {
+      "answered": "49/49 (100 %)",
+      "numbers_verified": "49/49 (100 %)",
+      "reply_language": "49/49 (100 %)",
+      "verdict_given": "14/14 (100 %)",
+      "no_verdict": "12/12 (100 %)"
+    },
+    "answer_sources": {
+      "llm": 33,
+      "llm_retry": 3,
+      "template": 3,
+      "template_fallback": 10
+    },
+    "median_ms": 7687
+  },
+  "rows": [
+    {
+      "id": "S01",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is it safe to go fishing from Kochi tomorrow morning?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "kochi"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Kochi, Sat 17 Oct 05:00–12:00 IST.\n• visibility 3.34 km ≤ caution threshold 5 km\n• no lightning feed; convective proxy: CAPE 2090 J/kg ≥ 2000\n• wave height 0.66 m\n• wave period 9.95 s\n• swell height 0.58 m\n• swell period 8.45 s\n• wind 4.7 kt\n• gusts 10.3 kt\n• wind direction 220 deg\n• visibility 3.34 km\n• sea temperature 31.1 degC\n• current 0.216 kt\n• current direction 333 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 25.7 km WSW (bearing 239°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #2: 59.2 km NW (bearing 304°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #3: 64.7 km S (bearing 187°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 277.1 km to the SSW\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 1513
+    },
+    {
+      "id": "S02",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Can I take my vallam out from Vizhinjam tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "vizhinjam"
+        ],
+        "day": "tomorrow",
+        "vessel": "traditional"
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Vizhinjam",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": "traditional",
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "vessel": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "VERDICT: GO for a traditional craft at Vizhinjam for Saturday 17 October between 05:00 and 12:00 IST. All weather and sea conditions are within safe limits, with waves up to 1.16 m, swells of 0.92 m, and wind speeds up to 3.9 kt with gusts to 11.9 kt. Visibility will be 5.48 km. We could not check live cyclone tracks or lightning data. Potential fishing zones are located 23.2 km WNW, 53.2 km SW, and 60.7 km WNW from Vizhinjam.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 7687
+    },
+    {
+      "id": "S03",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "I have a 15 metre boat at Veraval, is it ok to go out tomorrow early morning?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "veraval"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "early_morning",
+          "morning"
+        ],
+        "vessel": "motorised"
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Veraval",
+        "day": "tomorrow",
+        "part": "early_morning",
+        "vessel": "motorised",
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true,
+        "vessel": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "VERDICT: GO for a motorised craft out of Veraval between 03:00 and 08:00 IST on Saturday 17 October. \n\nAll sea conditions are within normal limits, with waves at 0.56 m, wind at 5.7 kt, and visibility at 8.56 km. Potential fishing zones are located 26.3 km W, 41.8 km SE, and 119.7 km WNW. The nearest maritime boundary with Pakistan is 361.9 km to the WNW. Cyclone and lightning data could not be checked.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 9830
+    },
+    {
+      "id": "S04",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Should my trawler leave Paradip harbour the day after tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "paradip"
+        ],
+        "day": "day_after",
+        "vessel": "mechanised"
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Paradip",
+        "day": "day_after",
+        "part": "morning",
+        "vessel": "mechanised",
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "vessel": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION for a mechanised craft off Paradip for Sunday 18 October, 05:00–12:00 IST. Visibility drops to 2.14 km and atmospheric energy CAPE is high at 2430 J/kg, showing thunder risk. Expect waves up to 0.88 m, swell 0.84 m, wind 8.7 kt from 356 deg, and gusts up to 18.7 kt. Fishing zones are open at 39.6 km SE, 69.4 km SSW, and 85 km SW. Cyclone and lightning data could not be checked.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 4765
+    },
+    {
+      "id": "S05",
+      "category": "safety",
+      "lang": "en",
+      "style": "misspelled",
+      "q": "sea rough tmrw near chenai? can go fishing?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "chennai",
+          "kasimedu"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Chennai",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION for a traditional craft off Chennai between 05:00 and 12:00 IST. High atmospheric instability (CAPE 2190 J/kg) indicates a risk of thunderstorms, though live lightning data could not be checked. Live cyclone tracks could also not be checked. Expect waves up to 0.68 m with a period of 10.6 s, swell of 0.58 m, and winds up to 4.2 kt with gusts to 11.5 kt. Potential Fishing Zones are active 54.6 km East, 68 km Southeast, and 83.1 km South-Southeast. The nearest maritime boundary with Sri Lanka is 277.4 km South-Southeast.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 5087
+    },
+    {
+      "id": "S06",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Leaving Rameswaram at 5 am heading 90 degrees at 8 knots — is that safe?",
+      "en": null,
+      "expect": {
+        "intent": [
+          "safety",
+          "boundary"
+        ],
+        "location": [
+          "rameswaram"
+        ],
+        "part": [
+          "early_morning",
+          "morning"
+        ],
+        "heading_deg": 90,
+        "speed_kt": 8
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": 90.0,
+        "speed_kt": 8.0,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "part": true,
+        "heading_deg": true,
+        "speed_kt": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Rameswaram, Sat 17 Oct 05:00–12:00 IST.\n• steepness Hs/T² (0.98 m / 4.75 s²) 0.0434 m/s² ≥ caution threshold 0.04 m/s²\n• visibility 3.76 km ≤ caution threshold 5 km\n• no lightning feed; convective proxy: CAPE 2090 J/kg ≥ 2000\n• current heading crosses Sri Lanka - India in 94.5 min — change heading before then\n• wave height 0.98 m\n• wave period 4.9 s\n• swell height 0.52 m\n• swell period 6.6 s\n• wind 15.3 kt\n• gusts 20.8 kt\n• wind direction 222 deg\n• visibility 3.76 km\n• sea temperature 30.3 degC\n• current 0.864 kt\n• current direction 30 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 47.5 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 94.3 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 23.1 km to the E\n• on the stated heading and speed the track reaches Sri Lanka - India in 94.5 min (23.3 km) — beyond the 90 min horizon\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 1880
+    },
+    {
+      "id": "S07",
+      "category": "safety",
+      "lang": "ta",
+      "style": "plain",
+      "q": "நாளை காலை கொச்சியில் இருந்து கடலுக்கு போகலாமா?",
+      "en": "Can I go to sea from Kochi tomorrow morning?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "kochi"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "safety",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "எச்சரிக்கை (CAUTION): பாரம்பரிய படகுகள் கவனமாக செல்லவும். பார்வைத்திறன் 3.34 km ஆகக் குறைவாக உள்ளது மற்றும் இடிமின்னல் வர வாய்ப்புள்ளது (CAPE 2090 J/kg). காற்று 4.7 kt வேகம், வீச்சு 10.3 kt மற்றும் அலை உயரம் 0.66 m ஆக இருக்கும். புயல் மற்றும் மின்னல் பற்றிய நேரலைத் தகவல்களைச் சரிபார்க்க முடியவில்லை. மீன்பிடி மண்டலங்கள் கொச்சியிலிருந்து 25.7 km தென்மேற்கு, 59.2 km வடமேற்கு மற்றும் 64.7 km தெற்கே உள்ளன.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 5828
+    },
+    {
+      "id": "S08",
+      "category": "safety",
+      "lang": "ta",
+      "style": "plain",
+      "q": "இன்று மாலை நாகப்பட்டினத்தில் கடல் பாதுகாப்பாக இருக்குமா?",
+      "en": "Will the sea be safe at Nagapattinam this evening?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "nagapattinam"
+        ],
+        "day": "today",
+        "part": "evening"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "safety",
+        "location": "Nagapattinam",
+        "day": "today",
+        "part": "evening",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "எச்சரிக்கை (CAUTION). நாகப்பட்டினத்தில் பார்வைத் திறன் 2.64 km",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 5928
+    },
+    {
+      "id": "S09",
+      "category": "safety",
+      "lang": "ta",
+      "style": "colloquial",
+      "q": "என் கட்டுமரத்துடன் நாளை அதிகாலை காசிமேட்டில் இருந்து மீன்பிடிக்க போகலாமா?",
+      "en": "Can I go fishing from Kasimedu early tomorrow morning with my kattumaram?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "kasimedu",
+          "chennai"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "early_morning",
+          "morning"
+        ],
+        "vessel": "traditional"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "safety",
+        "location": "Kasimedu",
+        "day": "tomorrow",
+        "part": "early_morning",
+        "vessel": "traditional",
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true,
+        "vessel": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "கடலுக்குச் செல்லலாம் (GO). காசிமேட்டில் சனிக்கிழமை காலை 03:00 முதல் 08:00 மணி வரை அனைத்து வானிலை அளவுகளும் பாதுகாப்பான எல்லைக்குள் உள்ளன. \n\nகாற்றின் வேகம் 4 kt, காற்று வீச்சு 9.9 kt மற்றும் அலை உயரம் 0.7 m ஆக இருக்கும். பார்வைத்திறன் 6.5 km ஆகவும், கடல் நீரோட்டம் 0.216 kt ஆகவும் இருக்கும். \n\nமீன்பிடி மண்டலங்கள் காசிமேட்டிலிருந்து கிழக்கே 54.1 km (101°), தென்கிழக்கே 69.6 km (136°) மற்றும் தெற்கு-தென்கிழக்கே 85.8 km (159°) தொலைவில் உள்ளன. இலங்கை கடல் எல்லை தெற்கு-தென்கிழக்கு திசையில் 280.1 km தொலைவில் உள்ளது. \n\nபுயல் மற்றும் மின்னல் குறித்த நேரலைத் தகவல்களைச் சரிபார்க்க முடியவில்லை.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 8577
+    },
+    {
+      "id": "S10",
+      "category": "safety",
+      "lang": "hi",
+      "style": "plain",
+      "q": "क्या कल सुबह वेरावल से समुद्र में जाना सुरक्षित है?",
+      "en": "Is it safe to go to sea from Veraval tomorrow morning?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "veraval"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "safety",
+        "location": "Veraval",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "फैसला: GO (आप समुद्र में जा सकते हैं)। पारंपरिक नाव के लिए सभी मौसम सीमा के भीतर हैं। \n\nवेरावल के लिए शनिवार 17 Oct सुबह 05:00 से 12:00 बजे तक हवा 5.7 kt, हवा के झोंके 11.1 kt और दिशा 341 deg रहेगी। लहरों की ऊंचाई 0.54 m, पीरियड 10.55 s, स्वेल 0.5 m, स्वेल पीरियड 9.85 s और पानी का तापमान 29.6 degC रहेगा। समुद्री धारा 0.594 kt (297 deg), दृश्यता 8.56 km और पाकिस्तान समुद्री सीमा 361.9 km WNW दूर है। \n\nमछली पकड़ने के क्षेत्र: PFZ #1 वेरावल से 26.3 km W (260°), PFZ #2 41.8 km SE (134°) और PFZ #3 119.7 km WNW (298°) दूर हैं। \n\nचक्रवात और बिजली से जुड़ा डेटा जांचा नहीं जा सका।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 6617
+    },
+    {
+      "id": "S11",
+      "category": "safety",
+      "lang": "hi",
+      "style": "colloquial",
+      "q": "कल पारादीप से नाव ले जाऊं क्या? मौसम कैसा रहेगा?",
+      "en": "Should I take the boat out from Paradip tomorrow? How will the weather be?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "paradip"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "hi",
+        "intent": "safety",
+        "location": "Paradip",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "पारादीप से पारम्परिक नाव के लिए फैसला: CAUTION (सावधानी बरतें)। दृश्यता 3.48 km है जो जोखिम वाली सीमा से कम है, और CAPE 2160 J/kg होने से खराब मौसम का खतरा है। हवा की गति 5 kt और झोंके 12.6 kt तक रहेंगे, जबकि लहरों की ऊँचाई 1.02 m होगी। तूफान और बिजली से जुड़ी जानकारी की जांच नहीं की जा सकी। मछली पकड़ने का ज़ोन PFZ #1 पारादीप से 39.6 km SE (126°) पर है, PFZ #2 69.4 km SSW (200°) पर है और PFZ #3 85 km SW (216°) पर है। बांग्लादेश की समुद्री सीमा यहाँ से पूर्व की ओर 271.2 km दूर है।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 9041
+    },
+    {
+      "id": "S12",
+      "category": "safety",
+      "lang": "ml",
+      "style": "plain",
+      "q": "നാളെ രാവിലെ കൊച്ചിയിൽ നിന്ന് കടലിൽ പോകാമോ?",
+      "en": "Can I go to sea from Kochi tomorrow morning?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "kochi"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "ml",
+        "intent": "safety",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "കൊച്ചിയിൽ പരമ്പരാഗത വള്ളങ്ങൾക്ക് ജാഗ്രത (CAUTION) മുന്നറിയിപ്പുണ്ട്. കാഴ്ചപരിധി 3.34 km ആയി കുറഞ്ഞതും ഇടിമിന്നലിന് സാധ്യതയുള്ളതുമാണ് കാരണം. കാറ്റിന്റെ വേഗത 4.7 kt, കാറ്റടിച്ചുകയറുന്നത് 10.3 kt, തിരമാലയുടെ ഉയരം 0.66 m ആണ്. സൈക്ലോൺ, ഇടിമിന്നൽ വിവരങ്ങൾ പരിശോധിക്കാൻ കഴിഞ്ഞിട്ടില്ല. മീൻപിടുത്ത മേഖലകൾ കൊച്ചിയിൽ നിന്ന് 25.7 km WSW, 59.2 km NW, 64.7 km S ദിശകളിലാണ്. അടുത്തുള്ള കടൽ അതിർത്തി 277.1 km SSW മാറിയാണ്.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 7830
+    },
+    {
+      "id": "S13",
+      "category": "safety",
+      "lang": "hi",
+      "style": "code-mixed",
+      "q": "Kal subah Porbandar se boat nikalna safe hai kya?",
+      "en": "Is it safe to take the boat out from Porbandar tomorrow morning? (Hindi written in English letters)",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "porbandar"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "safety",
+        "location": "Porbandar",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "DO NOT SAIL",
+      "answer": "पारंपरिक नाव के लिए निर्णय है: DO NOT SAIL (समुद्र में न जाएं)। \n\nपोरबंदर में शनिवार 17 अक्टूबर, सुबह 05:00 से 12:00 बजे के बीच दृश्यता (विजिबिलिटी) केवल 0.08 km है, जो बेहद कम है। \n\nइस दौरान हवा की गति 5.8 kt, झोंके 10.5 kt और लहरों की ऊंचाई 0.42 m तक रहेगी। \n\nमछली पकड़ने के क्षेत्र पोरबंदर से 25.6 km दक्षिण-पश्चिम (SW), 54.3 km पश्चिम (W) और 83.6 km दक्षिण-दक्षिण-पूर्व (SSE) में हैं। \n\nचक्रवात और बिजली की लाइव स्थिति की जांच नहीं की जा सकी।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 4092
+    },
+    {
+      "id": "S14",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is it safe to go out from Port Blair tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "port blair"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Port Blair",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true
+      },
+      "behaved": true,
+      "verdict": "DO NOT SAIL",
+      "answer": "DO NOT SAIL — traditional craft off Port Blair, Sat 17 Oct 05:00–12:00 IST.\n• visibility 0.38 km ≤ no-go threshold 2 km\n• no lightning feed; convective proxy: CAPE 2610 J/kg ≥ 2000\n• wave height 0.2 m\n• wave period 7.7 s\n• swell height 0.18 m\n• swell period 6.5 s\n• wind 4.7 kt\n• gusts 12.4 kt\n• wind direction 342 deg\n• visibility 0.38 km\n• sea temperature 30.8 degC\n• current 0.81 kt\n• current direction 214 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 59 km SSE (bearing 162°) from Port Blair, Andaman sector, advisory dated 2026-10-15\n• PFZ #2: 86.5 km ENE (bearing 60°) from Port Blair, Andaman sector, advisory dated 2026-10-15\n• PFZ #3: 91.8 km S (bearing 178°) from Port Blair, Andaman sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Andaman and Nicobar (India) - Myanmar (Myanmar) 240.5 km to the NNE\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 1273
+    },
+    {
+      "id": "C01",
+      "category": "conditions",
+      "lang": "en",
+      "style": "plain",
+      "q": "What will the wave height be at Chennai tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "chennai",
+          "kasimedu"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "en",
+        "intent": "conditions",
+        "location": "Chennai",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Conditions off Chennai, Sat 17 Oct 05:00–12:00 IST:\n• wave height 0.68 m\n• wave period 10.6 s\n• swell height 0.58 m\n• swell period 10.7 s\n• wind 4.2 kt\n• gusts 11.5 kt\n• wind direction 316 deg\n• visibility 6.84 km\n• sea temperature 30.7 degC\n• current 0.216 kt\n• current direction 207 deg",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 1543
+    },
+    {
+      "id": "C02",
+      "category": "conditions",
+      "lang": "en",
+      "style": "plain",
+      "q": "How strong is the wind off Mangalore this afternoon?",
+      "en": null,
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "mangalore"
+        ],
+        "day": "today",
+        "part": "afternoon"
+      },
+      "got": {
+        "language": "en",
+        "intent": "conditions",
+        "location": "Mangalore",
+        "day": "today",
+        "part": "afternoon",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Here are the weather facts for Mangalore on Friday 16 October between 12:00 and 17:00 IST. Wave height will reach up to 0.56 m with a wave period of 9.75 s, and swell height will be 0.42 m with a swell period of 8.55 s. Winds will be up to 5 kt with gusts reaching 12.6 kt, coming from 288 deg. Visibility will be around 5.68 km. The sea current will be 0.27 kt moving towards 333 deg, and the sea temperature will be 30.7 degC.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 3700
+    },
+    {
+      "id": "C03",
+      "category": "conditions",
+      "lang": "en",
+      "style": "plain",
+      "q": "Any big swell expected at Visakhapatnam day after tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "visakhapatnam"
+        ],
+        "day": "day_after"
+      },
+      "got": {
+        "language": "en",
+        "intent": "conditions",
+        "location": "Visakhapatnam",
+        "day": "day_after",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Conditions off Visakhapatnam, Sun 18 Oct 05:00–12:00 IST:\n• wave height 0.84 m\n• wave period 9.8 s\n• swell height 0.76 m\n• swell period 9.65 s\n• sea temperature 30 degC\n• current 1.458 kt\n• current direction 217 deg\nData note: open_meteo/weather: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/weather: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 4203
+    },
+    {
+      "id": "C04",
+      "category": "conditions",
+      "lang": "ta",
+      "style": "plain",
+      "q": "நாளை தூத்துக்குடியில் அலை எவ்வளவு உயரம் இருக்கும்?",
+      "en": "How high will the waves be at Thoothukudi tomorrow?",
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "tuticorin",
+          "thoothukudi"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "conditions",
+        "location": "Thoothukudi",
+        "day": "tomorrow",
+        "part": "all_day",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "தூத்துக்குடி கடற்பகுதி தகவல்கள் இதோ. \n\nஅலை உயரம் 1.06 m மற்றும் அலை காலம் 7.7 s ஆக இருக்கும். ஸ்வெல் அலை உயரம் 0.84 m மற்றும் அதன் காலம் 8.8 s. \n\nகாற்றின் வேகம் 9.4 kt, ஆனால் வீசும் காற்று 20.6 kt வரை அதிகரிக்கலாம். காற்று 256 deg திசையிலிருந்து வீசும். \n\nபார்வைத் திறன் 3.16 km ஆக இருக்கும். கடல் நீர் வெப்பநிலை 31.3 degC மற்றும் நீரோட்டம் 270 deg திசையில் 0.108 kt வேகத்தில் இருக்கும்.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 6588
+    },
+    {
+      "id": "C05",
+      "category": "conditions",
+      "lang": "hi",
+      "style": "plain",
+      "q": "आज रात मुंबई के पास हवा कितनी तेज़ होगी?",
+      "en": "How strong will the wind be near Mumbai tonight?",
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "sassoon dock",
+          "mumbai"
+        ],
+        "day": "today",
+        "part": "night"
+      },
+      "got": {
+        "language": "hi",
+        "intent": "conditions",
+        "location": "Sassoon Dock",
+        "day": "today",
+        "part": "night",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "ससून डॉक पर शुक्रवार रात 21:00 से 03:00 बजे के दौरान मौसम की स्थिति। हवा की गति 2.6 kt है और झोंके 10.1 kt तक जा रहे हैं। हवा 360 deg दिशा से आ रही है। लहरों की ऊंचाई 0.44 m और स्वेल 0.36 m है। लहरों का आवर्तकाल 9.15 s और स्वेल आवर्तकाल 9.8 s है। दृश्यता 12.48 km रहेगी और समुद्र का तापमान 29.9 degC है।",
+      "answer_source": "llm_retry",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 10972
+    },
+    {
+      "id": "C06",
+      "category": "conditions",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is there fog or poor visibility at Puri tomorrow morning?",
+      "en": null,
+      "expect": {
+        "intent": [
+          "conditions",
+          "safety"
+        ],
+        "location": [
+          "puri"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "conditions",
+        "location": "Puri",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Conditions off Puri, Sat 17 Oct 05:00–12:00 IST:\n• wave height 0.9 m\n• wave period 12.3 s\n• swell height 0.9 m\n• swell period 10.3 s\n• wind 4.7 kt\n• gusts 9.9 kt\n• wind direction 106 deg\n• visibility 1.08 km\n• sea temperature 30.3 degC\n• current 0.54 kt\n• current direction 211 deg",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 5320
+    },
+    {
+      "id": "P01",
+      "category": "pfz",
+      "lang": "en",
+      "style": "plain",
+      "q": "Where are the fish near Paradip today?",
+      "en": null,
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "paradip"
+        ],
+        "day": "today"
+      },
+      "got": {
+        "language": "en",
+        "intent": "pfz",
+        "location": "Paradip",
+        "day": "today",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Chlorophyll is 6.412 mg/m3, well above the recent baseline mean of 2.843 mg/m3 with a standard deviation of 0.507. The latest reading is 7.05 standard deviations from the baseline, and the 7-day trend is rising. Three potential fishing zones are available near Paradip in the Orissa sector, dated 2026-10-15. Zone 1 is 39.6 km SE at a bearing of 126°. Zone 2 is 69.4 km SSW at a bearing of 200°. Zone 3 is 85 km SW at a bearing of 216°. The nearest maritime boundary is Bangladesh - India at a distance of 271.2 km to the E.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 9573
+    },
+    {
+      "id": "P02",
+      "category": "pfz",
+      "lang": "en",
+      "style": "plain",
+      "q": "Show me the potential fishing zones from Kochi",
+      "en": null,
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "kochi"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "pfz",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "PFZ #1 is 25.7 km WSW from Kochi, with an advisory dated 2026-10-15. PFZ #2 is 59.2 km NW from Kochi, with an advisory dated 2026-10-15. PFZ #3 is 64.7 km S from Kochi, with an advisory dated 2026-10-15. The nearest maritime boundary is Maldives - India, which is 277.1 km to the SSW. Chlorophyll-a is 3.645 mg/m3. The 28-day baseline mean is 7.529 mg/m3 with a standard deviation of 6.285.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 3936
+    },
+    {
+      "id": "P03",
+      "category": "pfz",
+      "lang": "en",
+      "style": "plain",
+      "q": "Which direction should I go from Malpe to find fish?",
+      "en": null,
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "malpe"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "pfz",
+        "location": "Malpe",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Chlorophyll-a is 14.47 mg/m3. The 28-day baseline mean is 13.486 mg/m3 with a standard deviation of 4.271, and the latest reading is 0.23 standard deviations from it with a flat 7-day trend. This means chlorophyll is within its normal recent range, and the data does not point to a productivity change as an explanation. \n\nThree potential fishing zones are available near Malpe in the Karnataka sector from the advisory dated 2026-10-15. Zone 1 lies 24.8 km WNW at a bearing of 296°. Zone 2 lies 58.4 km WNW at a bearing of 301°. Zone 3 lies 71.6 km WNW at a bearing of 292°. The nearest maritime boundary is Maldives - India, which is 611.2 km to the S.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 17307
+    },
+    {
+      "id": "P04",
+      "category": "pfz",
+      "lang": "ta",
+      "style": "plain",
+      "q": "இன்று கடலூர் அருகே மீன் எங்கே கிடைக்கும்?",
+      "en": "Where will fish be found near Cuddalore today?",
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "cuddalore"
+        ],
+        "day": "today"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "pfz",
+        "location": "Cuddalore",
+        "day": "today",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "கடலூர் பகுதி மீன்பிடி மண்டல தகவல்கள் இதோ. \nமுதல் மண்டலம் கடலூரிலிருந்து கிழக்கு திசையில் (கோணம் 79°) 47.5 கி.மீ தொலைவில் உள்ளது. \nஇரண்டாவது மண்டலம் கிழக்கு-தென்கிழக்கு திசையில் (கோணம் 106°) 67.9 கி.மீ தொலைவில் உள்ளது. \nமூன்றாவது மண்டலம் தென்கிழக்கு திசையில் (கோணம் 144°) 80.7 கி.மீ தொலைவில் உள்ளது. \nஅருகிலுள்ள கடல் எல்லை இலங்கை - இந்தியா எல்லை, தென்கிழக்கே 168.1 கி.மீ தொலைவில் உள்ளது. \nகுளோரோபில் தரவு நேரடி மூலத்திலிருந்து கிடைக்காததால் பழைய சேமிக்கப்பட்ட நகலிலிருந்து பெறப்பட்டது.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 14402
+    },
+    {
+      "id": "P05",
+      "category": "pfz",
+      "lang": "ta",
+      "style": "plain",
+      "q": "ராமேஸ்வரத்தில் இருந்து மீன்பிடி மண்டலம் எவ்வளவு தூரம்?",
+      "en": "How far is the fishing zone from Rameswaram?",
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "rameswaram"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "pfz",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "மீன் பிடிக்கப் போகும் மீனவர்களே, ராமேசுவரத்திலிருந்து கிழக்கு திசையில் 23.1 கி.மீ தொலைவில் இலங்கை கடல் எல்லை உள்ளது. மீன் வள இடமான PFZ #1 ராமேசுவரத்திலிருந்து மேற்கு-தென்மேற்கு திசையில் 47.5 கி.மீ தொலைவில் உள்ளது. மற்றொரு மீன் வள இடமான PFZ #2 ராமேசுவரத்திலிருந்து மேற்கு-தென்மேற்கு திசையில் 94.3 கி.மீ தொலைவில் உள்ளது. நேரலை ஆதாரம் பதிலளிக்காததால், காற்று அல்லது வானிலை தரவு பழையதாகவோ அல்லது சேமிக்கப்பட்ட பிரதியிலிருந்தோ எடுக்கப்பட்டுள்ளது. சரிபார்க்க முடியாத தரவு இடைவெளிகள்: chlorophyll-a.",
+      "answer_source": "llm_retry",
+      "unsupported_numbers": [],
+      "degradation": [
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 24091
+    },
+    {
+      "id": "P06",
+      "category": "pfz",
+      "lang": "hi",
+      "style": "plain",
+      "q": "पोरबंदर से मछली कहाँ मिलेगी?",
+      "en": "Where will I find fish from Porbandar?",
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "porbandar"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "pfz",
+        "location": "Porbandar",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "यहाँ कोई सुरक्षा का फैसला नहीं दिया गया है। \n\nपोरबंदर से मछली पकड़ने के तीन क्षेत्र नीचे दिए गए हैं। \nपहला क्षेत्र पोरबंदर से दक्षिण-पश्चिम में 25.6 किलोमीटर दूर है, जिसकी सलाह 2026-10-15 की है। \nदूसरा क्षेत्र पोरबंदर से पश्चिम में 54.3 किलोमीटर दूर है, जिसकी सलाह 2026-10-15 की है। \nतीसरा क्षेत्र पोरबंदर से दक्षिण-दक्षिण पूर्व में 83.6 किलोमीटर दूर है, जिसकी सलाह 2026-10-15 की है। \nनिकटतम समुद्री सीमा पाकिस्तान - भारत (पाकिस्तान) पश्चिम-उत्तर-पश्चिम दिशा में 250.4 किलोमीटर दूर है। \nक्लोरोफिल-ए का स्तर 5.004 मिलीग्राम प्रति घन मीटर है, जो अपने सामान्य हाल के दायरे में है।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 13004
+    },
+    {
+      "id": "P07",
+      "category": "pfz",
+      "lang": "en",
+      "style": "misspelled",
+      "q": "were is PFZ near vizag",
+      "en": null,
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "visakhapatnam"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "pfz",
+        "location": "Visakhapatnam",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 41.3 km SSW (bearing 194°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• PFZ #2: 50.2 km ENE (bearing 76°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• PFZ #3: 56.5 km S (bearing 180°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 645.4 km to the E\n• chlorophyll-a 4.012 mg/m3 [obs_0038; noaa_coastwatch/viirs_chl; for 17:30 local; grid 2 km away; fetched 0 min ago; current]\n• 28-day baseline mean 1.801 mg/m3 (sd 1.19); latest is 1.86 standard deviations from it; 7-day trend rising\n• interpretation: chlorophyll is well above its recent baseline — consistent with upwelling or river/runoff input; higher plankton often precedes better catches, but this is an association, not a guarantee",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 6833
+    },
+    {
+      "id": "B01",
+      "category": "boundary",
+      "lang": "en",
+      "style": "plain",
+      "q": "How far is the Sri Lanka border from Rameswaram?",
+      "en": null,
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "rameswaram"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "boundary",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Rameswaram, Sat 17 Oct 05:00–12:00 IST.\n• steepness Hs/T² (0.98 m / 4.75 s²) 0.0434 m/s² ≥ caution threshold 0.04 m/s²\n• visibility 3.76 km ≤ caution threshold 5 km\n• no lightning feed; convective proxy: CAPE 2090 J/kg ≥ 2000\n• wave height 0.98 m\n• wave period 4.9 s\n• swell height 0.52 m\n• swell period 6.6 s\n• wind 15.3 kt\n• gusts 20.8 kt\n• wind direction 222 deg\n• visibility 3.76 km\n• sea temperature 30.3 degC\n• current 0.864 kt\n• current direction 30 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 47.5 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 94.3 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 23.1 km to the E\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 1747
+    },
+    {
+      "id": "B02",
+      "category": "boundary",
+      "lang": "en",
+      "style": "plain",
+      "q": "If I head 90 degrees from Rameswaram at 8 knots, will I cross the IMBL?",
+      "en": null,
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "rameswaram"
+        ],
+        "heading_deg": 90,
+        "speed_kt": 8
+      },
+      "got": {
+        "language": "en",
+        "intent": "boundary",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": 90.0,
+        "speed_kt": 8.0,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "heading_deg": true,
+        "speed_kt": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Rameswaram, Sat 17 Oct 05:00–12:00 IST.\n• steepness Hs/T² (0.98 m / 4.75 s²) 0.0434 m/s² ≥ caution threshold 0.04 m/s²\n• visibility 3.76 km ≤ caution threshold 5 km\n• no lightning feed; convective proxy: CAPE 2090 J/kg ≥ 2000\n• current heading crosses Sri Lanka - India in 94.5 min — change heading before then\n• wave height 0.98 m\n• wave period 4.9 s\n• swell height 0.52 m\n• swell period 6.6 s\n• wind 15.3 kt\n• gusts 20.8 kt\n• wind direction 222 deg\n• visibility 3.76 km\n• sea temperature 30.3 degC\n• current 0.864 kt\n• current direction 30 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 47.5 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 94.3 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 23.1 km to the E\n• on the stated heading and speed the track reaches Sri Lanka - India in 94.5 min (23.3 km) — beyond the 90 min horizon\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 1497
+    },
+    {
+      "id": "B03",
+      "category": "boundary",
+      "lang": "en",
+      "style": "plain",
+      "q": "Am I close to the international maritime boundary near Kanyakumari?",
+      "en": null,
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "kanyakumari"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "boundary",
+        "location": "Kanyakumari",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "GO — traditional craft off Kanyakumari, Sat 17 Oct 05:00–12:00 IST.\n• wave height 1.28 m\n• wave period 9.1 s\n• swell height 1.2 m\n• swell period 7.45 s\n• wind 8.5 kt\n• gusts 18.5 kt\n• wind direction 290 deg\n• visibility 6.2 km\n• sea temperature 30.1 degC\n• current 0.702 kt\n• current direction 101 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 35.1 km E (bearing 92°) from Kanyakumari, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 53 km ENE (bearing 75°) from Kanyakumari, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #3: 78.6 km WSW (bearing 252°) from Kanyakumari, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 141.9 km to the ESE\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 2965
+    },
+    {
+      "id": "B04",
+      "category": "boundary",
+      "lang": "ta",
+      "style": "plain",
+      "q": "இராமேஸ்வரத்தில் இருந்து இலங்கை எல்லை எவ்வளவு தூரம்?",
+      "en": "How far is the Sri Lanka border from Rameswaram?",
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "rameswaram"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "boundary",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION.\n\nராமேசுவரத்தில் இருந்து கிழக்கே 23.1 கி.மீ தூரத்தில் இலங்கை எல்லை உள்ளது. அலை உயரம் 0.98 மீ, அலை காலம் 4.9 விநாடி, சுழல் அலை உயரம் 0.52 மீ, மற்றும் சுழல் அலை காலம் 6.6 விநாடி ஆகும். காற்று 15.3 நாட்டிக்கல் மைல், gusts 20.8 நாட்டிக்கல் மைல், காற்று திசை 222 டிகிரி, மற்றும் பார்வை தூரம் 3.76 கி.மீ ஆகும். கடல் நீர் வெப்பநிலை 30.3 டிகிரி செ, நீரோட்டம் 0.864 நாட்டிக்கல் மைல், நீரோட்ட திசை 30 டிகிரி மற்றும் CAPE 2090 J/kg ஆகும். மீன்பிடி பகுதி 1: ராமேசுவரத்தில் இருந்து WSW திசையில் 47.5 கி.மீ தொலைவில் உள்ளது. மீன்பிடி பகுதி 2: ராமேசுவரத்தில் இருந்து WSW திசையில் 94.3 கி.மீ தொலைவில் உள்ளது. சைக்ளோன் மற்றும் மின்னல் தகவல் சோதிக்கப்படவில்லை.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 18125
+    },
+    {
+      "id": "B05",
+      "category": "boundary",
+      "lang": "ta",
+      "style": "plain",
+      "q": "நாகப்பட்டினத்தில் இருந்து கிழக்கு நோக்கி 10 நாட் வேகத்தில் போனால் எல்லையை தாண்டுவேனா?",
+      "en": "If I go east from Nagapattinam at 10 knots, will I cross the border?",
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "nagapattinam"
+        ],
+        "heading_deg": 90,
+        "speed_kt": 10
+      },
+      "got": {
+        "language": "ta",
+        "intent": "boundary",
+        "location": "Nagapattinam",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": 90.0,
+        "speed_kt": 10.0,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "heading_deg": true,
+        "speed_kt": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": "DO NOT SAIL",
+      "answer": "கடலுக்குச் செல்ல வேண்டாம் (DO NOT SAIL). உங்கள் தற்போதைய திசையில் சென்றால் 0.5 நிமிடத்தில் (0.2 km) இந்திய பொருளாதார மண்டல எல்லையைத் தாண்டிவிடுவீர்கள். மின்னல் தகவல் இல்லை மற்றும் CAPE 2780 J/kg உள்ளது. அலை உயரம் 0.36 m, காற்று வேகம் 7.9 kt, மற்றும் காற்று வீச்சு 16.9 kt ஆக உள்ளது. நாகப்பட்டினத்திலிருந்து 40.6 km வடகிழக்கு (52°) மற்றும் 40.9 km கிழக்கு-தென்கிழக்கு (117°) திசையில் மீன்பிடி மண்டலங்கள் உள்ளன. புயல் மற்றும் மின்னல் குறித்த நேரலைத் தரவுகளைச் சரிபார்க்க முடியவில்லை.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 7147
+    },
+    {
+      "id": "B06",
+      "category": "boundary",
+      "lang": "hi",
+      "style": "plain",
+      "q": "पोरबंदर से पाकिस्तान की समुद्री सीमा कितनी दूर है?",
+      "en": "How far is the Pakistan maritime boundary from Porbandar?",
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "porbandar"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "boundary",
+        "location": "Porbandar",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": "DO NOT SAIL",
+      "answer": "DO NOT SAIL. पोरबंदर के लिए यह सूचना है। दिखने की दूरी 0.08 किलोमीटर है जो 2 किलोमीटर की तय सीमा से बहुत कम है। हवा 5.8 kt और झोंके 10.5 kt हैं। लहर की ऊँचाई 0.42 m और समुद्र का तापमान 28.5 degC है। मछली पकड़ने के क्षेत्र इस प्रकार हैं: PFZ #1 दक्षिण-पश्चिम में 25.6 km, PFZ #2 पश्चिम में 54.3 km, और PFZ #3 दक्षिण-दक्षिण-पूर्व में 83.6 km दूर है। पाकिस्तान - इंडिया समुद्री सीमा पश्चिम-उत्तर-पश्चिम में 250.4 km दूर है। चक्रवात और बिजली की जानकारी की जाँच नहीं हो सकी क्योंकि सिस्टम में एपीआई कुंजी मौजूद नहीं है।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 14338
+    },
+    {
+      "id": "A01",
+      "category": "chlorophyll",
+      "lang": "en",
+      "style": "plain",
+      "q": "Why has my catch dropped near Kochi this month?",
+      "en": null,
+      "expect": {
+        "intent": "chlorophyll",
+        "location": [
+          "kochi"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "chlorophyll",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Chlorophyll-a is 3.645 mg/m3 for Kochi, checked 3 h ago on a grid 1.8 km away. The 28-day baseline mean is 7.529 mg/m3 with a standard deviation of 6.285. The latest reading is -0.62 standard deviations from that baseline, and the 7-day trend is falling. This means chlorophyll is within its normal recent range, so the data does not point to a productivity change as an explanation.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 6500
+    },
+    {
+      "id": "A02",
+      "category": "chlorophyll",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is the water greener than usual off Mangalore?",
+      "en": null,
+      "expect": {
+        "intent": "chlorophyll",
+        "location": [
+          "mangalore"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "chlorophyll",
+        "location": "Mangalore",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "For your chlorophyll check near Mangalore, the level is 9.154 mg/m3. The 28-day baseline mean is 12.139 mg/m3 with a standard deviation of 3.395. The latest reading is -0.88 standard deviations from the baseline, and the 7-day trend is falling. This means chlorophyll is within its normal recent range. The data does not point to a productivity change as an explanation.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 18326
+    },
+    {
+      "id": "A03",
+      "category": "chlorophyll",
+      "lang": "ta",
+      "style": "plain",
+      "q": "சென்னை அருகே மீன் பிடிப்பு ஏன் குறைந்து வருகிறது?",
+      "en": "Why is the fish catch decreasing near Chennai?",
+      "expect": {
+        "intent": "chlorophyll",
+        "location": [
+          "chennai",
+          "kasimedu"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "chlorophyll",
+        "location": "Chennai",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "சென்னை பகுதியில் குளோரோபில் நிலவரம் பற்றிய விபரம்.\n\nகாற்று மற்றும் வானிலை தரவுகள் பழையதாகவோ அல்லது சேமிக்கப்பட்ட பிரதியிலிருந்தோ எடுக்கப்பட்டவை.\n\nகுளோரோபில்-ஏ அளவு 2.305 மிிகி/கமீ ஆகும். இது 17:30 உள்ளூர் நேரப்படி, 3.9 கிமீ தொலைவில் உள்ள கட்டத்திலிருந்து பெறப்பட்டது.\n\n26 நாள் சராசரி அளவு 3.044 மிிகி/கமீ மற்றும் திட்ட விலகல் 0.516 ஆகும். தற்போதைய அளவு சராசரியிலிருந்து -1.43 திட்ட விலகலில் உள்ளது.\n\nகடந்த 7 நாட்களில் இதன் போக்கு வீழ்ச்சியடைந்து வருகிறது. குளோரோபில் அதன் இயல்பான சமீபத்திய வரம்பிற்குள் உள்ளது.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 13896
+    },
+    {
+      "id": "A04",
+      "category": "chlorophyll",
+      "lang": "hi",
+      "style": "plain",
+      "q": "वेरावल के पास पानी का रंग बदल गया है, क्या मछली कम होगी?",
+      "en": "The water colour has changed near Veraval — will there be fewer fish?",
+      "expect": {
+        "intent": "chlorophyll",
+        "location": [
+          "veraval"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "chlorophyll",
+        "location": "Veraval",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "वेरावल के पास क्लोरोफिल-ए का मान 4.012 मिलीग्राम प्रति घन मीटर है। यह 17:30 स्थानीय समय का है और ग्रिड 2.8 किलोमीटर दूर है। 28-दिन का औसत मान 4.4 मिलीग्राम प्रति घन मीटर है, जिसका मानक विचलन 1.637 है। ताज़ा मान इस औसत से -0.24 मानक विचलन पर है और 7-दिन का रुझान गिर रहा है। इसका अर्थ है कि क्लोरोफिल अपनी सामान्य हालिया सीमा के भीतर है।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 18819
+    },
+    {
+      "id": "G01",
+      "category": "general_knowledge",
+      "lang": "en",
+      "style": "plain",
+      "q": "What is a potential fishing zone?",
+      "en": null,
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "en",
+        "intent": "general_knowledge",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "A Potential Fishing Zone is an area in the sea where fish are likely to congregate in large numbers. These zones are identified using satellite data such as sea surface temperature and chlorophyll concentrations to help fishermen find productive fishing grounds more easily and save fuel.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 11593
+    },
+    {
+      "id": "G02",
+      "category": "general_knowledge",
+      "lang": "en",
+      "style": "plain",
+      "q": "What does a 2 metre swell mean for a small boat?",
+      "en": null,
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "en",
+        "intent": "general_knowledge",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "A 2-metre swell means ocean waves generated by distant weather are reaching heights from trough to crest. For small boats and traditional craft, a 2-metre swell can cause significant rolling, make navigation difficult, and create hazardous conditions near the shore or river mouths due to breaking waves.",
+      "answer_source": "llm_retry",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 25329
+    },
+    {
+      "id": "G03",
+      "category": "general_knowledge",
+      "lang": "en",
+      "style": "plain",
+      "q": "Why is the sea rough during the monsoon?",
+      "en": null,
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "en",
+        "intent": "general_knowledge",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The sea becomes rough during the monsoon due to strong, persistent seasonal winds (such as the Southwest Monsoon winds) that blow over large expanses of the ocean, transferring energy to the water and generating high waves, strong currents, and turbulent sea conditions.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 8544
+    },
+    {
+      "id": "G04",
+      "category": "general_knowledge",
+      "lang": "ta",
+      "style": "plain",
+      "q": "அலை உயரம் என்றால் என்ன?",
+      "en": "What is wave height?",
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "general_knowledge",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "அலை உயரம் என்பது அலையின் அடிப்பகுதிக்கும் உச்சிகளுக்கும் இடையே உள்ள செங்குத்து தூரமாகும். இது பொதுவாக மீட்டர்களில் அளவிடப்படுகிறது மற்றும் கடல் சீற்றத்தை தீர்மானிக்க உதவுகிறது.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 9133
+    },
+    {
+      "id": "G05",
+      "category": "general_knowledge",
+      "lang": "hi",
+      "style": "plain",
+      "q": "चक्रवात आने से पहले क्या संकेत दिखते हैं?",
+      "en": "What signs appear before a cyclone comes?",
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "hi",
+        "intent": "general_knowledge",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "चक्रवात आने से पहले आसमान में घने काले बादल छा जाते हैं। समुद्र में ऊंची और असामान्य लहरें उठने लगती हैं। हवा का दबाव तेजी से गिरता है और तेज हवाएं चलने लगती हैं। इसके अलावा बैरोमीटर में दबाव में गिरावट और पक्षियों का तट की ओर लौटना भी इसके मुख्य संकेत हैं।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 8219
+    },
+    {
+      "id": "Q01",
+      "category": "clarify",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is it safe to go fishing tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "clarify"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Could you please tell me which location or port you are planning to fish from?",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 14245
+    },
+    {
+      "id": "Q02",
+      "category": "clarify",
+      "lang": "ta",
+      "style": "plain",
+      "q": "நாளை கடல் எப்படி இருக்கும்?",
+      "en": "How will the sea be tomorrow?",
+      "expect": {
+        "intent": "clarify"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "கடல் நிலவரத்தை அறிய உங்கள் ஊர் அல்லது மீன்பிடி துறைமுகத்தின் பெயரைச் சொல்ல முடியுமா?",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 9305
+    },
+    {
+      "id": "Q03",
+      "category": "clarify",
+      "lang": "en",
+      "style": "plain",
+      "q": "Where are the fish today?",
+      "en": null,
+      "expect": {
+        "intent": "clarify"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "today",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Could you please tell me which location or coastal area you are asking about?",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 2169
+    },
+    {
+      "id": "O01",
+      "category": "off_topic",
+      "lang": "en",
+      "style": "plain",
+      "q": "Who will win the cricket match today?",
+      "en": null,
+      "expect": {
+        "intent": "off_topic"
+      },
+      "got": {
+        "language": "en",
+        "intent": "off_topic",
+        "location": null,
+        "day": "today",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "This system is only for checking sea safety and weather for small-craft fishing on the Indian coast. Please ask about sea conditions, wind, or weather for your fishing trip.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 9231
+    },
+    {
+      "id": "O02",
+      "category": "off_topic",
+      "lang": "en",
+      "style": "plain",
+      "q": "Write me a poem about love",
+      "en": null,
+      "expect": {
+        "intent": "off_topic"
+      },
+      "got": {
+        "language": "en",
+        "intent": "off_topic",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "I can only answer questions about marine safety, weather, and sea conditions for small-craft fishermen on the Indian coast. Please tell me your location or fishing zone so I can check the safety status for you.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 11908
+    },
+    {
+      "id": "O03",
+      "category": "off_topic",
+      "lang": "hi",
+      "style": "plain",
+      "q": "मेरे फोन का रिचार्ज कैसे करूँ?",
+      "en": "How do I recharge my phone?",
+      "expect": {
+        "intent": "off_topic"
+      },
+      "got": {
+        "language": "hi",
+        "intent": "off_topic",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "यह सेवा केवल भारतीय तट पर मछुआरों के लिए मौसम और समुद्र की सुरक्षा जानकारी देने के लिए है। मैं केवल हवा, लहरों और मछली पकड़ने के क्षेत्रों के बारे में बता सकता हूँ। कृपया अपनी जगह का नाम या अपना सवाल मौसम से जोड़कर पूछें।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 6071
+    },
+    {
+      "id": "O04",
+      "category": "off_topic",
+      "lang": "en",
+      "style": "plain",
+      "q": "What is the price of sardines at the market today?",
+      "en": null,
+      "expect": {
+        "intent": [
+          "off_topic",
+          "general_knowledge"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "off_topic",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "I can only help you with marine safety and weather checks for your fishing trips along the Indian coast. Please tell me your location and the fishing zone you want to check, and I will get the latest details for you.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": false,
+      "ms": 5928
+    }
+  ]
+}

@@ -197,11 +197,21 @@ KEYWORDS: dict[Intent, tuple[str, ...]] = {
         "how high",
     ),
 }
+# Matched as whole words (see _day): a substring test read "know" as "now" → today.
+# Dict order is priority: "day after tomorrow" must be day_after, not tomorrow.
 DAY_WORDS: dict[str, Day] = {
     "day after": "day_after",
+    "parso": "day_after",  # Hindi in Latin script
     "tomorrow": "tomorrow",
+    "tmrw": "tomorrow",
+    "tmr": "tomorrow",
+    "kal": "tomorrow",  # Hindi "kal" — tomorrow in a forward-looking question
+    "this morning": "today",
+    "this afternoon": "today",
+    "this evening": "today",
     "tonight": "today",
     "today": "today",
+    "aaj": "today",
     "now": "today",
 }
 PART_WORDS: dict[str, DayPart] = {
@@ -209,13 +219,37 @@ PART_WORDS: dict[str, DayPart] = {
     "before dawn": "early_morning",
     "dawn": "early_morning",
     "morning": "morning",
+    "subah": "morning",
     "afternoon": "afternoon",
+    "dopahar": "afternoon",
     "evening": "evening",
+    "shaam": "evening",
     "night": "night",
     "tonight": "night",
+    "raat": "night",
     "all day": "all_day",
     "whole day": "all_day",
 }
+# "Which direction should I go to find fish?" asks about fishing zones even though it also
+# contains a safety phrase ("should I go"). Checked before the keyword table.
+FISH_FINDING = re.compile(
+    r"\b(find|locate|catch|get)\b[^.?!]*\bfish\b|\bwhere\b[^.?!]*\bfish\b|\bdirection\b[^.?!]*\bfish\b"
+)
+# Hindi typed in Latin letters ("Kal subah Porbandar se boat nikalna safe hai kya?"). Two or
+# more of these words → answer in Hindi. Deterministic, so it needs no model call.
+HINGLISH = frozenset(
+    "kal aaj parso subah shaam raat dopahar hai hain kya kaisa kaise kitna kitni kitne nahi "
+    "mein se ko jana jaana jaun nikalna nikal machli machhli samundar samudra mausam hoga "
+    "hogi rahega chahiye sakta sakte".split()
+)
+
+
+def _day(q: str) -> Day:
+    return next((d for w, d in DAY_WORDS.items() if re.search(rf"\b{re.escape(w)}\b", q)), "tomorrow")
+
+
+def _is_hinglish(q: str) -> bool:
+    return sum(w in HINGLISH for w in re.findall(r"[a-z]+", q)) >= 2
 VESSEL_WORDS: dict[str, VesselClass] = {
     "canoe": VesselClass.TRADITIONAL,
     "catamaran": VesselClass.TRADITIONAL,
@@ -270,17 +304,24 @@ STOP = {
 
 
 def _find_location(text: str) -> tuple[str, ResolvedLocation] | None:
-    """Try 1–3 word spans (longest first) against the resolver. Skips stop-word-only spans."""
+    """Try 1–3 word spans against the resolver and keep the BEST match, not the first: a weak
+    fuzzy hit on an early span ("i have a 15 m boat") must not beat an exact place name later
+    in the sentence ("…at Veraval"). An exact match is returned at once (longest spans first)."""
     words = re.findall(r"[a-z]+", text.lower())
+    best: tuple[tuple[float, int], str, ResolvedLocation] | None = None
     for n in (3, 2, 1):
         for k in range(len(words) - n + 1):
             span = words[k : k + n]
             if all(w in STOP for w in span) or len(span[-1]) < 4:
                 continue
             r = resolve_location(LocationQuery(name=" ".join(span)))
-            if r and (r.score >= 0.85 or n > 1):
+            if not r or not (r.score >= 0.85 or n > 1):
+                continue
+            if r.score >= 1.0:
                 return " ".join(span), r
-    return None
+            if best is None or (r.score, n) > best[0]:
+                best = ((r.score, n), " ".join(span), r)
+    return (best[1], best[2]) if best else None
 
 
 def fast_plan(query: str) -> Plan | None:
@@ -288,15 +329,16 @@ def fast_plan(query: str) -> Plan | None:
     if detect_script(query) != "en":
         return None
     q = query.lower()
-    intent: Intent | None = None
+    intent: Intent | None = Intent.PFZ if FISH_FINDING.search(q) else None
     for cand, words in KEYWORDS.items():  # dict order = priority: safety first
+        if intent is not None:
+            break
         if any(w in q for w in words):
             intent = cand
-            break
     if intent is None:
         return None
     loc = _find_location(q)
-    day: Day = next((d for w, d in DAY_WORDS.items() if w in q), "tomorrow")
+    day: Day = _day(q)
     part: DayPart = next((p for w, p in PART_WORDS.items() if w in q), "morning")
     vessel = next((v for w, v in VESSEL_WORDS.items() if w in q), None)
     m = re.search(r"(\d{1,2}(?:\.\d)?)\s*(?:m|metre|meter)\b", q)
@@ -308,7 +350,7 @@ def fast_plan(query: str) -> Plan | None:
     if intent in NEEDS_LOCATION and loc is None:
         return None
     return Plan(
-        language="en",
+        language="hi" if _is_hinglish(q) else "en",
         english_query=query,
         intent=intent,
         location_name=loc[0] if loc else None,
@@ -332,7 +374,7 @@ Classify `intent`:
 - boundary: distance to or crossing of the maritime boundary (Sri Lanka, Pakistan, EEZ), detention risk.
 - conditions: asking about waves, wind, swell, visibility, currents, sea temperature — without asking for a verdict.
 - chlorophyll: productivity, plankton, why the catch is declining, unusual water colour.
-- general_knowledge: a marine/fishing question that needs no live data (what is a PFZ, what does 2 m swell mean, why is the sea rough in monsoon). Put a short factual answer in `knowledge_answer`, in the user's language, with NO specific forecast numbers for any place or date.
+- general_knowledge: a marine/fishing question that needs no live data (what is a PFZ, what does 2 m swell mean, why is the sea rough in monsoon). Put a short factual answer in `knowledge_answer`, in the user's language, with NO specific forecast numbers for any place or date. NOT general_knowledge if the question names a specific harbour or place and asks what is happening there or why (e.g. "why is the catch falling near Chennai?" is chlorophyll; "how high are the waves at Kochi?" is conditions) — those need live data for that place.
 - off_topic: not about the sea, weather, fishing, boats or the coast.
 - clarify: the request needs live data but the location is missing and cannot be inferred. Put the question to ask in `clarify_question`, in the user's language.
 

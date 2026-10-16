@@ -964,3 +964,57 @@ the hit rate" note; the script gains a line on slide 9 and a prepared Q&A answer
   seasons (Chennai and Port Blair had zero do-not-sail mornings in this window). Noted as
   planned in §5; not started.
 - Removed the forced page break before §5 that left page 10 nearly empty.
+
+### Step 29 · The fisherman question bank — and what it found
+
+The supervisor asked for a bank of the questions fishermen actually ask. Built as a test set,
+not training data: each entry records the **expected understanding** (type, place, day, time,
+boat, language), never a fixed answer — "is it safe tomorrow" has a different right answer
+every day, so a model trained on question/answer pairs would memorise stale answers.
+
+- `data/question_bank/bank.json` — 49 questions across all 8 intents, in English, Tamil,
+  Hindi and Malayalam, including colloquial, misspelled and code-mixed (romanised Hindi)
+  phrasing, plus out-of-scope questions (cricket, phone recharge, fish market price).
+- `scripts/run_question_bank.py` — runs each through the full graph, scores understanding
+  field by field and the answer's behaviour (verdict where needed, every number verified,
+  reply in the asker's language); retries if the model was rate-limited rather than scoring
+  a quota error as a misunderstanding. Writes `results.json` and
+  `docs/question_bank_results.md`, which doubles as a recorded run for the demo.
+- Web: a **Question bank** panel (button in the header) lists all 49 by category with the
+  last run's ✓ / ✗ per question; one click asks it. `GET /question-bank` serves it.
+- `.claude/launch.json` gains the API server (the page needs both; only the web server was
+  configured, which is why "it won't run" — the page loaded with nothing behind it);
+  `.vscode/tasks.json` adds a one-click "Sagar Setu: start".
+
+**Result: 49 / 49 understood, 49 / 49 answers behaved** — after the fixes below. The first
+pass scored 20 / 24 on the questions it could score, and the misses were all real bugs:
+
+| Question | Bug | Fix |
+|---|---|---|
+| "I **have** a 15 m boat at Veraval" → *Vashi(Haveli)* | substring match crossed a word boundary ("vash**i have**li"), and the first weak multi-word hit beat the exact "Veraval" later | whole-word substring matching; `_find_location` keeps the best-scoring span, exact match wins |
+| "…Mangalore **this afternoon**" → tomorrow | no "this afternoon"; day words matched as substrings ("know" ⊃ "now") | added "this morning/afternoon/evening"; word-boundary matching |
+| "which direction should I go … to **find fish**" → safety | "should i go" is a safety keyword, checked first | a find/where/direction…fish pattern is checked before the keyword table |
+| "Kal subah Porbandar se boat … hai kya" → English | Latin-script Hindi read as English | ≥ 2 common Hindi words → language hi; kal/aaj/parso/subah/shaam/raat added |
+| PFZ and chlorophyll answers with the model down | **the deterministic template failed its own verification**: it prints each observation's grid distance, its age ("0 min ago") and a signed z-score ("-0.62"), none in the allowed set | allowed numbers now include ledger distances and ages, and magnitudes of negative values |
+| Tamil "why is the catch falling near Chennai" → general knowledge | planner prompt didn't exclude place-specific "why" questions | prompt: a named place asking what/why needs live data |
+| "what does a **2 metre** swell mean" → unverified | the asker's own number counted as invented | for general-knowledge questions only, numbers from the question are allowed; forecasts stay strict (test pins both) |
+
+**Gemini free tier.** The first full run exhausted `gemini-3.6-flash`'s daily quota
+(`429 GenerateRequestsPerDayPerProjectPerModel-FreeTier`, retry ≈ 17.6 h), which also
+explains every "model unavailable" in the second half. Free-tier quotas are **per model**, so:
+- `GeminiLLM` now takes a fallback list (`GEMINI_FALLBACK_MODELS`, default
+  `gemini-3.5-flash-lite,gemini-3.1-flash-lite`). A 429 or 503 parks that model for Google's
+  `retryDelay` and the request moves on; network errors still fail fast.
+- `gemini-3.5-flash-lite` answers `400 INVALID_ARGUMENT` to `thinkingConfig{thinkingBudget:0}`
+  (probed: plain 200, json-mode 200, thinking-config 400). The client now learns that per
+  model and resends without it.
+- All 8 Indian-language questions passed on the lite model.
+
+**Caught by reading the Tamil, not by any check:** the lite model rendered wind speed as
+"15.3 நொடிகள்" (seconds) instead of knots. The verifier checks numbers, not units — the
+limitation documented in the synopsis. Synthesis rule 8 now pins units and gives the word for
+knots in Tamil, Hindi and Malayalam; re-asked live, it wrote "15.3 நாட்".
+
+Tests: 115 → 124 (every bug above has a regression test). `results.json` merges the latest
+run of each question; 10 early-run answers are deterministic templates written while the
+model was out of quota, and are labelled as such in the report.

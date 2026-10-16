@@ -17,7 +17,7 @@ from marine.agents.synthesis import Brief, template_answer, verify
 from marine.config import SNAPSHOT_DIR
 from marine.graph import ask
 from marine.sources import base
-from marine.tools import ToolContext
+from marine.tools import LocationQuery, ToolContext, resolve_location
 
 # -- fixtures: network stub (same as test_tools) ------------------------------------------------
 
@@ -131,6 +131,104 @@ def test_fast_path_defers_when_no_location_or_non_latin():
     assert fast_plan("நாளை கடலுக்கு போகலாமா?") is None
 
 
+# Regressions found by the fisherman question bank (data/question_bank, run 2026-10-16).
+
+
+def test_fast_path_prefers_exact_place_over_an_early_fuzzy_span():
+    # "i have" used to match inside "vash[i have]li" and win before "Veraval" was reached.
+    p = fast_plan("I have a 15 metre boat at Veraval, is it ok to go out tomorrow early morning?")
+    assert p.location.name == "Veraval" and p.vessel == "motorised"
+    r = resolve_location(LocationQuery(name="i have"))
+    assert r is None or "haveli" not in r.name.lower()
+
+
+def test_fast_path_this_afternoon_is_today_and_know_is_not_now():
+    assert fast_plan("How strong is the wind off Mangalore this afternoon?").day == "today"
+    assert fast_plan("do you know the wave height at chennai").day == "tomorrow"
+
+
+def test_fast_path_finding_fish_is_pfz_even_with_a_safety_phrase():
+    p = fast_plan("Which direction should I go from Malpe to find fish?")
+    assert p.intent == Intent.PFZ and p.location.name == "Malpe"
+    assert fast_plan("Should I go fishing from Kochi tomorrow?").intent == Intent.SAFETY
+
+
+def test_fast_path_romanised_hindi_is_answered_in_hindi():
+    p = fast_plan("Kal subah Porbandar se boat nikalna safe hai kya?")
+    assert p.language == "hi" and p.intent == Intent.SAFETY and p.location.name == "Porbandar"
+    assert (p.day, p.part) == ("tomorrow", "morning")
+    assert fast_plan("Is it safe to go out from Kochi tomorrow?").language == "en"
+
+
+def _gemini_mock(seen: list[str], exhausted: set[str]) -> httpx.MockTransport:
+    def handler(req: httpx.Request) -> httpx.Response:
+        model = req.url.path.split("/models/")[1].split(":")[0]
+        seen.append(model)
+        if model in exhausted:
+            return httpx.Response(
+                429,
+                json={"error": {"code": 429, "status": "RESOURCE_EXHAUSTED", "details": [
+                    {"@type": "type.googleapis.com/google.rpc.RetryInfo", "retryDelay": "3600s"}
+                ]}},
+            )
+        return httpx.Response(200, json={"candidates": [{"content": {"parts": [{"text": "ok"}]}}]})
+
+    return httpx.MockTransport(handler)
+
+
+async def test_gemini_falls_back_when_a_models_daily_quota_is_spent():
+    from marine.agents import llm as llm_mod
+
+    llm_mod._PARKED.clear()
+    seen: list[str] = []
+    g = llm_mod.GeminiLLM("k", "primary", fallbacks=["backup"])
+    g.transport = _gemini_mock(seen, exhausted={"primary"})
+    assert await g.complete("s", "u") == "ok"
+    assert seen == ["primary", "backup"] and g.model == "backup"
+    seen.clear()
+    assert await g.complete("s", "u") == "ok"
+    assert seen == ["backup"]  # the spent model stays parked for its retryDelay
+    llm_mod._PARKED.clear()
+
+
+async def test_gemini_drops_thinking_config_for_models_that_reject_it():
+    # gemini-3.5-flash-lite answers 400 INVALID_ARGUMENT to thinkingConfig{thinkingBudget: 0}.
+    from marine.agents import llm as llm_mod
+
+    llm_mod._NO_THINKING_CONFIG.clear()
+    bodies: list[dict] = []
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        body = json.loads(req.content)
+        bodies.append(body)
+        if "thinkingConfig" in body["generationConfig"]:
+            err = {"code": 400, "message": "Request contains an invalid argument.",
+                   "status": "INVALID_ARGUMENT"}
+            return httpx.Response(400, json={"error": err})
+        ok = {"candidates": [{"content": {"parts": [{"text": "ok"}]}}]}
+        return httpx.Response(200, json=ok)
+
+    g = llm_mod.GeminiLLM("k", "lite")
+    g.transport = httpx.MockTransport(handler)
+    assert await g.complete("s", "u") == "ok"
+    assert len(bodies) == 2  # refused once, resent without thinkingConfig
+    bodies.clear()
+    assert await g.complete("s", "u") == "ok"
+    assert len(bodies) == 1 and "thinkingConfig" not in bodies[0]["generationConfig"]
+    llm_mod._NO_THINKING_CONFIG.clear()
+
+
+async def test_gemini_raises_unavailable_when_every_model_is_spent():
+    from marine.agents import llm as llm_mod
+
+    llm_mod._PARKED.clear()
+    g = llm_mod.GeminiLLM("k", "a", fallbacks=["b"])
+    g.transport = _gemini_mock([], exhausted={"a", "b"})
+    with pytest.raises(LLMUnavailable, match="every model unavailable"):
+        await g.complete("s", "u")
+    llm_mod._PARKED.clear()
+
+
 async def test_make_plan_without_llm_degrades_to_clarify():
     p = await make_plan("நாளை கடலுக்கு போகலாமா?", None)
     assert p.intent == Intent.CLARIFY and p.language == "ta" and p.clarify_question
@@ -235,6 +333,30 @@ async def test_graph_pfz_question_skips_risk_and_reports_zones(live_from_snapsho
     assert out["verdict"] is None
     assert out["geo"] is not None and out["geo"].pfz
     assert "PFZ" in out["answer"].text
+    # The template quotes chlorophyll with its grid distance and a signed z-score; both must
+    # pass the verifier, or the no-model fallback marks its own answer unverified.
+    assert out["answer"].verification.ok, out["answer"].verification.unsupported
+
+
+def test_general_knowledge_may_echo_the_askers_own_number_but_forecasts_may_not():
+    from marine.agents.planner import Plan
+    from marine.agents.synthesis import build_brief
+    from marine.ledger import EvidenceLedger
+
+    q = "What does a 2 metre swell mean for a small boat?"
+    gk = Plan(language="en", english_query=q, intent=Intent.GENERAL_KNOWLEDGE)
+    b = build_brief(gk, EvidenceLedger(), None, None, None, None)
+    assert verify("A 2-metre swell makes a small boat roll heavily.", b).ok
+    # A forecast question must not let the model "confirm" the asker's premise.
+    fc = Plan(language="en", english_query="waves will be 0.5 m at Kochi tomorrow, right?",
+              intent=Intent.CONDITIONS)
+    b2 = build_brief(fc, EvidenceLedger(), None, None, None, None)
+    assert not verify("Yes, waves will be 0.5 m.", b2).ok
+
+
+async def test_graph_chlorophyll_template_passes_its_own_verification(live_from_snapshot):
+    out = await ask("why has my catch dropped near kochi", llm=None, ctx=ToolContext())
+    assert out["answer"].verification.ok, out["answer"].verification.unsupported
 
 
 async def test_graph_clarify_when_no_location(live_from_snapshot):

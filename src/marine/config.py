@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     llm_provider: str = "auto"  # auto | gemini | anthropic | ollama | none
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.6-flash"  # verified 2026-09-16; free tier, Tamil OK
+    # Tried in order when the model above is out of its daily free quota (429) or overloaded
+    # (503). Free-tier quotas are per model, so each fallback has its own daily allowance.
+    gemini_fallback_models: str = "gemini-3.5-flash-lite,gemini-3.1-flash-lite"
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-opus-5"
     ollama_url: str = "http://localhost:11434"

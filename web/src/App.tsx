@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { askStream, fetchHealth, fetchStaticGeo, type AgentEvent, type AskResult, type StaticGeo, type Vessel } from "./api";
+import { askStream, fetchHealth, fetchQuestionBank, fetchStaticGeo, type AgentEvent, type AskResult, type QuestionBank as Bank, type StaticGeo, type Vessel } from "./api";
 import MapView from "./components/MapView";
+import QuestionBank from "./components/QuestionBank";
 import Ledger from "./components/Ledger";
 import VerdictCard from "./components/Verdict";
 import AgentTrace from "./components/AgentTrace";
@@ -30,12 +31,15 @@ export default function App() {
   const [vessel, setVessel] = useState<Vessel>(() => (localStorage.getItem("vessel") as Vessel) || "traditional");
   const [query, setQuery] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
+  const [bank, setBank] = useState<Bank | null>(null);
+  const [showBank, setShowBank] = useState(false);
   const abort = useRef<AbortController | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchStaticGeo().then(setGeo).catch(() => setGeo(null));
     fetchHealth().then(setHealth).catch(() => setHealth(null));
+    fetchQuestionBank().then(setBank).catch(() => setBank(null));
   }, []);
   useEffect(() => { localStorage.setItem("vessel", vessel); }, [vessel]);
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: "smooth" }); }, [turns]);
@@ -85,6 +89,11 @@ export default function App() {
           <div className="status">
             <span className={`dot ${health ? "ok" : "bad"}`} />
             {health ? <>model: {health.llm}</> : "API offline"}
+            {bank && (
+              <button className={`bank-open ${showBank ? "on" : ""}`} onClick={() => setShowBank((s) => !s)}>
+                Question bank ({bank.questions.length})
+              </button>
+            )}
             <label className="vessel">
               boat
               <select value={vessel} onChange={(e) => setVessel(e.target.value as Vessel)}>
@@ -97,7 +106,15 @@ export default function App() {
         </header>
 
         <div className="turns">
-          {turns.length === 0 && (
+          {showBank && bank && (
+            <QuestionBank
+              bank={bank}
+              disabled={busy}
+              onClose={() => setShowBank(false)}
+              onAsk={(q) => { setShowBank(false); submit(q); }}
+            />
+          )}
+          {!showBank && turns.length === 0 && (
             <div className="examples">
               <p className="muted">Try:</p>
               {EXAMPLES.map((e) => (
@@ -105,7 +122,7 @@ export default function App() {
               ))}
             </div>
           )}
-          {turns.map((t) => (
+          {!showBank && turns.map((t) => (
             <div key={t.id} className="turn">
               <div className="q">{t.query}</div>
               <AgentTrace events={t.events} busy={t.busy && !t.result} />

@@ -158,3 +158,27 @@ export async function fetchHealth(): Promise<{ ok: boolean; llm: string; snapsho
   const r = await fetch(`${API}/health`);
   return r.json();
 }
+
+export interface BankQuestion {
+  id: string;
+  category: string;
+  lang: string;
+  style: string;
+  q: string;
+  en?: string;
+  note?: string;
+  last_run?: { understood: boolean; behaved: boolean } | null;
+}
+
+export interface QuestionBank {
+  title: string;
+  categories: Record<string, string>;
+  questions: BankQuestion[];
+  summary?: { understood: string; behaved: string; run_at: string } | null;
+}
+
+export async function fetchQuestionBank(): Promise<QuestionBank> {
+  const r = await fetch(`${API}/question-bank`);
+  if (!r.ok) throw new Error(`API ${r.status}`);
+  return r.json();
+}

@@ -43,18 +43,70 @@ class LLM(Protocol):
 # -- Gemini (REST; no SDK dependency) -------------------------------------------------------
 
 
+# Free-tier quotas are per model per day. When one model is exhausted (429) or overloaded
+# (503) it is parked until Google says it may be retried, and the next model in the list is
+# used — so one spent quota cannot take the whole assistant down mid-demo. Process-wide, so
+# the API server stops hitting a dead model on every request.
+_PARKED: dict[str, float] = {}  # model -> time.monotonic() after which it may be tried again
+# Models that reject thinkingConfig {thinkingBudget: 0} with 400 INVALID_ARGUMENT (the
+# flash-lite family does). Learned on first refusal, then omitted for that model.
+_NO_THINKING_CONFIG: set[str] = set()
+_RETRY_DELAY = re.compile(r'"retryDelay"\s*:\s*"(\d+(?:\.\d+)?)s"')
+_FALLBACK_STATUSES = (429, 503)
+
+
+def _park(model: str, status: int, body: str) -> None:
+    m = _RETRY_DELAY.search(body)
+    secs = float(m.group(1)) if m else 60.0
+    _PARKED[model] = time.monotonic() + secs
+    log.warning("gemini %s returned %d; parked for %.0f s, falling back", model, status, secs)
+
+
 class GeminiLLM:
     name = "gemini"
 
-    def __init__(self, api_key: str, model: str, *, thinking: bool = False):
+    def __init__(
+        self,
+        api_key: str,
+        model: str,
+        *,
+        thinking: bool = False,
+        fallbacks: tuple[str, ...] | list[str] = (),
+    ):
         self.api_key, self.model, self.thinking = api_key, model, thinking
-        self.base = f"https://generativelanguage.googleapis.com/v1beta/models/{model}"
+        self.models = [model] + [f for f in fallbacks if f and f != model]
+        self.transport: httpx.AsyncBaseTransport | None = None  # tests inject a mock here
 
-    def _body(self, system: str, user: str, json_mode: bool, max_tokens: int) -> dict:
+    def _url(self, model: str, method: str) -> str:
+        return f"https://generativelanguage.googleapis.com/v1beta/models/{model}:{method}"
+
+    def _candidates(self) -> list[str]:
+        now = time.monotonic()
+        live = [m for m in self.models if _PARKED.get(m, 0.0) <= now]
+        # Everything parked: still try the primary, so the caller gets the real error.
+        return live or self.models[:1]
+
+    def _client(self) -> httpx.AsyncClient:
+        return httpx.AsyncClient(timeout=settings.llm_timeout_s, transport=self.transport)
+
+    def _rejects_thinking_config(self, model: str, status: int, body: str) -> bool:
+        """True (and remembered) if this 400 is the model refusing thinkingBudget=0."""
+        if (
+            status == 400
+            and not self.thinking
+            and model not in _NO_THINKING_CONFIG
+            and "invalid argument" in body.lower()
+        ):
+            _NO_THINKING_CONFIG.add(model)
+            log.warning("gemini %s rejects thinkingConfig; resending without it", model)
+            return True
+        return False
+
+    def _body(self, model: str, system: str, user: str, json_mode: bool, max_tokens: int) -> dict:
         cfg: dict = {"maxOutputTokens": max_tokens, "temperature": 0.2}
         if json_mode:
             cfg["responseMimeType"] = "application/json"
-        if not self.thinking:
+        if not self.thinking and model not in _NO_THINKING_CONFIG:
             cfg["thinkingConfig"] = {"thinkingBudget": 0}
         return {
             "systemInstruction": {"parts": [{"text": system}]},
@@ -64,47 +116,77 @@ class GeminiLLM:
 
     async def complete(self, system, user, *, json_mode=False, max_tokens=1024) -> str:
         t0 = time.perf_counter()
-        try:
-            async with httpx.AsyncClient(timeout=settings.llm_timeout_s) as c:
-                r = await c.post(
-                    f"{self.base}:generateContent",
-                    headers={"x-goog-api-key": self.api_key},
-                    json=self._body(system, user, json_mode, max_tokens),
+        last = ""
+        for model in self._candidates():
+            try:
+                async with self._client() as c:
+                    for _attempt in range(2):
+                        r = await c.post(
+                            self._url(model, "generateContent"),
+                            headers={"x-goog-api-key": self.api_key},
+                            json=self._body(model, system, user, json_mode, max_tokens),
+                        )
+                        if not self._rejects_thinking_config(model, r.status_code, r.text):
+                            break
+            except httpx.HTTPError as e:  # network trouble affects every model: fail fast
+                raise LLMUnavailable(f"gemini: {type(e).__name__}") from e
+            if r.status_code in _FALLBACK_STATUSES:
+                _park(model, r.status_code, r.text)
+                last = f"{model}: HTTP {r.status_code} {r.text[:200]}"
+                continue
+            if r.status_code != 200:
+                raise LLMUnavailable(f"gemini: HTTP {r.status_code} {r.text[:200]}")
+            try:
+                text = "".join(
+                    p.get("text", "") for p in r.json()["candidates"][0]["content"]["parts"]
                 )
-        except httpx.HTTPError as e:
-            raise LLMUnavailable(f"gemini: {type(e).__name__}") from e
-        if r.status_code != 200:
-            raise LLMUnavailable(f"gemini: HTTP {r.status_code} {r.text[:200]}")
-        try:
-            text = "".join(p.get("text", "") for p in r.json()["candidates"][0]["content"]["parts"])
-        except (KeyError, IndexError, ValueError) as e:
-            raise LLMUnavailable(f"gemini: malformed response ({e})") from e
-        log.info("gemini complete %d ms", (time.perf_counter() - t0) * 1000)
-        return text
+            except (KeyError, IndexError, ValueError) as e:
+                raise LLMUnavailable(f"gemini: malformed response ({e})") from e
+            self.model = model
+            log.info("gemini %s complete %d ms", model, (time.perf_counter() - t0) * 1000)
+            return text
+        raise LLMUnavailable(f"gemini: every model unavailable ({last})")
 
     async def stream(self, system, user, *, max_tokens=1024) -> AsyncIterator[str]:
-        try:
-            async with httpx.AsyncClient(timeout=settings.llm_timeout_s) as c:
-                async with c.stream(
-                    "POST",
-                    f"{self.base}:streamGenerateContent?alt=sse",
-                    headers={"x-goog-api-key": self.api_key},
-                    json=self._body(system, user, False, max_tokens),
-                ) as r:
-                    if r.status_code != 200:
-                        raise LLMUnavailable(f"gemini stream: HTTP {r.status_code}")
-                    async for line in r.aiter_lines():
-                        if not line.startswith("data: "):
-                            continue
-                        try:
-                            chunk = json.loads(line[6:])
-                            for p in chunk["candidates"][0]["content"]["parts"]:
-                                if p.get("text"):
-                                    yield p["text"]
-                        except (KeyError, IndexError, ValueError):
-                            continue
-        except httpx.HTTPError as e:
-            raise LLMUnavailable(f"gemini stream: {type(e).__name__}") from e
+        last = ""
+        for model in self._candidates():
+            for _attempt in range(2):
+                resend = False
+                try:
+                    async with self._client() as c:
+                        async with c.stream(
+                            "POST",
+                            self._url(model, "streamGenerateContent") + "?alt=sse",
+                            headers={"x-goog-api-key": self.api_key},
+                            json=self._body(model, system, user, False, max_tokens),
+                        ) as r:
+                            if r.status_code != 200:
+                                body = (await r.aread()).decode(errors="ignore")
+                                if self._rejects_thinking_config(model, r.status_code, body):
+                                    resend = True
+                                elif r.status_code in _FALLBACK_STATUSES:
+                                    _park(model, r.status_code, body)
+                                    last = f"{model}: HTTP {r.status_code}"
+                                else:
+                                    raise LLMUnavailable(f"gemini stream: HTTP {r.status_code}")
+                            else:
+                                self.model = model
+                                async for line in r.aiter_lines():
+                                    if not line.startswith("data: "):
+                                        continue
+                                    try:
+                                        chunk = json.loads(line[6:])
+                                        for p in chunk["candidates"][0]["content"]["parts"]:
+                                            if p.get("text"):
+                                                yield p["text"]
+                                    except (KeyError, IndexError, ValueError):
+                                        continue
+                                return
+                except httpx.HTTPError as e:
+                    raise LLMUnavailable(f"gemini stream: {type(e).__name__}") from e
+                if not resend:
+                    break
+        raise LLMUnavailable(f"gemini stream: every model unavailable ({last})")
 
 
 # -- Ollama (local, offline) ---------------------------------------------------------------
@@ -227,7 +309,10 @@ def get_llm(provider: str | None = None, *, thinking: bool = False) -> LLM:
     if p == "gemini":
         if not settings.gemini_api_key:
             raise LLMUnavailable("GEMINI_API_KEY not set")
-        return GeminiLLM(settings.gemini_api_key, settings.gemini_model, thinking=thinking)
+        fallbacks = [m.strip() for m in settings.gemini_fallback_models.split(",") if m.strip()]
+        return GeminiLLM(
+            settings.gemini_api_key, settings.gemini_model, thinking=thinking, fallbacks=fallbacks
+        )
     if p == "anthropic":
         if not settings.anthropic_api_key:
             raise LLMUnavailable("ANTHROPIC_API_KEY not set")
