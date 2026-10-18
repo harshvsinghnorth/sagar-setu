@@ -286,11 +286,15 @@ def _pfz_index(q: str) -> int | None:
 
 
 def _day(q: str) -> Day:
-    return next((d for w, d in DAY_WORDS.items() if re.search(rf"\b{re.escape(w)}\b", q)), "tomorrow")
+    return next(
+        (d for w, d in DAY_WORDS.items() if re.search(rf"\b{re.escape(w)}\b", q)), "tomorrow"
+    )
 
 
 def _is_hinglish(q: str) -> bool:
     return sum(w in HINGLISH for w in re.findall(r"[a-z]+", q)) >= 2
+
+
 VESSEL_WORDS: dict[str, VesselClass] = {
     "canoe": VesselClass.TRADITIONAL,
     "catamaran": VesselClass.TRADITIONAL,

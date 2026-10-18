@@ -57,6 +57,14 @@ def test_point_across_the_sri_lanka_line_is_outside_india():
     assert s.nearest_imbl.distance_km < 15
 
 
+@pytest.mark.parametrize("lat, lon", [(11.55, 92.95), (9.0, 93.0), (13.0, 93.2)])
+def test_andaman_and_nicobar_waters_are_indian_eez(lat, lon):
+    # Marine Regions publishes the Andaman & Nicobar EEZ as its own polygon (mrgid 8333);
+    # with the mainland polygon alone, the sea off Port Blair read as "land or port".
+    s = position_status(lat, lon)
+    assert s.zone == "eez" and s.inside_india_eez
+
+
 def test_open_ocean_far_south_is_outside_india():
     assert position_status(5.0, 70.0).zone == "outside_india"
 

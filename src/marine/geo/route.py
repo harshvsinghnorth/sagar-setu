@@ -15,6 +15,7 @@ from __future__ import annotations
 import heapq
 import math
 import time
+from collections import deque
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -23,6 +24,7 @@ from shapely.geometry import MultiLineString
 
 from marine.geo.boundaries import load_eez, load_imbl, load_india_union
 from marine.geo.geodesy import LocalPlane, haversine_km, initial_bearing_deg
+from marine.geo.land import is_land, load_land
 from marine.risk.thresholds import TABLES, VesselClass
 
 KMH_PER_KT = 1.852
@@ -56,9 +58,10 @@ class SeaField:
 class Grid:
     lats: np.ndarray  # (ny,) cell-centre latitudes, south → north
     lons: np.ndarray  # (nx,) cell-centre longitudes, west → east
-    navigable: np.ndarray  # (ny, nx) inside India's EEZ and ≥ margin from every IMBL
+    navigable: np.ndarray  # (ny, nx) Indian sea (EEZ, not land), ≥ margin from every IMBL
     in_eez: np.ndarray  # (ny, nx) inside India's EEZ at all
     foreign: np.ndarray  # (ny, nx) not Indian sea or land: another state's water or land
+    land: np.ndarray  # (ny, nx) Natural Earth 1:10m land (any state)
     imbl_km: np.ndarray  # (ny, nx) distance to the nearest IMBL
     node: np.ndarray  # (ny, nx) index of the nearest SeaField node
     margin_km: float
@@ -125,7 +128,12 @@ def build_grid(
     lats = np.arange(south, north + step_deg / 2, step_deg)
     lons = np.arange(west, east + step_deg / 2, step_deg)
     lon2, lat2 = np.meshgrid(lons, lats)
-    in_eez, foreign = _classify(lon2, lat2)
+    in_eez, in_union = _classify(lon2, lat2)
+    # A cell is land if land touches ANY part of it, not just its centre: a 2 km cell would
+    # otherwise step over strips narrower than itself (the Dhanushkodi spit is < 1 km wide).
+    half = step_deg / 2
+    boxes = shapely.box(lon2 - half, lat2 - half, lon2 + half, lat2 + half)
+    land = shapely.intersects(load_land(), boxes) | (in_union & ~in_eez)
 
     plane = LocalPlane(float(np.mean(lats)), float(np.mean(lons)))
     lines = [plane.to_xy_array(b.coords) for b in load_imbl()]
@@ -134,18 +142,21 @@ def build_grid(
     imbl_km = shapely.distance(pts, MultiLineString(lines)).reshape(lat2.shape)
 
     node = nearest_nodes(lat2.ravel(), lon2.ravel(), sea).reshape(lat2.shape)
-    navigable = in_eez & (imbl_km >= margin_km)
-    return Grid(lats, lons, navigable, in_eez, foreign, imbl_km, node, margin_km)
+    navigable = in_eez & ~land & (imbl_km >= margin_km)
+    return Grid(lats, lons, navigable, in_eez, ~in_union, land, imbl_km, node, margin_km)
 
 
 def _classify(lons: np.ndarray, lats: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """(inside India's EEZ, foreign). Indian land is neither: inside the EEZ+land union but
-    outside the EEZ — so land near the IMBL (Rameswaram island) is not mistaken for the
-    other state's water."""
+    """(inside India's EEZ, inside India's EEZ + land union).
+
+    Outside the union is another state's water or land — so land near the IMBL (Rameswaram
+    island) is not mistaken for foreign water. Land itself comes from Natural Earth 1:10m,
+    OR-ed with "in the union but not the EEZ": the EEZ outline alone treats narrow islands as
+    sea."""
     eez, union = load_eez(), load_india_union()
     shapely.prepare(eez)
     shapely.prepare(union)
-    return shapely.contains_xy(eez, lons, lats), ~shapely.contains_xy(union, lons, lats)
+    return shapely.contains_xy(eez, lons, lats), shapely.contains_xy(union, lons, lats)
 
 
 def _cell_of(grid: Grid, lat: float, lon: float) -> tuple[int, int]:
@@ -162,11 +173,41 @@ def _snap(grid: Grid, cell: tuple[int, int], passable: np.ndarray, max_km: float
     if len(ys) == 0:
         return None
     lat0, lon0 = grid.lats[cell[0]], grid.lons[cell[1]]
-    d = np.array(
-        [haversine_km(lat0, lon0, grid.lats[y], grid.lons[x]) for y, x in zip(ys, xs, strict=True)]
-    )
+    # Equirectangular is exact enough over a 12 km snap radius.
+    cos0 = math.cos(math.radians(float(lat0)))
+    d = 111.195 * np.hypot(grid.lats[ys] - lat0, (grid.lons[xs] - lon0) * cos0)
     k = int(np.argmin(d))
     return ((int(ys[k]), int(xs[k])), float(d[k])) if d[k] <= max_km else None
+
+
+def _reachable(passable: np.ndarray, cell: tuple[int, int]) -> np.ndarray:
+    """Cells joined to `cell` by 8-connected moves through passable water (flood fill)."""
+    ny, nx = passable.shape
+    seen = np.zeros_like(passable, dtype=bool)
+    seen[cell] = True
+    queue = deque([cell])
+    while queue:
+        i, j = queue.popleft()
+        for di, dj in MOVES:
+            a, b = i + di, j + dj
+            if 0 <= a < ny and 0 <= b < nx and passable[a, b] and not seen[a, b]:
+                seen[a, b] = True
+                queue.append((a, b))
+    return seen
+
+
+def _snap_pair(grid: Grid, si, gi, passable: np.ndarray, max_km: float):
+    """Snap start and goal into the SAME body of water. The nearest water to a harbour can be
+    a lagoon with no mouth at this resolution (Kochi's backwaters): snap the other end first,
+    then the harbour to the nearest water that actually connects to it."""
+    for first, second in ((gi, si), (si, gi)):
+        a = _snap(grid, first, passable, max_km)
+        if a is None:
+            continue
+        b = _snap(grid, second, _reachable(passable, a[0]), max_km)
+        if b is not None:
+            return (b, a) if first == gi else (a, b)
+    return None
 
 
 # -- cost ------------------------------------------------------------------------------------
@@ -270,13 +311,18 @@ def astar(
 
 
 def _segment_ok(grid: Grid, passable: np.ndarray, a: tuple[int, int], b: tuple[int, int]) -> bool:
-    """Every cell under the straight segment a→b is passable (sampled at ½-cell spacing)."""
+    """The straight segment a→b may be sailed: every cell under it is passable (sampled at
+    ½-cell spacing) AND the segment itself touches no land on the exact coastline — so
+    smoothing can never shortcut across a spit narrower than a cell."""
     steps = max(abs(b[0] - a[0]), abs(b[1] - a[1])) * 2 + 1
     for t in np.linspace(0.0, 1.0, steps):
         c = (round(a[0] + (b[0] - a[0]) * t), round(a[1] + (b[1] - a[1]) * t))
         if not passable[c]:
             return False
-    return True
+    seg = shapely.LineString(
+        [(grid.lons[a[1]], grid.lats[a[0]]), (grid.lons[b[1]], grid.lats[b[0]])]
+    )
+    return a == b or not load_land().intersects(seg)
 
 
 def smooth(grid: Grid, passable: np.ndarray, cells: list[tuple[int, int]]) -> list[tuple[int, int]]:
@@ -297,13 +343,14 @@ def smooth(grid: Grid, passable: np.ndarray, cells: list[tuple[int, int]]) -> li
 def check_line(
     grid: Grid, sea: SeaField, a: tuple[float, float], b: tuple[float, float]
 ) -> LineCheck:
-    """Sample the straight line a→b (lat, lon) every ~0.5 km."""
+    """Sample the straight line a→b (lat, lon) every ~0.1 km — fine enough to catch a spit."""
     dist = haversine_km(*a, *b)
-    n = max(int(dist / 0.5), 2)
+    n = max(int(dist / 0.1), 2)
     lats = np.linspace(a[0], b[0], n)
     lons = np.linspace(a[1], b[1], n)
-    in_eez, foreign = _classify(lons, lats)
-    land = ~in_eez & ~foreign
+    in_eez, in_union = _classify(lons, lats)
+    foreign = ~in_union
+    land = is_land(lons, lats) | (in_union & ~in_eez)
     cells = [_cell_of(grid, la, lo) for la, lo in zip(lats, lons, strict=True)]
     imbl = [float(grid.imbl_km[c]) for c in cells]
     nodes = nearest_nodes(lats, lons, sea)
@@ -329,7 +376,9 @@ def route_bbox(
 ) -> tuple[float, float, float, float]:
     """(south, west, north, east) searched around a trip — also the forecast grid's extent."""
     span = max(abs(goal[0] - start[0]), abs(goal[1] - start[1]))
-    pad = max(0.15, 0.3 * span)
+    # 0.3° minimum: room to go round a headland or island next to either end (the
+    # Dhanushkodi spit reaches ~0.15° east of Rameswaram harbour).
+    pad = max(0.3, 0.3 * span)
     return (
         min(start[0], goal[0]) - pad,
         min(start[1], goal[1]) - pad,
@@ -371,15 +420,20 @@ def plan_route(
     hazard = hazard_mask(grid, sea, vessel)
     attempts = [(grid.navigable & ~hazard, False), (grid.navigable, True)]
     for passable, through_hazard in attempts:
-        s = _snap(grid, _cell_of(grid, *start), passable, snap_km)
-        g = _snap(grid, gi, passable, snap_km)
-        if s is None or g is None:
+        pair = _snap_pair(grid, _cell_of(grid, *start), gi, passable, snap_km)
+        if pair is None:
             continue
+        s, g = pair
         cells = astar(grid, sea, passable, s[0], g[0], vessel, speed_kt)
         if cells is None:
             continue
         wp = smooth(grid, passable, cells)
         path = [(round(float(grid.lats[i]), 4), round(float(grid.lons[j]), 4)) for i, j in wp]
+        # Compare against the straight line from where the boat actually reaches open water,
+        # not from the harbour's coordinate: from Rameswaram's harbour the open water is on
+        # the Palk Bay side, and the straight line from THERE to the Gulf of Mannar crosses
+        # the island — which is what explains the detour.
+        direct = check_line(grid, sea, path[0], goal)
         dist = sum(haversine_km(*path[k], *path[k + 1]) for k in range(len(path) - 1))
         hours = sum(
             travel_hours(
@@ -415,7 +469,8 @@ def plan_route(
         )
     return RouteResult(
         False,
-        "no legal sea route found inside Indian waters",
+        "no sea route inside Indian waters at this map's resolution — narrow channels such "
+        "as Pamban are below what a 1:10m coastline can show",
         direct=direct,
         cells=grid.navigable.size,
         compute_ms=round((time.perf_counter() - t0) * 1000, 1),

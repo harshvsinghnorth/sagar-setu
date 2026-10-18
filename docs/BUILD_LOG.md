@@ -1113,3 +1113,48 @@ Result: the snapshot's PFZ advisory is now 2026-10-15 (81 zones, Julian day 288)
   asserted that Gujarat had no advisory on the snapshot day — true in September, false after
   the refresh. Rewritten to build the "nothing in range" case from the data (drop the Gujarat
   zones) instead of assuming a particular day's advisory.
+
+### Step 33 · A real coastline for routes — and the Andaman EEZ that was missing
+
+Route search took "land" from the Marine Regions EEZ outline, which treats narrow islands as
+sea: a route from Rameswaram to the Gulf of Mannar cut straight across Rameswaram island and
+the Dhanushkodi spit.
+
+- **Land mask:** Natural Earth 1:10m land + minor islands (public domain), clipped to the
+  Indian region — `data/static/ne_10m_land_india_region.geojson`, 0.29 MB, loaded by the new
+  `geo/land.py`. A grid cell is land if land touches **any part of its 2 km box**, not just
+  its centre, so a spit narrower than a cell still blocks. Every smoothed leg is also checked
+  against the exact coastline, and `check_line` now samples every 0.1 km.
+- **Result:** Rameswaram → Gulf of Mannar PFZ now goes round the east of Dhanushkodi: 81.2 km,
+  legs SE / SSW / W, never closer than 5.9 km to the IMBL. The answer says the straight line
+  crosses land, which is why it is longer. The straight line is now measured from where the boat
+  reaches open water, not from the harbour coordinate.
+- **Stated, not invented:** at 1:10m the Pamban channel between Rameswaram island and the
+  mainland is closed. We do not draw a passage the data does not show; the no-route reason
+  names this limitation.
+
+Testing all five harbours on the new mask found three more problems:
+
+1. **Kochi:** the nearest water to the harbour is the Vembanad backwater, whose mouth is
+   narrower than a cell, so the route snapped into a lagoon with no exit. The fix is
+   `_snap_pair`: snap the open-sea end first, flood-fill the water connected to it, then
+   snap the harbour into *that* water. Kochi now snaps 6.6 km to the open sea.
+2. **Rameswaram:** the search window (0.15° pad) was too small to go round the spit. The
+   minimum pad is now 0.3°; the forecast grid uses the same box.
+3. **Port Blair — an older bug, found by this test:** `india_eez_polygon.geojson` held only
+   the mainland EEZ (mrgid 8480). Marine Regions publishes the Andaman & Nicobar EEZ as a
+   separate polygon (mrgid 8333). Without it, the sea off Port Blair was classified as
+   "land or port", so the geofence never said "inside India's EEZ" there and every route
+   failed. Fetched mrgid 8333 (free, no key, 0.36 MB) and appended it; `load_eez()` now
+   unions all features.
+
+`_snap` is now vectorised, so Kochi's search fell from about 900 ms to 110 ms.
+
+Tests 140 → 148:
+- a Rameswaram leg-by-leg land check;
+- Kochi backwater snapping;
+- each harbour reaching open sea (four parametrised cases);
+- Andaman & Nicobar waters as Indian EEZ (three points).
+
+Bank questions R01–R04 re-run: 4/4 understood and behaved. The bank total is still 53/53.
+INCOIS PFZ timed out live during the run, and the answers said they used the stored copy.

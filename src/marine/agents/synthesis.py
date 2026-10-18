@@ -100,9 +100,7 @@ def _route_brief(r) -> tuple[list[str], set[float], list[str]]:
             lines.append("the straight line to it crosses into another country's waters")
         return lines, nums, degraded
     h, m = divmod(round(r.eta_min), 60)
-    lines.append(
-        f"suggested route: {r.distance_km:g} km, about {h} h {m} min at {r.speed_kt:g} kt"
-    )
+    lines.append(f"suggested route: {r.distance_km:g} km, about {h} h {m} min at {r.speed_kt:g} kt")
     lines.append("legs: " + "; ".join(f"{leg.distance_km:g} km {leg.compass}" for leg in r.legs))
     lines.append(
         f"the route stays at least {r.min_imbl_km:g} km inside the maritime boundary "
@@ -139,8 +137,18 @@ def _route_brief(r) -> tuple[list[str], set[float], list[str]]:
         "modelled — this is not a navigation chart"
     )
     nums |= {
-        r.distance_km, float(h), float(m), r.eta_min, r.speed_kt, r.min_imbl_km, r.margin_km,
-        abs(extra), r.direct_min_imbl_km, r.max_wave_m, r.period_at_max_wave_s, r.max_wind_kt,
+        r.distance_km,
+        float(h),
+        float(m),
+        r.eta_min,
+        r.speed_kt,
+        r.min_imbl_km,
+        r.margin_km,
+        abs(extra),
+        r.direct_min_imbl_km,
+        r.max_wave_m,
+        r.period_at_max_wave_s,
+        r.max_wind_kt,
     }
     nums |= {leg.distance_km for leg in r.legs} | {leg.bearing_deg for leg in r.legs}
     return lines, {x for x in nums if x is not None}, degraded

@@ -95,8 +95,11 @@ def load_imbl() -> list[BoundaryLine]:
 
 @lru_cache(maxsize=1)
 def load_eez() -> MultiPolygon:
+    """India's EEZ: mainland + Lakshadweep (mrgid 8480) and Andaman & Nicobar (mrgid 8333) —
+    Marine Regions publishes them as separate polygons."""
     data = json.loads((STATIC_DIR / "india_eez_polygon.geojson").read_text(encoding="utf-8"))
-    return shape(data["features"][0]["geometry"])
+    eez = unary_union([shape(f["geometry"]) for f in data["features"]])
+    return eez if isinstance(eez, MultiPolygon) else MultiPolygon([eez])
 
 
 @lru_cache(maxsize=1)

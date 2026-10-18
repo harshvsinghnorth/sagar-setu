@@ -167,9 +167,18 @@ def _gemini_mock(seen: list[str], exhausted: set[str]) -> httpx.MockTransport:
         if model in exhausted:
             return httpx.Response(
                 429,
-                json={"error": {"code": 429, "status": "RESOURCE_EXHAUSTED", "details": [
-                    {"@type": "type.googleapis.com/google.rpc.RetryInfo", "retryDelay": "3600s"}
-                ]}},
+                json={
+                    "error": {
+                        "code": 429,
+                        "status": "RESOURCE_EXHAUSTED",
+                        "details": [
+                            {
+                                "@type": "type.googleapis.com/google.rpc.RetryInfo",
+                                "retryDelay": "3600s",
+                            }
+                        ],
+                    }
+                },
             )
         return httpx.Response(200, json={"candidates": [{"content": {"parts": [{"text": "ok"}]}}]})
 
@@ -202,8 +211,11 @@ async def test_gemini_drops_thinking_config_for_models_that_reject_it():
         body = json.loads(req.content)
         bodies.append(body)
         if "thinkingConfig" in body["generationConfig"]:
-            err = {"code": 400, "message": "Request contains an invalid argument.",
-                   "status": "INVALID_ARGUMENT"}
+            err = {
+                "code": 400,
+                "message": "Request contains an invalid argument.",
+                "status": "INVALID_ARGUMENT",
+            }
             return httpx.Response(400, json={"error": err})
         ok = {"candidates": [{"content": {"parts": [{"text": "ok"}]}}]}
         return httpx.Response(200, json=ok)
@@ -255,15 +267,30 @@ def test_route_conditions_raise_the_verdict_inputs_with_period_from_the_same_nod
     ledger, t = EvidenceLedger(), datetime.now(UTC)
 
     def ob(var, val, unit, node):
-        return ledger.add(Observation(variable=var, value=val, unit=unit, source="grid",
-                                      valid_time=t, fetched_at=t, distance_km=1.0,
-                                      confidence=1.0, note=node))
+        return ledger.add(
+            Observation(
+                variable=var,
+                value=val,
+                unit=unit,
+                source="grid",
+                valid_time=t,
+                fetched_at=t,
+                distance_km=1.0,
+                confidence=1.0,
+                note=node,
+            )
+        )
 
-    ids = [o.id for o in (
-        ob("route_wave_height", 1.2, "m", "node A"), ob("route_wave_period", 9.0, "s", "node A"),
-        ob("route_wave_height", 2.1, "m", "node B"), ob("route_wave_period", 5.0, "s", "node B"),
-        ob("route_wind_speed", 22.0, "kt", "node B"),
-    )]
+    ids = [
+        o.id
+        for o in (
+            ob("route_wave_height", 1.2, "m", "node A"),
+            ob("route_wave_period", 9.0, "s", "node A"),
+            ob("route_wave_height", 2.1, "m", "node B"),
+            ob("route_wave_period", 5.0, "s", "node B"),
+            ob("route_wind_speed", 22.0, "kt", "node B"),
+        )
+    ]
     worse_at_sea = RiskInputs(wave_height_m=0.8, wave_period_s=8.0, wind_kt=10.0)
     merge_route_conditions(worse_at_sea, ledger, ids)
     # The 2.1 m wave is paired with node B's 5 s period, not node A's 9 s.
@@ -393,8 +420,11 @@ def test_general_knowledge_may_echo_the_askers_own_number_but_forecasts_may_not(
     b = build_brief(gk, EvidenceLedger(), None, None, None, None)
     assert verify("A 2-metre swell makes a small boat roll heavily.", b).ok
     # A forecast question must not let the model "confirm" the asker's premise.
-    fc = Plan(language="en", english_query="waves will be 0.5 m at Kochi tomorrow, right?",
-              intent=Intent.CONDITIONS)
+    fc = Plan(
+        language="en",
+        english_query="waves will be 0.5 m at Kochi tomorrow, right?",
+        intent=Intent.CONDITIONS,
+    )
     b2 = build_brief(fc, EvidenceLedger(), None, None, None, None)
     assert not verify("Yes, waves will be 0.5 m.", b2).ok
 
@@ -402,8 +432,9 @@ def test_general_knowledge_may_echo_the_askers_own_number_but_forecasts_may_not(
 async def test_graph_route_question_routes_to_the_nearest_zone_and_grades_it(live_from_snapshot):
     from marine.geo.boundaries import position_status
 
-    out = await ask("what is the best route from kochi to the fishing zone", llm=None,
-                    ctx=ToolContext())
+    out = await ask(
+        "what is the best route from kochi to the fishing zone", llm=None, ctx=ToolContext()
+    )
     r = out["geo"].route
     assert r is not None and r.found and r.destination == "PFZ #1"
     assert len(r.path) >= 2 and all(position_status(*p).zone == "eez" for p in r.path)
@@ -415,16 +446,18 @@ async def test_graph_route_question_routes_to_the_nearest_zone_and_grades_it(liv
     assert "not a navigation chart" in ans.text
 
 
-async def test_route_falls_back_to_the_harbour_forecast_and_says_so(live_from_snapshot,
-                                                                    monkeypatch):
+async def test_route_falls_back_to_the_harbour_forecast_and_says_so(
+    live_from_snapshot, monkeypatch
+):
     import marine.tools.route as tr
 
     async def no_grid(_url):
         return None
 
     monkeypatch.setattr(tr, "_fetch", no_grid)
-    out = await ask("what is the best route from kochi to the fishing zone", llm=None,
-                    ctx=ToolContext())
+    out = await ask(
+        "what is the best route from kochi to the fishing zone", llm=None, ctx=ToolContext()
+    )
     r = out["geo"].route
     assert r.found and r.sea_state_source == "harbour_only"
     assert any("route sea state" in d for d in out["answer"].degradation)

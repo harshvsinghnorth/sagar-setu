@@ -10,7 +10,8 @@ Status is what actually happened, not what the documentation says.
 | Open-Meteo marine + forecast | ✅ live, no key, 250–1300 ms | **Primary** for waves, swell, wind, visibility, SST, currents. Reliability floor. |
 | INCOIS PFZ (GeoServer WFS) | ✅ live GeoJSON, no key, 1–8 s (1.1 MB) | **Only** PFZ source. Fetch once per day, cache. |
 | INCOIS landing centres + sectors (WFS) | ✅ static | Location resolver (1223 named landing centres) + sector polygons. Committed. |
-| Marine Regions EEZ polygon + boundaries | ✅ static, 38 s for 1.85 MB | Committed to `data/static/`. Never fetched at runtime. |
+| Marine Regions EEZ polygon + boundaries | ✅ static, 38 s for 1.85 MB | Committed to `data/static/`. Never fetched at runtime. Mainland (mrgid 8480) **and** Andaman & Nicobar (mrgid 8333, added 2026-10-19) — separate polygons upstream. |
+| Natural Earth 1:10m land + minor islands | ✅ static, public domain, clipped to 0.29 MB | Land mask for route search (`data/static/ne_10m_land_india_region.geojson`). Added 2026-10-19. |
 | NOAA VIIRS chlorophyll (CoastWatch ERDDAP) | ✅ live, 1–2 s, needs browser UA | Chlorophyll. Copernicus substitute. |
 | INCOIS ERDDAP Argo 10-day T/S | ⚠️ live but 1° grid, ~6 weeks stale, null nearshore | Weak SST cross-check. Ledger shows the staleness. |
 | INCOIS ERDDAP everything else | ❌ stale (SST→2011, chl→2006, ASCAT→2023) | Climatology baseline only, if at all. |
@@ -86,6 +87,18 @@ GET https://geo.vliz.be/geoserver/MarineRegions/wfs?service=WFS&version=1.0.0&re
     &typeName=MarineRegions:eez&cql_filter=mrgid=8480&outputFormat=application/json        # India EEZ polygon
     &typeName=MarineRegions:eez_boundaries&cql_filter=sovereign1='India' OR sovereign2='India'  # IMBL lines
 ```
+
+The Andaman & Nicobar EEZ is a separate feature: the same request with `cql_filter=mrgid=8333`
+(200, 0.36 MB, 4.5 s on 2026-10-19). `india_eez_polygon.geojson` holds both; `load_eez()`
+unions them.
+
+## Natural Earth 1:10m land (route land mask)
+
+`ne_10m_land` + `ne_10m_minor_islands` from naturalearthdata.com — public domain, no key.
+Clipped to lon 64–100, lat 0–27 and rounded to 1e-5° → 0.29 MB, 13,662 vertices. Finer than
+the EEZ outline (Rameswaram island and the Dhanushkodi spit are land), still a 1:10 000 000
+product: it closes the Pamban channel and misses small harbour features such as Kochi's
+inlet. Routes are advice, never a chart.
 
 `eez_boundaries` feature `eez_boundaries.117` is the India–Sri Lanka line through Palk Bay /
 Gulf of Mannar starting at (79.533, 9.10). Properties include `line_name`, `sovereign1/2`,

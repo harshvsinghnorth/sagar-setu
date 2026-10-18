@@ -106,7 +106,46 @@ def test_eta_is_plain_travel_time_and_a_following_current_shortens_it():
     assert helped.eta_min < calm.eta_min
 
 
+def test_route_never_crosses_the_rameswaram_island_or_the_dhanushkodi_spit():
+    # Rameswaram's harbour opens to Palk Bay; the Gulf of Mannar is on the other side of an
+    # island joined (at 1:10m) to the mainland, with a spit under 1 km wide running SE. The
+    # coarse EEZ outline let the first version cut straight across both.
+    from marine.geo.land import load_land
+
+    r = plan_route((9.29, 79.31), (9.01, 79.21), sea())
+    assert r.found
+    for a, b in zip(r.path, r.path[1:], strict=False):
+        leg = __import__("shapely").LineString([(a[1], a[0]), (b[1], b[0])])
+        assert not load_land().intersects(leg), (a, b)
+    assert r.direct.crosses_land  # measured from where the boat reaches open water
+    assert r.distance_km > r.direct.distance_km
+
+
 def test_a_harbour_on_land_is_snapped_to_open_water():
     r = plan_route((9.29, 79.31), (9.80, 79.30), sea())  # Rameswaram harbour → Palk Bay
     assert r.found and 0 < r.start_snap_km < 6
     assert position_status(*r.path[0]).zone == "eez"
+
+
+def test_kochi_snaps_past_the_backwaters_to_water_that_reaches_the_sea():
+    # The nearest water to Kochi harbour is the Vembanad backwater, whose mouth is narrower
+    # than a grid cell — snapping there left the route with nowhere to go.
+    r = plan_route((9.97, 76.28), (9.85, 76.08), sea(), snap_km=12.0)
+    assert r.found and r.start_snap_km < 12
+    assert position_status(*r.path[0]).zone == "eez"
+
+
+@pytest.mark.parametrize(
+    "harbour, offshore",
+    [
+        ((20.90, 70.37), (20.75, 70.15)),  # Veraval
+        ((13.09, 80.29), (13.10, 80.55)),  # Chennai
+        ((20.26, 86.67), (20.10, 86.90)),  # Paradip
+        ((11.62, 92.73), (11.55, 92.95)),  # Port Blair — needs the Andaman & Nicobar EEZ
+    ],
+)
+def test_every_test_harbour_reaches_open_sea(harbour, offshore):
+    s, n = min(harbour[0], offshore[0]) - 1, max(harbour[0], offshore[0]) + 1
+    w, e = min(harbour[1], offshore[1]) - 1, max(harbour[1], offshore[1]) + 1
+    r = plan_route(harbour, offshore, sea(south=s, north=n, west=w, east=e))
+    assert r.found, r.reason
