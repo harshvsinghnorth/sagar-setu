@@ -1074,3 +1074,17 @@ The map draws the route over a dashed straight line, red when that line would cr
   verified against Open-Meteo's documentation; it only affects travel time, not safety.
 
 Tests 131 → 136.
+
+### Step 31 · Saying where each threshold table came from
+
+CLAUDE.md asks for three vessel tables but gives numbers for one. The traditional-craft
+limits are the spec's starting values; the motorised and mechanised limits were set in Phase 2
+by stepping each limit up for a larger hull (+0.5 m waves, +3–4 kt wind per class) — our
+extrapolation, no source. Step 10 recorded that only as "progressively looser", which reads
+as more authoritative than it is.
+
+`TABLE_SOURCE` in `risk/thresholds.py` now names the origin of each table, every
+`RiskVerdict.calibration` carries it (so the verdict card says "our extrapolation —
+unsourced" for a 15 m boat), and `/health` reports it next to the numbers. A parametrised
+test pins all three. The 92-day evaluation used only the traditional table, so its figures
+are unaffected. Tests 136 → 139.

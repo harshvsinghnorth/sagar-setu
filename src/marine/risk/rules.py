@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 from marine.risk.thresholds import (
     CALIBRATION,
     CAPE_CAUTION_JKG,
+    TABLE_SOURCE,
     TABLES,
     THUNDERSTORM_CODES,
     Band,
@@ -352,5 +353,6 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
         parameters=params,
         reasons=reasons,
         data_gaps=gaps,
+        calibration=f"thresholds: {TABLE_SOURCE[vessel.value]}",
         computed_ms=round((time.perf_counter() - t0) * 1000, 3),
     )

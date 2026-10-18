@@ -38,6 +38,17 @@ CALIBRATION = (
     "provisional — CLAUDE.md starting values, not yet calibrated against INCOIS/IMD criteria"
 )
 
+# Where each table came from. Only the traditional-craft numbers come from the project
+# specification (CLAUDE.md, "Risk thresholds"); the spec asks for three tables but gives
+# numbers for one. The motorised and mechanised tables are OUR EXTRAPOLATION — each limit
+# stepped up for a larger hull (+0.5 m waves, +3–4 kt wind per class) — with no source behind
+# them at all. Shown to the user and to reviewers so nobody mistakes them for a citation.
+TABLE_SOURCE: dict[str, str] = {
+    "traditional": "project specification (CLAUDE.md) starting values — provisional",
+    "motorised": "our extrapolation from the traditional table — unsourced",
+    "mechanised": "our extrapolation from the traditional table — unsourced",
+}
+
 
 class Level(IntEnum):
     """Ordered so that max() gives the worst. Worst-of wins; never average."""

@@ -252,3 +252,20 @@ def test_parameter_verdicts_carry_ledger_evidence_ids():
         "obs_0002",
     ]
     assert next(p for p in v.parameters if p.parameter == "wind").evidence == ["obs_0003"]
+
+
+@pytest.mark.parametrize(
+    "vessel,word",
+    [
+        (VesselClass.TRADITIONAL, "specification"),
+        (VesselClass.MOTORISED, "unsourced"),
+        (VesselClass.MECHANISED, "unsourced"),
+    ],
+)
+def test_verdict_names_where_its_thresholds_came_from(vessel, word):
+    # Only the traditional table comes from the spec; the larger-hull tables are our own
+    # extrapolation and must never read as if they were cited.
+    v = evaluate(
+        RiskInputs(wave_height_m=0.5, wave_period_s=8.0, wind_kt=5.0, visibility_km=10.0), vessel
+    )
+    assert word in v.calibration

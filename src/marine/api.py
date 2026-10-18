@@ -32,7 +32,7 @@ from marine.config import ROOT, SNAPSHOT_DIR, STATIC_DIR, settings
 from marine.fixtures import HARBOURS, KNOWN_PORTS
 from marine.geo.boundaries import IMBL_TYPES
 from marine.graph import ask_streaming
-from marine.risk.thresholds import TABLES, VesselClass
+from marine.risk.thresholds import TABLE_SOURCE, TABLES, VesselClass
 from marine.sources import incois_pfz
 from marine.sources.base import PointQuery
 from marine.sources.open_meteo import OpenMeteoMarine, OpenMeteoWeather
@@ -194,6 +194,7 @@ def health() -> dict:
                 "wave_height_m": [t.wave_height_m.caution, t.wave_height_m.no_go],
                 "wind_kt": [t.wind_kt.caution, t.wind_kt.no_go],
                 "visibility_km": [t.visibility_km.caution, t.visibility_km.no_go],
+                "source": TABLE_SOURCE[v.value],
             }
             for v, t in TABLES.items()
         },
