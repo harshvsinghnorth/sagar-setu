@@ -1158,3 +1158,9 @@ Tests 140 → 148:
 
 Bank questions R01–R04 re-run: 4/4 understood and behaved. The bank total is still 53/53.
 INCOIS PFZ timed out live during the run, and the answers said they used the stored copy.
+
+*Commit note:* this whole step is in commit `c554538`, which is mislabelled "style: ruff
+format". PowerShell 5.1 split the real message at its quote marks, so the first commit failed
+and the formatting commit picked up everything that was staged. It was already pushed, so it
+was left as it is rather than force-pushing `main`. Commits now take their message from a
+file (`git commit -F`).
