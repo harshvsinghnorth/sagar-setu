@@ -105,10 +105,15 @@ def _eez_prepared():
 
 
 @lru_cache(maxsize=1)
-def _india_union_prepared():
+def load_india_union():
     """EEZ + land union (Marine Regions eez_land): 'is this point Indian at all?'"""
     data = json.loads((STATIC_DIR / "india_eez_land_union.geojson").read_text(encoding="utf-8"))
-    return prep(unary_union([shape(f["geometry"]) for f in data["features"]]))
+    return unary_union([shape(f["geometry"]) for f in data["features"]])
+
+
+@lru_cache(maxsize=1)
+def _india_union_prepared():
+    return prep(load_india_union())
 
 
 @lru_cache(maxsize=1)
