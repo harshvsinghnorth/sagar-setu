@@ -1,0 +1,2660 @@
+{
+  "summary": {
+    "run_at": "2026-10-18T18:47:45+00:00",
+    "questions": 53,
+    "scored": 20,
+    "errors": [],
+    "llm_unavailable": [
+      "S02",
+      "S04",
+      "S07",
+      "S08",
+      "S09",
+      "S10",
+      "S11",
+      "S12",
+      "C04",
+      "C05",
+      "P04",
+      "P05",
+      "P06",
+      "B04",
+      "B05",
+      "B06",
+      "R03",
+      "R04",
+      "A02",
+      "A03",
+      "A04",
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "Q01",
+      "Q02",
+      "Q03",
+      "O01",
+      "O02",
+      "O03",
+      "O04"
+    ],
+    "understood": "20/20 (100 %)",
+    "behaved": "20/20 (100 %)",
+    "by_language": {
+      "en": "19/19 (100 %)",
+      "hi": "1/1 (100 %)"
+    },
+    "by_category": {
+      "boundary": "3/3 (100 %)",
+      "chlorophyll": "1/1 (100 %)",
+      "conditions": "4/4 (100 %)",
+      "pfz": "4/4 (100 %)",
+      "route": "2/2 (100 %)",
+      "safety": "6/6 (100 %)"
+    },
+    "by_style": {
+      "code-mixed": "1/1 (100 %)",
+      "misspelled": "2/2 (100 %)",
+      "plain": "17/17 (100 %)"
+    },
+    "fields": {
+      "language": "20/20 (100 %)",
+      "intent": "20/20 (100 %)",
+      "location": "20/20 (100 %)",
+      "day": "10/10 (100 %)",
+      "part": "6/6 (100 %)",
+      "vessel": "1/1 (100 %)",
+      "heading_deg": "2/2 (100 %)",
+      "speed_kt": "2/2 (100 %)",
+      "pfz_index": "1/1 (100 %)"
+    },
+    "behaviour": {
+      "answered": "20/20 (100 %)",
+      "numbers_verified": "20/20 (100 %)",
+      "reply_language": "20/20 (100 %)",
+      "verdict_given": "8/8 (100 %)",
+      "degradation_stated": "11/11 (100 %)",
+      "route_found": "2/2 (100 %)"
+    },
+    "answer_sources": {
+      "template_fallback": 20
+    },
+    "median_ms": 5873
+  },
+  "rows": [
+    {
+      "id": "S01",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is it safe to go fishing from Kochi tomorrow morning?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "kochi"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "DO NOT SAIL",
+      "answer": "DO NOT SAIL — traditional craft off Kochi, Tue 20 Oct 05:00–12:00 IST.\n• visibility 0.58 km ≤ no-go threshold 2 km\n• wave height 0.86 m\n• wave period 11.6 s\n• swell height 0.8 m\n• swell period 10.3 s\n• wind 4.3 kt\n• gusts 11.3 kt\n• wind direction 333 deg\n• visibility 0.58 km\n• sea temperature 31 degC\n• current 0.216 kt\n• current direction 180 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 25.7 km WSW (bearing 239°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #2: 59.2 km NW (bearing 304°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #3: 64.7 km S (bearing 187°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 277.1 km to the SSW\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 8414
+    },
+    {
+      "id": "S02",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Can I take my vallam out from Vizhinjam tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "vizhinjam"
+        ],
+        "day": "tomorrow",
+        "vessel": "traditional"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": true,
+        "vessel": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3674
+    },
+    {
+      "id": "S03",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "I have a 15 metre boat at Veraval, is it ok to go out tomorrow early morning?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "veraval"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "early_morning",
+          "morning"
+        ],
+        "vessel": "motorised"
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Veraval",
+        "day": "tomorrow",
+        "part": "early_morning",
+        "vessel": "motorised",
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true,
+        "vessel": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "GO — motorised craft off Veraval, Tue 20 Oct 03:00–08:00 IST.\n• wave height 0.66 m\n• wave period 10.55 s\n• swell height 0.66 m\n• swell period 8.95 s\n• wind 4.8 kt\n• gusts 8 kt\n• wind direction 39 deg\n• visibility 14.68 km\n• sea temperature 29.7 degC\n• current 0.486 kt\n• current direction 307 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 26.3 km W (bearing 260°) from Veraval, Gujarat sector, advisory dated 2026-10-15\n• PFZ #2: 41.8 km SE (bearing 134°) from Veraval, Gujarat sector, advisory dated 2026-10-15\n• PFZ #3: 119.7 km WNW (bearing 298°) from Veraval, Gujarat sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Pakistan - India (Pakistan) 361.9 km to the WNW\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 6001
+    },
+    {
+      "id": "S04",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Should my trawler leave Paradip harbour the day after tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "paradip"
+        ],
+        "day": "day_after",
+        "vessel": "mechanised"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": false,
+        "vessel": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3699
+    },
+    {
+      "id": "S05",
+      "category": "safety",
+      "lang": "en",
+      "style": "misspelled",
+      "q": "sea rough tmrw near chenai? can go fishing?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "chennai",
+          "kasimedu"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Chennai",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Chennai, Tue 20 Oct 05:00–12:00 IST.\n• visibility 4.9 km ≤ caution threshold 5 km\n• wave height 0.5 m\n• wave period 9.85 s\n• swell height 0.38 m\n• swell period 10.9 s\n• wind 6.4 kt\n• gusts 18.1 kt\n• wind direction 351 deg\n• visibility 4.9 km\n• sea temperature 30.2 degC\n• current 0.486 kt\n• current direction 207 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 54.6 km E (bearing 98°) from Chennai, North Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 68 km SE (bearing 133°) from Chennai, North Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #3: 83.1 km SSE (bearing 158°) from Chennai, North Tamilnadu sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 277.4 km to the SSE\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5844
+    },
+    {
+      "id": "S06",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Leaving Rameswaram at 5 am heading 90 degrees at 8 knots — is that safe?",
+      "en": null,
+      "expect": {
+        "intent": [
+          "safety",
+          "boundary"
+        ],
+        "location": [
+          "rameswaram"
+        ],
+        "part": [
+          "early_morning",
+          "morning"
+        ],
+        "heading_deg": 90,
+        "speed_kt": 8
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": 90.0,
+        "speed_kt": 8.0,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "part": true,
+        "heading_deg": true,
+        "speed_kt": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Rameswaram, Tue 20 Oct 05:00–12:00 IST.\n• visibility 4.18 km ≤ caution threshold 5 km\n• current heading crosses Sri Lanka - India in 94.5 min — change heading before then\n• wave height 0.92 m\n• wave period 12.6 s\n• swell height 0.82 m\n• swell period 10.2 s\n• wind 7.6 kt\n• gusts 10.5 kt\n• wind direction 358 deg\n• visibility 4.18 km\n• sea temperature 30.5 degC\n• current 0.162 kt\n• current direction 315 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 47.5 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 94.3 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 23.1 km to the E\n• on the stated heading and speed the track reaches Sri Lanka - India in 94.5 min (23.3 km) — beyond the 90 min horizon\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5879
+    },
+    {
+      "id": "S07",
+      "category": "safety",
+      "lang": "ta",
+      "style": "plain",
+      "q": "நாளை காலை கொச்சியில் இருந்து கடலுக்கு போகலாமா?",
+      "en": "Can I go to sea from Kochi tomorrow morning?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "kochi"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3661
+    },
+    {
+      "id": "S08",
+      "category": "safety",
+      "lang": "ta",
+      "style": "plain",
+      "q": "இன்று மாலை நாகப்பட்டினத்தில் கடல் பாதுகாப்பாக இருக்குமா?",
+      "en": "Will the sea be safe at Nagapattinam this evening?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "nagapattinam"
+        ],
+        "day": "today",
+        "part": "evening"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": false,
+        "part": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3713
+    },
+    {
+      "id": "S09",
+      "category": "safety",
+      "lang": "ta",
+      "style": "colloquial",
+      "q": "என் கட்டுமரத்துடன் நாளை அதிகாலை காசிமேட்டில் இருந்து மீன்பிடிக்க போகலாமா?",
+      "en": "Can I go fishing from Kasimedu early tomorrow morning with my kattumaram?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "kasimedu",
+          "chennai"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "early_morning",
+          "morning"
+        ],
+        "vessel": "traditional"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": true,
+        "part": true,
+        "vessel": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3711
+    },
+    {
+      "id": "S10",
+      "category": "safety",
+      "lang": "hi",
+      "style": "plain",
+      "q": "क्या कल सुबह वेरावल से समुद्र में जाना सुरक्षित है?",
+      "en": "Is it safe to go to sea from Veraval tomorrow morning?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "veraval"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3684
+    },
+    {
+      "id": "S11",
+      "category": "safety",
+      "lang": "hi",
+      "style": "colloquial",
+      "q": "कल पारादीप से नाव ले जाऊं क्या? मौसम कैसा रहेगा?",
+      "en": "Should I take the boat out from Paradip tomorrow? How will the weather be?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "paradip"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3756
+    },
+    {
+      "id": "S12",
+      "category": "safety",
+      "lang": "ml",
+      "style": "plain",
+      "q": "നാളെ രാവിലെ കൊച്ചിയിൽ നിന്ന് കടലിൽ പോകാമോ?",
+      "en": "Can I go to sea from Kochi tomorrow morning?",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "kochi"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "ml",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3689
+    },
+    {
+      "id": "S13",
+      "category": "safety",
+      "lang": "hi",
+      "style": "code-mixed",
+      "q": "Kal subah Porbandar se boat nikalna safe hai kya?",
+      "en": "Is it safe to take the boat out from Porbandar tomorrow morning? (Hindi written in English letters)",
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "porbandar"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "safety",
+        "location": "Porbandar",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "GO — traditional craft off Porbandar, Tue 20 Oct 05:00–12:00 IST.\n• wave height 0.66 m\n• wave period 10.55 s\n• swell height 0.66 m\n• swell period 8.95 s\n• wind 4.8 kt\n• gusts 10.5 kt\n• wind direction 344 deg\n• visibility 14.68 km\n• sea temperature 29.8 degC\n• current 0.81 kt\n• current direction 300 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 25.6 km SW (bearing 235°) from Porbandar, Gujarat sector, advisory dated 2026-10-15\n• PFZ #2: 54.3 km W (bearing 260°) from Porbandar, Gujarat sector, advisory dated 2026-10-15\n• PFZ #3: 83.6 km SSE (bearing 148°) from Porbandar, Gujarat sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Pakistan - India (Pakistan) 250.4 km to the WNW\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5970
+    },
+    {
+      "id": "S14",
+      "category": "safety",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is it safe to go out from Port Blair tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "safety",
+        "location": [
+          "port blair"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "en",
+        "intent": "safety",
+        "location": "Port Blair",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Port Blair, Tue 20 Oct 05:00–12:00 IST.\n• visibility 3.96 km ≤ caution threshold 5 km\n• no lightning feed; convective proxy: CAPE 2160 J/kg ≥ 2000\n• wave height 0.22 m\n• wave period 7.75 s\n• swell height 0.18 m\n• swell period 7.1 s\n• wind 7 kt\n• gusts 16.7 kt\n• wind direction 102 deg\n• visibility 3.96 km\n• sea temperature 30.8 degC\n• current 0.324 kt\n• current direction 225 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 59 km SSE (bearing 162°) from Port Blair, Andaman sector, advisory dated 2026-10-15\n• PFZ #2: 86.5 km ENE (bearing 60°) from Port Blair, Andaman sector, advisory dated 2026-10-15\n• PFZ #3: 91.8 km S (bearing 178°) from Port Blair, Andaman sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Andaman and Nicobar (India) - Myanmar (Myanmar) 240.5 km to the NNE\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5767
+    },
+    {
+      "id": "C01",
+      "category": "conditions",
+      "lang": "en",
+      "style": "plain",
+      "q": "What will the wave height be at Chennai tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "chennai",
+          "kasimedu"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "en",
+        "intent": "conditions",
+        "location": "Chennai",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Conditions off Chennai, Tue 20 Oct 05:00–12:00 IST:\n• wave height 0.5 m\n• wave period 9.85 s\n• swell height 0.38 m\n• swell period 10.9 s\n• wind 6.4 kt\n• gusts 18.1 kt\n• wind direction 351 deg\n• visibility 4.9 km\n• sea temperature 30.2 degC\n• current 0.486 kt\n• current direction 207 deg\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5779
+    },
+    {
+      "id": "C02",
+      "category": "conditions",
+      "lang": "en",
+      "style": "plain",
+      "q": "How strong is the wind off Mangalore this afternoon?",
+      "en": null,
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "mangalore"
+        ],
+        "day": "today",
+        "part": "afternoon"
+      },
+      "got": {
+        "language": "en",
+        "intent": "conditions",
+        "location": "Mangalore",
+        "day": "today",
+        "part": "afternoon",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Conditions off Mangalore, Mon 19 Oct 12:00–17:00 IST:\n• wave height 0.86 m\n• wave period 10.9 s\n• swell height 0.78 m\n• swell period 9.85 s\n• wind 4.2 kt\n• gusts 11.7 kt\n• wind direction 354 deg\n• visibility 2.86 km\n• sea temperature 31.1 degC\n• current 0.324 kt\n• current direction 162 deg\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5754
+    },
+    {
+      "id": "C03",
+      "category": "conditions",
+      "lang": "en",
+      "style": "plain",
+      "q": "Any big swell expected at Visakhapatnam day after tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "visakhapatnam"
+        ],
+        "day": "day_after"
+      },
+      "got": {
+        "language": "en",
+        "intent": "conditions",
+        "location": "Visakhapatnam",
+        "day": "day_after",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Conditions off Visakhapatnam, Wed 21 Oct 05:00–12:00 IST:\n• wave height 1.04 m\n• wave period 13.15 s\n• swell height 0.94 m\n• swell period 12 s\n• wind 7.6 kt\n• gusts 16.9 kt\n• wind direction 358 deg\n• visibility 7.8 km\n• sea temperature 30.3 degC\n• current 0.54 kt\n• current direction 217 deg\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5803
+    },
+    {
+      "id": "C04",
+      "category": "conditions",
+      "lang": "ta",
+      "style": "plain",
+      "q": "நாளை தூத்துக்குடியில் அலை எவ்வளவு உயரம் இருக்கும்?",
+      "en": "How high will the waves be at Thoothukudi tomorrow?",
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "tuticorin",
+          "thoothukudi"
+        ],
+        "day": "tomorrow"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3799
+    },
+    {
+      "id": "C05",
+      "category": "conditions",
+      "lang": "hi",
+      "style": "plain",
+      "q": "आज रात मुंबई के पास हवा कितनी तेज़ होगी?",
+      "en": "How strong will the wind be near Mumbai tonight?",
+      "expect": {
+        "intent": "conditions",
+        "location": [
+          "sassoon dock",
+          "mumbai"
+        ],
+        "day": "today",
+        "part": "night"
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": false,
+        "part": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3744
+    },
+    {
+      "id": "C06",
+      "category": "conditions",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is there fog or poor visibility at Puri tomorrow morning?",
+      "en": null,
+      "expect": {
+        "intent": [
+          "conditions",
+          "safety"
+        ],
+        "location": [
+          "puri"
+        ],
+        "day": "tomorrow",
+        "part": [
+          "morning",
+          "early_morning"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "conditions",
+        "location": "Puri",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Conditions off Puri, Tue 20 Oct 05:00–12:00 IST:\n• wave height 0.96 m\n• wave period 12.7 s\n• swell height 0.78 m\n• swell period 12.4 s\n• wind 9.1 kt\n• gusts 19 kt\n• wind direction 355 deg\n• visibility 5.86 km\n• sea temperature 30.4 degC\n• current 0.54 kt\n• current direction 225 deg\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5738
+    },
+    {
+      "id": "P01",
+      "category": "pfz",
+      "lang": "en",
+      "style": "plain",
+      "q": "Where are the fish near Paradip today?",
+      "en": null,
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "paradip"
+        ],
+        "day": "today"
+      },
+      "got": {
+        "language": "en",
+        "intent": "pfz",
+        "location": "Paradip",
+        "day": "today",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "day": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 39.6 km SE (bearing 126°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• PFZ #2: 69.4 km SSW (bearing 200°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• PFZ #3: 85 km SW (bearing 216°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 271.2 km to the E\n• chlorophyll-a 6.375 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 5.3 km away; fetched 16 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 2.599 mg/m3 (sd 0.929); latest is 4.06 standard deviations from it; 7-day trend rising\n• interpretation: chlorophyll is well above its recent baseline — consistent with upwelling or river/runoff input; higher plankton often precedes better catches, but this is an association, not a guarantee\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "incois/pfz: snapshot",
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5831
+    },
+    {
+      "id": "P02",
+      "category": "pfz",
+      "lang": "en",
+      "style": "plain",
+      "q": "Show me the potential fishing zones from Kochi",
+      "en": null,
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "kochi"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "pfz",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 25.7 km WSW (bearing 239°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #2: 59.2 km NW (bearing 304°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #3: 64.7 km S (bearing 187°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 277.1 km to the SSW\n• chlorophyll-a 3.442 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 1.8 km away; fetched 16 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "incois/pfz: snapshot",
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5846
+    },
+    {
+      "id": "P03",
+      "category": "pfz",
+      "lang": "en",
+      "style": "plain",
+      "q": "Which direction should I go from Malpe to find fish?",
+      "en": null,
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "malpe"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "pfz",
+        "location": "Malpe",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 24.8 km WNW (bearing 296°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• PFZ #2: 58.4 km WNW (bearing 301°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• PFZ #3: 71.6 km WNW (bearing 292°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 611.2 km to the S\n• chlorophyll-a 3.442 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 415.1 km away; fetched 16 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "incois/pfz: snapshot",
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5970
+    },
+    {
+      "id": "P04",
+      "category": "pfz",
+      "lang": "ta",
+      "style": "plain",
+      "q": "இன்று கடலூர் அருகே மீன் எங்கே கிடைக்கும்?",
+      "en": "Where will fish be found near Cuddalore today?",
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "cuddalore"
+        ],
+        "day": "today"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "day": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3716
+    },
+    {
+      "id": "P05",
+      "category": "pfz",
+      "lang": "ta",
+      "style": "plain",
+      "q": "ராமேஸ்வரத்தில் இருந்து மீன்பிடி மண்டலம் எவ்வளவு தூரம்?",
+      "en": "How far is the fishing zone from Rameswaram?",
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "rameswaram"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3687
+    },
+    {
+      "id": "P06",
+      "category": "pfz",
+      "lang": "hi",
+      "style": "plain",
+      "q": "पोरबंदर से मछली कहाँ मिलेगी?",
+      "en": "Where will I find fish from Porbandar?",
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "porbandar"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3695
+    },
+    {
+      "id": "P07",
+      "category": "pfz",
+      "lang": "en",
+      "style": "misspelled",
+      "q": "were is PFZ near vizag",
+      "en": null,
+      "expect": {
+        "intent": "pfz",
+        "location": [
+          "visakhapatnam"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "pfz",
+        "location": "Visakhapatnam",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 41.3 km SSW (bearing 194°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• PFZ #2: 50.2 km ENE (bearing 76°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• PFZ #3: 56.5 km S (bearing 180°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 645.4 km to the E\n• chlorophyll-a 6.375 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 461.3 km away; fetched 16 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 2.599 mg/m3 (sd 0.929); latest is 4.06 standard deviations from it; 7-day trend rising\n• interpretation: chlorophyll is well above its recent baseline — consistent with upwelling or river/runoff input; higher plankton often precedes better catches, but this is an association, not a guarantee\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "incois/pfz: snapshot",
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5804
+    },
+    {
+      "id": "B01",
+      "category": "boundary",
+      "lang": "en",
+      "style": "plain",
+      "q": "How far is the Sri Lanka border from Rameswaram?",
+      "en": null,
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "rameswaram"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "boundary",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Rameswaram, Tue 20 Oct 05:00–12:00 IST.\n• visibility 4.18 km ≤ caution threshold 5 km\n• wave height 0.92 m\n• wave period 12.6 s\n• swell height 0.82 m\n• swell period 10.2 s\n• wind 7.6 kt\n• gusts 10.5 kt\n• wind direction 358 deg\n• visibility 4.18 km\n• sea temperature 30.5 degC\n• current 0.162 kt\n• current direction 315 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 47.5 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 94.3 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 23.1 km to the E\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5867
+    },
+    {
+      "id": "B02",
+      "category": "boundary",
+      "lang": "en",
+      "style": "plain",
+      "q": "If I head 90 degrees from Rameswaram at 8 knots, will I cross the IMBL?",
+      "en": null,
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "rameswaram"
+        ],
+        "heading_deg": 90,
+        "speed_kt": 8
+      },
+      "got": {
+        "language": "en",
+        "intent": "boundary",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": 90.0,
+        "speed_kt": 8.0,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "heading_deg": true,
+        "speed_kt": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Rameswaram, Tue 20 Oct 05:00–12:00 IST.\n• visibility 4.18 km ≤ caution threshold 5 km\n• current heading crosses Sri Lanka - India in 94.5 min — change heading before then\n• wave height 0.92 m\n• wave period 12.6 s\n• swell height 0.82 m\n• swell period 10.2 s\n• wind 7.6 kt\n• gusts 10.5 kt\n• wind direction 358 deg\n• visibility 4.18 km\n• sea temperature 30.5 degC\n• current 0.162 kt\n• current direction 315 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 47.5 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 94.3 km WSW (bearing 239°) from Rameswaram, South Tamilnadu sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 23.1 km to the E\n• on the stated heading and speed the track reaches Sri Lanka - India in 94.5 min (23.3 km) — beyond the 90 min horizon\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 6014
+    },
+    {
+      "id": "B03",
+      "category": "boundary",
+      "lang": "en",
+      "style": "plain",
+      "q": "Am I close to the international maritime boundary near Kanyakumari?",
+      "en": null,
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "kanyakumari"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "boundary",
+        "location": "Kanyakumari",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Kanyakumari, Tue 20 Oct 05:00–12:00 IST.\n• visibility 4.18 km ≤ caution threshold 5 km\n• wave height 0.92 m\n• wave period 12.6 s\n• swell height 0.82 m\n• swell period 10.2 s\n• wind 7.6 kt\n• gusts 10.5 kt\n• wind direction 358 deg\n• visibility 4.18 km\n• sea temperature 30.5 degC\n• current 0.162 kt\n• current direction 315 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 35.1 km E (bearing 92°) from Kanyakumari, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 53 km ENE (bearing 75°) from Kanyakumari, South Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #3: 78.6 km WSW (bearing 252°) from Kanyakumari, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 141.9 km to the ESE\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5969
+    },
+    {
+      "id": "B04",
+      "category": "boundary",
+      "lang": "ta",
+      "style": "plain",
+      "q": "இராமேஸ்வரத்தில் இருந்து இலங்கை எல்லை எவ்வளவு தூரம்?",
+      "en": "How far is the Sri Lanka border from Rameswaram?",
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "rameswaram"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3708
+    },
+    {
+      "id": "B05",
+      "category": "boundary",
+      "lang": "ta",
+      "style": "plain",
+      "q": "நாகப்பட்டினத்தில் இருந்து கிழக்கு நோக்கி 10 நாட் வேகத்தில் போனால் எல்லையை தாண்டுவேனா?",
+      "en": "If I go east from Nagapattinam at 10 knots, will I cross the border?",
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "nagapattinam"
+        ],
+        "heading_deg": 90,
+        "speed_kt": 10
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false,
+        "heading_deg": false,
+        "speed_kt": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3684
+    },
+    {
+      "id": "B06",
+      "category": "boundary",
+      "lang": "hi",
+      "style": "plain",
+      "q": "पोरबंदर से पाकिस्तान की समुद्री सीमा कितनी दूर है?",
+      "en": "How far is the Pakistan maritime boundary from Porbandar?",
+      "expect": {
+        "intent": "boundary",
+        "location": [
+          "porbandar"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3727
+    },
+    {
+      "id": "R01",
+      "category": "route",
+      "lang": "en",
+      "style": "plain",
+      "q": "What is the best route from Kochi to the fishing zone?",
+      "en": null,
+      "expect": {
+        "intent": "route",
+        "location": [
+          "kochi"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "route",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "route_found": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "DO NOT SAIL",
+      "answer": "DO NOT SAIL — traditional craft off Kochi, Tue 20 Oct 05:00–12:00 IST.\n• visibility 0.58 km ≤ no-go threshold 2 km\n• wave height 0.86 m\n• wave period 11.6 s\n• swell height 0.8 m\n• swell period 10.3 s\n• wind 4.3 kt\n• gusts 11.3 kt\n• wind direction 333 deg\n• visibility 0.58 km\n• sea temperature 31 degC\n• current 0.216 kt\n• current direction 180 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 25.7 km WSW (bearing 239°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #2: 59.2 km NW (bearing 304°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #3: 64.7 km S (bearing 187°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 277.1 km to the SSW\nRoute:\n• destination: PFZ #1, 25.1 km to the WSW in a straight line\n• suggested route: 25.1 km, about 1 h 57 min at 7 kt\n• legs: 25.1 km SW\n• the route stays at least 254.6 km inside the maritime boundary (safety margin 2 km)\n• the straight line crosses land; the route goes round it\n• worst on the route: waves 0.86 m (period 11.4 s), wind 4.3 kt\n• advisory only: the coastline is approximate and shallow water and sandbanks are not modelled — this is not a navigation chart\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; route sea state: no forecast grid could be fetched — the harbour forecast was applied to the whole route; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "route sea state: no forecast grid could be fetched — the harbour forecast was applied to the whole route",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 10251
+    },
+    {
+      "id": "R02",
+      "category": "route",
+      "lang": "en",
+      "style": "plain",
+      "q": "Safest way from Chennai to PFZ #2?",
+      "en": null,
+      "expect": {
+        "intent": "route",
+        "location": [
+          "chennai",
+          "kasimedu"
+        ],
+        "pfz_index": 2
+      },
+      "got": {
+        "language": "en",
+        "intent": "route",
+        "location": "Chennai",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": 2,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "pfz_index": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "route_found": true,
+        "degradation_stated": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION — traditional craft off Chennai, Tue 20 Oct 05:00–12:00 IST.\n• visibility 4.9 km ≤ caution threshold 5 km\n• wave height 0.5 m\n• wave period 9.85 s\n• swell height 0.38 m\n• swell period 10.9 s\n• wind 6.4 kt\n• gusts 18.1 kt\n• wind direction 351 deg\n• visibility 4.9 km\n• sea temperature 30.2 degC\n• current 0.486 kt\n• current direction 207 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 54.6 km E (bearing 98°) from Chennai, North Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #2: 68 km SE (bearing 133°) from Chennai, North Tamilnadu sector, advisory dated 2026-10-15\n• PFZ #3: 83.1 km SSE (bearing 158°) from Chennai, North Tamilnadu sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 277.4 km to the SSE\nRoute:\n• destination: PFZ #2, 65 km to the SE in a straight line\n• suggested route: 65.2 km, about 4 h 54 min at 7 kt\n• legs: 65.2 km SE\n• the route stays at least 215.6 km inside the maritime boundary (safety margin 2 km)\n• the straight line stays in Indian waters, closest 215.6 km to the boundary\n• worst on the route: waves 0.5 m (period 9.3 s), wind 6.4 kt\n• advisory only: the coastline is approximate and shallow water and sandbanks are not modelled — this is not a navigation chart\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; route sea state: no forecast grid could be fetched — the harbour forecast was applied to the whole route; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "route sea state: no forecast grid could be fetched — the harbour forecast was applied to the whole route",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 10085
+    },
+    {
+      "id": "R03",
+      "category": "route",
+      "lang": "ta",
+      "style": "plain",
+      "q": "இராமேஸ்வரத்தில் இருந்து மீன்பிடி மண்டலத்திற்கு பாதுகாப்பான வழி என்ன?",
+      "en": "What is the safe way from Rameswaram to the fishing zone?",
+      "expect": {
+        "intent": "route",
+        "location": [
+          "rameswaram"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3725
+    },
+    {
+      "id": "R04",
+      "category": "route",
+      "lang": "hi",
+      "style": "plain",
+      "q": "वेरावल से मछली वाले क्षेत्र तक सबसे अच्छा रास्ता कौन सा है?",
+      "en": "What is the best route from Veraval to the fishing zone?",
+      "expect": {
+        "intent": "route",
+        "location": [
+          "veraval"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3769
+    },
+    {
+      "id": "A01",
+      "category": "chlorophyll",
+      "lang": "en",
+      "style": "plain",
+      "q": "Why has my catch dropped near Kochi this month?",
+      "en": null,
+      "expect": {
+        "intent": "chlorophyll",
+        "location": [
+          "kochi"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "chlorophyll",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "• chlorophyll-a 3.442 mg/m3 [obs_0060; noaa_coastwatch/viirs_chl; for 17:30 local; grid 1.8 km away; fetched 17 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: noaa_coastwatch/viirs_chl: snapshot.",
+      "answer_source": "template_fallback",
+      "unsupported_numbers": [],
+      "degradation": [
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 5885
+    },
+    {
+      "id": "A02",
+      "category": "chlorophyll",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is the water greener than usual off Mangalore?",
+      "en": null,
+      "expect": {
+        "intent": "chlorophyll",
+        "location": [
+          "mangalore"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3706
+    },
+    {
+      "id": "A03",
+      "category": "chlorophyll",
+      "lang": "ta",
+      "style": "plain",
+      "q": "சென்னை அருகே மீன் பிடிப்பு ஏன் குறைந்து வருகிறது?",
+      "en": "Why is the fish catch decreasing near Chennai?",
+      "expect": {
+        "intent": "chlorophyll",
+        "location": [
+          "chennai",
+          "kasimedu"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3724
+    },
+    {
+      "id": "A04",
+      "category": "chlorophyll",
+      "lang": "hi",
+      "style": "plain",
+      "q": "वेरावल के पास पानी का रंग बदल गया है, क्या मछली कम होगी?",
+      "en": "The water colour has changed near Veraval — will there be fewer fish?",
+      "expect": {
+        "intent": "chlorophyll",
+        "location": [
+          "veraval"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false,
+        "location": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3717
+    },
+    {
+      "id": "G01",
+      "category": "general_knowledge",
+      "lang": "en",
+      "style": "plain",
+      "q": "What is a potential fishing zone?",
+      "en": null,
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3803
+    },
+    {
+      "id": "G02",
+      "category": "general_knowledge",
+      "lang": "en",
+      "style": "plain",
+      "q": "What does a 2 metre swell mean for a small boat?",
+      "en": null,
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3785
+    },
+    {
+      "id": "G03",
+      "category": "general_knowledge",
+      "lang": "en",
+      "style": "plain",
+      "q": "Why is the sea rough during the monsoon?",
+      "en": null,
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3680
+    },
+    {
+      "id": "G04",
+      "category": "general_knowledge",
+      "lang": "ta",
+      "style": "plain",
+      "q": "அலை உயரம் என்றால் என்ன?",
+      "en": "What is wave height?",
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false,
+        "no_verdict": true
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3721
+    },
+    {
+      "id": "G05",
+      "category": "general_knowledge",
+      "lang": "hi",
+      "style": "plain",
+      "q": "चक्रवात आने से पहले क्या संकेत दिखते हैं?",
+      "en": "What signs appear before a cyclone comes?",
+      "expect": {
+        "intent": "general_knowledge"
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false,
+        "no_verdict": true
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3818
+    },
+    {
+      "id": "Q01",
+      "category": "clarify",
+      "lang": "en",
+      "style": "plain",
+      "q": "Is it safe to go fishing tomorrow?",
+      "en": null,
+      "expect": {
+        "intent": "clarify"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3658
+    },
+    {
+      "id": "Q02",
+      "category": "clarify",
+      "lang": "ta",
+      "style": "plain",
+      "q": "நாளை கடல் எப்படி இருக்கும்?",
+      "en": "How will the sea be tomorrow?",
+      "expect": {
+        "intent": "clarify"
+      },
+      "got": {
+        "language": "ta",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false,
+        "no_verdict": true
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3691
+    },
+    {
+      "id": "Q03",
+      "category": "clarify",
+      "lang": "en",
+      "style": "plain",
+      "q": "Where are the fish today?",
+      "en": null,
+      "expect": {
+        "intent": "clarify"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3714
+    },
+    {
+      "id": "O01",
+      "category": "off_topic",
+      "lang": "en",
+      "style": "plain",
+      "q": "Who will win the cricket match today?",
+      "en": null,
+      "expect": {
+        "intent": "off_topic"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3728
+    },
+    {
+      "id": "O02",
+      "category": "off_topic",
+      "lang": "en",
+      "style": "plain",
+      "q": "Write me a poem about love",
+      "en": null,
+      "expect": {
+        "intent": "off_topic"
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3788
+    },
+    {
+      "id": "O03",
+      "category": "off_topic",
+      "lang": "hi",
+      "style": "plain",
+      "q": "मेरे फोन का रिचार्ज कैसे करूँ?",
+      "en": "How do I recharge my phone?",
+      "expect": {
+        "intent": "off_topic"
+      },
+      "got": {
+        "language": "hi",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": false,
+        "no_verdict": true
+      },
+      "behaved": false,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3710
+    },
+    {
+      "id": "O04",
+      "category": "off_topic",
+      "lang": "en",
+      "style": "plain",
+      "q": "What is the price of sardines at the market today?",
+      "en": null,
+      "expect": {
+        "intent": [
+          "off_topic",
+          "general_knowledge"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "clarify",
+        "location": null,
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": false
+      },
+      "language_ok": true,
+      "understood": false,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "no_verdict": true
+      },
+      "behaved": true,
+      "verdict": null,
+      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer_source": "template",
+      "unsupported_numbers": [],
+      "degradation": [],
+      "llm_unavailable": true,
+      "ms": 3671
+    }
+  ]
+}

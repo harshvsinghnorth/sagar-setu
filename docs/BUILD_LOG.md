@@ -1164,3 +1164,30 @@ format". PowerShell 5.1 split the real message at its quote marks, so the first 
 and the formatting commit picked up everything that was staged. It was already pushed, so it
 was left as it is rather than force-pushing `main`. Commits now take their message from a
 file (`git commit -F`).
+
+### Step 34 · Phase 6: the first "wifi off" rehearsal of the whole bank
+
+`scripts/run_question_bank.py --offline` sends every request (data sources and Gemini) to a
+dead proxy, and swaps the runtime cache for an empty temp folder, so every source falls to
+the frozen snapshot. It writes `data/question_bank/results_offline.json` and
+`docs/question_bank_offline.md`, and checks that every verdict answer states it was degraded.
+
+**Result: 20 of 53 questions answered, and all 20 were correct and honest.** Each said
+"snapshot" and used the template answer. The other 33 replied "language model unavailable".
+Problems found, **not yet fixed**:
+
+1. **Tamil and Hindi have no offline path.** `fast_plan` only handles Latin script, so every
+   Tamil and Hindi question needs Gemini. Demo item #4 (a Tamil/Hindi round trip) fails with
+   the network down.
+   - Fix: Tamil and Hindi keywords and day words in the fast path.
+   - Fix: Tamil and Devanagari aliases for the landing centres.
+   - Fix: Tamil and Hindi templates for the offline answer, which a native speaker should
+     review.
+2. **The "model unavailable" message is in English** even for a Tamil question (Q02).
+3. **It is slow offline.** On a network that times out rather than refuses, each source waits
+   its full timeout (Open-Meteo 2 s, PFZ about 4 s), and Gemini is retried on every question
+   (3.7 s). A safety answer took 8.4 s against the 2.4 s budget.
+   - Fix: a per-host circuit breaker in `sources/base.py` and `agents/llm.py`. After a
+     connection failure, skip that host for about 60 s and go straight to the fallback.
+4. General-knowledge and off-topic questions also need the model. Offline, "model
+   unavailable" is an acceptable honest answer for them.
