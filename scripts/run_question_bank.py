@@ -37,8 +37,8 @@ RESULTS = ROOT / "data" / "question_bank" / "results.json"
 REPORT = ROOT / "docs" / "question_bank_results.md"
 
 LLM_DOWN = "language model is unavailable"
-NEEDS_VERDICT = {"safety"}
-FIELDS = ("intent", "location", "day", "part", "vessel", "heading_deg", "speed_kt")
+NEEDS_VERDICT = {"safety", "route"}  # a route is graded by the engine like a safety question
+FIELDS = ("intent", "location", "day", "part", "vessel", "heading_deg", "speed_kt", "pfz_index")
 
 
 def _val(x):
@@ -91,6 +91,7 @@ async def run_one(item: dict, retries: int, backoff: float) -> dict:
         "vessel": _val(plan.vessel) if plan.vessel else None,
         "heading_deg": plan.heading_deg,
         "speed_kt": plan.speed_kt,
+        "pfz_index": plan.pfz_index,
         "planner": plan.source,
     }
     exp = item["expect"]
@@ -109,8 +110,12 @@ async def run_one(item: dict, retries: int, backoff: float) -> dict:
         "numbers_verified": verified,
         "reply_language": script_ok,
     }
-    if got["intent"] in NEEDS_VERDICT and exp.get("intent") in ("safety", ["safety", "boundary"]):
+    expected_intents = exp["intent"] if isinstance(exp["intent"], list) else [exp["intent"]]
+    if got["intent"] in NEEDS_VERDICT and any(i in NEEDS_VERDICT for i in expected_intents):
         behaviour["verdict_given"] = verdict is not None
+    if got["intent"] == "route":
+        route = (state.get("geo") and state["geo"].route) or None
+        behaviour["route_found"] = bool(route and route.found)
     if item["category"] in ("off_topic", "general_knowledge", "clarify"):
         behaviour["no_verdict"] = verdict is None
     llm_down = LLM_DOWN in (plan.clarify_question or "")

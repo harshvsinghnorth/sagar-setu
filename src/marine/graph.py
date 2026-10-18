@@ -134,7 +134,15 @@ async def geo_node(state: State) -> dict:
                     "geospatial",
                     "done",
                     t0,
-                    f"{len(f.pfz)} PFZ; zone={f.position.zone if f.position else '?'}",
+                    f"{len(f.pfz)} PFZ; zone={f.position.zone if f.position else '?'}"
+                    + (
+                        f"; route {f.route.distance_km} km to {f.route.destination}"
+                        f" ({f.route.compute_ms:.0f} ms search)"
+                        if f.route and f.route.found
+                        else f"; route: {f.route.reason}"
+                        if f.route
+                        else ""
+                    ),
                 )
             ],
         }
@@ -170,9 +178,9 @@ async def analytics_node(state: State) -> dict:
 def risk_node(state: State) -> dict:
     t0 = time.perf_counter()
     plan = state["plan"]
-    if plan.intent not in (Intent.SAFETY, Intent.BOUNDARY) or plan.location is None:
+    if plan.intent not in (Intent.SAFETY, Intent.BOUNDARY, Intent.ROUTE) or plan.location is None:
         return {"verdict": None}
-    v = specialists.risk(state["ctx"], plan)
+    v = specialists.risk(state["ctx"], plan, state.get("geo"))
     return {
         "verdict": v,
         "events": [

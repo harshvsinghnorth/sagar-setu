@@ -12,7 +12,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from marine.agents.planner import Plan
+from marine.agents.planner import Intent, Plan
 from marine.geo.boundaries import CrossingPrediction, PositionStatus
 from marine.geo.pfz import PfzHit
 from marine.ledger import Observation
@@ -22,15 +22,20 @@ from marine.tools import (
     Point,
     PointWindow,
     RiskQuery,
+    RouteQuery,
+    RouteSummary,
     ToolContext,
     assess_sailing_risk,
     check_position,
     fan_out,
     get_chlorophyll,
     get_pfz_advisory,
+    plan_sea_route,
     predict_boundary_crossing,
 )
 from marine.tools.windows import named_window
+
+DEFAULT_SPEED_KT = 7.0  # a typical small-craft cruising speed when the asker gives none
 
 
 class OceanFinding(BaseModel):
@@ -50,6 +55,8 @@ class GeoFinding(BaseModel):
     pfz: list[PfzHit] = Field(default_factory=list)
     pfz_note: str | None = None
     crossing: CrossingPrediction | None = None
+    route: RouteSummary | None = None
+    route_note: str | None = None  # why no route was attempted
 
 
 class AnalyticsFinding(BaseModel):
@@ -132,6 +139,27 @@ async def geospatial(ctx: ToolContext, plan: Plan) -> GeoFinding:
                 lat=p.lat, lon=p.lon, heading_deg=plan.heading_deg, speed_kt=plan.speed_kt
             ),
         ).prediction
+    if plan.intent == Intent.ROUTE:
+        if not f.pfz:
+            f.route_note = "no fishing-zone advisory near this harbour to route to"
+        else:
+            k = min(plan.pfz_index or 1, len(f.pfz))
+            z = f.pfz[k - 1]
+            start, end = window_for(plan)
+            f.route = await plan_sea_route(
+                ctx,
+                RouteQuery(
+                    lat=p.lat,
+                    lon=p.lon,
+                    dest_lat=z.nearest_lat,
+                    dest_lon=z.nearest_lon,
+                    dest_label=f"PFZ #{k}",
+                    start=start,
+                    end=end,
+                    vessel=plan.vessel or RiskQuery.model_fields["vessel"].default,
+                    speed_kt=plan.speed_kt or DEFAULT_SPEED_KT,
+                ),
+            )
     return f
 
 
@@ -173,10 +201,12 @@ async def analytics(ctx: ToolContext, plan: Plan, days: int = 30) -> AnalyticsFi
     return f
 
 
-def risk(ctx: ToolContext, plan: Plan) -> RiskVerdict:
-    """The deterministic verdict. Not an agent — a function — but it sits in the DAG."""
+def risk(ctx: ToolContext, plan: Plan, geo: GeoFinding | None = None) -> RiskVerdict:
+    """The deterministic verdict. Not an agent — a function — but it sits in the DAG. For a
+    route it grades the worst conditions anywhere along the route, not only the harbour."""
     assert plan.location is not None
     start, end = window_for(plan)
+    route = geo.route if geo and geo.route and geo.route.found else None
     q = RiskQuery(
         lat=plan.location.lat,
         lon=plan.location.lon,
@@ -185,5 +215,6 @@ def risk(ctx: ToolContext, plan: Plan) -> RiskVerdict:
         vessel=plan.vessel or RiskQuery.model_fields["vessel"].default,
         heading_deg=plan.heading_deg,
         speed_kt=plan.speed_kt,
+        route_obs=route.observation_ids if route else [],
     )
     return assess_sailing_risk(ctx, q)

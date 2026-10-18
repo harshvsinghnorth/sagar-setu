@@ -229,6 +229,51 @@ async def test_gemini_raises_unavailable_when_every_model_is_spent():
     llm_mod._PARKED.clear()
 
 
+def test_fast_path_recognises_route_questions_and_which_zone():
+    p = fast_plan("What is the safest way from Rameswaram to the fishing zone?")
+    assert p.intent == Intent.ROUTE and p.location.name == "Rameswaram" and p.pfz_index is None
+    assert fast_plan("best route from kochi to PFZ #2").pfz_index == 2
+    assert fast_plan("how do i reach the second zone from chennai").pfz_index == 2
+    # A route phrase beats the find-fish pattern; without one, finding fish is still PFZ.
+    assert fast_plan("best route to find fish from malpe").intent == Intent.ROUTE
+    assert fast_plan("Which direction should I go from Malpe to find fish?").intent == Intent.PFZ
+
+
+def test_dag_for_route_fetches_in_parallel_then_grades_the_route():
+    p = fast_plan("best route from kochi to the fishing zone")
+    tasks = {t.id: t for t in tasks_for(p)}
+    assert {"ocean", "geo", "risk", "synthesis"} <= set(tasks)
+    assert "plan_sea_route" in tasks["geo"].tool
+    assert set(tasks["risk"].depends_on) == {"ocean", "geo"}
+
+
+def test_route_conditions_raise_the_verdict_inputs_with_period_from_the_same_node():
+    from marine.ledger import EvidenceLedger, Observation
+    from marine.risk.rules import RiskInputs
+    from marine.tools.safety import merge_route_conditions
+
+    ledger, t = EvidenceLedger(), datetime.now(UTC)
+
+    def ob(var, val, unit, node):
+        return ledger.add(Observation(variable=var, value=val, unit=unit, source="grid",
+                                      valid_time=t, fetched_at=t, distance_km=1.0,
+                                      confidence=1.0, note=node))
+
+    ids = [o.id for o in (
+        ob("route_wave_height", 1.2, "m", "node A"), ob("route_wave_period", 9.0, "s", "node A"),
+        ob("route_wave_height", 2.1, "m", "node B"), ob("route_wave_period", 5.0, "s", "node B"),
+        ob("route_wind_speed", 22.0, "kt", "node B"),
+    )]
+    worse_at_sea = RiskInputs(wave_height_m=0.8, wave_period_s=8.0, wind_kt=10.0)
+    merge_route_conditions(worse_at_sea, ledger, ids)
+    # The 2.1 m wave is paired with node B's 5 s period, not node A's 9 s.
+    assert (worse_at_sea.wave_height_m, worse_at_sea.wave_period_s) == (2.1, 5.0)
+    assert worse_at_sea.wind_kt == 22.0
+    worse_at_harbour = RiskInputs(wave_height_m=3.0, wave_period_s=8.0, wind_kt=30.0)
+    merge_route_conditions(worse_at_harbour, ledger, ids)
+    assert (worse_at_harbour.wave_height_m, worse_at_harbour.wind_kt) == (3.0, 30.0)
+
+
 async def test_make_plan_without_llm_degrades_to_clarify():
     p = await make_plan("நாளை கடலுக்கு போகலாமா?", None)
     assert p.intent == Intent.CLARIFY and p.language == "ta" and p.clarify_question
@@ -352,6 +397,38 @@ def test_general_knowledge_may_echo_the_askers_own_number_but_forecasts_may_not(
               intent=Intent.CONDITIONS)
     b2 = build_brief(fc, EvidenceLedger(), None, None, None, None)
     assert not verify("Yes, waves will be 0.5 m.", b2).ok
+
+
+async def test_graph_route_question_routes_to_the_nearest_zone_and_grades_it(live_from_snapshot):
+    from marine.geo.boundaries import position_status
+
+    out = await ask("what is the best route from kochi to the fishing zone", llm=None,
+                    ctx=ToolContext())
+    r = out["geo"].route
+    assert r is not None and r.found and r.destination == "PFZ #1"
+    assert len(r.path) >= 2 and all(position_status(*p).zone == "eez" for p in r.path)
+    assert out["verdict"] is not None  # a route is graded by the deterministic engine
+    ledger = out["ctx"].ledger
+    assert all(ledger.get(i) is not None for i in r.observation_ids)
+    ans = out["answer"]
+    assert ans.verification.ok, ans.verification.unsupported
+    assert "not a navigation chart" in ans.text
+
+
+async def test_route_falls_back_to_the_harbour_forecast_and_says_so(live_from_snapshot,
+                                                                    monkeypatch):
+    import marine.tools.route as tr
+
+    async def no_grid(_url):
+        return None
+
+    monkeypatch.setattr(tr, "_fetch", no_grid)
+    out = await ask("what is the best route from kochi to the fishing zone", llm=None,
+                    ctx=ToolContext())
+    r = out["geo"].route
+    assert r.found and r.sea_state_source == "harbour_only"
+    assert any("route sea state" in d for d in out["answer"].degradation)
+    assert out["answer"].verification.ok
 
 
 async def test_graph_chlorophyll_template_passes_its_own_verification(live_from_snapshot):

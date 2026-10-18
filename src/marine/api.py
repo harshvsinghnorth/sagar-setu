@@ -307,6 +307,20 @@ def _result_payload(state: dict) -> dict:
                 "minutes": c.minutes_to_crossing,
                 "within_horizon": c.crosses_within_horizon,
             }
+        if geo.route:
+            r = geo.route
+            m["route"] = {
+                "found": r.found,
+                "reason": r.reason,
+                "destination": r.destination,
+                "dest": [r.dest_lon, r.dest_lat],
+                "points": [[lon, lat] for lat, lon in r.path],
+                "distance_km": r.distance_km,
+                "eta_min": r.eta_min,
+                "min_imbl_km": r.min_imbl_km,
+                "direct_crosses_border": r.direct_crosses_border,
+                "sea_state_source": r.sea_state_source,
+            }
     if ocean:
         m["conditions"] = {
             k: {

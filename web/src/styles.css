@@ -157,3 +157,4 @@ button, input, select { font: inherit; }
 .mlabel.loc { color: var(--ink); border-color: var(--blue); }
 .mlabel.pfz { color: #0b5c3f; border-color: var(--aqua); }
 .mlabel.cross { color: #8a1f1f; border-color: var(--orange); }
+.mlabel.route { color: #4a1f8a; border-color: #7a3ccf; font-weight: 600; }

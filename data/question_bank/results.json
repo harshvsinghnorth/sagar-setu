@@ -1,17 +1,17 @@
 {
   "summary": {
-    "run_at": "2026-10-16T07:50:09+00:00",
-    "questions": 49,
-    "scored": 49,
+    "run_at": "2026-10-18T18:00:35+00:00",
+    "questions": 53,
+    "scored": 53,
     "errors": [],
     "llm_unavailable": [],
-    "understood": "49/49 (100 %)",
-    "behaved": "49/49 (100 %)",
+    "understood": "53/53 (100 %)",
+    "behaved": "53/53 (100 %)",
     "by_language": {
-      "en": "28/28 (100 %)",
-      "hi": "9/9 (100 %)",
+      "en": "30/30 (100 %)",
+      "hi": "10/10 (100 %)",
       "ml": "1/1 (100 %)",
-      "ta": "11/11 (100 %)"
+      "ta": "12/12 (100 %)"
     },
     "by_category": {
       "boundary": "6/6 (100 %)",
@@ -21,33 +21,36 @@
       "general_knowledge": "5/5 (100 %)",
       "off_topic": "4/4 (100 %)",
       "pfz": "7/7 (100 %)",
+      "route": "4/4 (100 %)",
       "safety": "14/14 (100 %)"
     },
     "by_style": {
       "code-mixed": "1/1 (100 %)",
       "colloquial": "2/2 (100 %)",
       "misspelled": "2/2 (100 %)",
-      "plain": "44/44 (100 %)"
+      "plain": "48/48 (100 %)"
     },
     "fields": {
-      "language": "49/49 (100 %)",
-      "intent": "49/49 (100 %)",
-      "location": "37/37 (100 %)",
+      "language": "53/53 (100 %)",
+      "intent": "53/53 (100 %)",
+      "location": "41/41 (100 %)",
       "day": "21/21 (100 %)",
       "part": "12/12 (100 %)",
       "vessel": "4/4 (100 %)",
       "heading_deg": "3/3 (100 %)",
-      "speed_kt": "3/3 (100 %)"
+      "speed_kt": "3/3 (100 %)",
+      "pfz_index": "1/1 (100 %)"
     },
     "behaviour": {
-      "answered": "49/49 (100 %)",
-      "numbers_verified": "49/49 (100 %)",
-      "reply_language": "49/49 (100 %)",
-      "verdict_given": "14/14 (100 %)",
+      "answered": "53/53 (100 %)",
+      "numbers_verified": "53/53 (100 %)",
+      "reply_language": "53/53 (100 %)",
+      "verdict_given": "18/18 (100 %)",
+      "route_found": "4/4 (100 %)",
       "no_verdict": "12/12 (100 %)"
     },
     "answer_sources": {
-      "llm": 33,
+      "llm": 37,
       "llm_retry": 3,
       "template": 3,
       "template_fallback": 10
@@ -1650,6 +1653,206 @@
       "degradation": [],
       "llm_unavailable": false,
       "ms": 14338
+    },
+    {
+      "id": "R01",
+      "category": "route",
+      "lang": "en",
+      "style": "plain",
+      "q": "What is the best route from Kochi to the fishing zone?",
+      "en": null,
+      "expect": {
+        "intent": "route",
+        "location": [
+          "kochi"
+        ]
+      },
+      "got": {
+        "language": "en",
+        "intent": "route",
+        "location": "Kochi",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "route_found": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION: Use caution if sailing a traditional craft from Kochi between 05:00 and 12:00. Visibility drops to 4.5 km, while waves reach 0.86 m and wind gusts reach 11.5 kt. \n\nTo reach PFZ #1, sail 4.4 km S, then 3.1 km SW, then 19.8 km W for 27.4 km total (about 2 h 6 min at 7 kt). This safe path goes around land that a straight line crosses, staying at least 256.1 km inside the maritime boundary. Other fishing zones are PFZ #2 at 59.2 km NW and PFZ #3 at 64.7 km S. \n\nFishing zone data is from a stored copy. We could not check cyclone tracks or lightning due to missing data. This route is advisory only, not a navigation chart.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [
+        "incois/pfz: stale_cache"
+      ],
+      "llm_unavailable": false,
+      "ms": 6244
+    },
+    {
+      "id": "R02",
+      "category": "route",
+      "lang": "en",
+      "style": "plain",
+      "q": "Safest way from Chennai to PFZ #2?",
+      "en": null,
+      "expect": {
+        "intent": "route",
+        "location": [
+          "chennai",
+          "kasimedu"
+        ],
+        "pfz_index": 2
+      },
+      "got": {
+        "language": "en",
+        "intent": "route",
+        "location": "Chennai",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": 2,
+        "planner": "fast_path"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true,
+        "pfz_index": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "route_found": true
+      },
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION. Visibility is low at 4.16 km and CAPE is high at 2200 J/kg. \n\nExpect waves up to 0.44 m with a period of 9.5 s, swell of 0.4 m, and wind around 5.3 kt with gusts to 13.6 kt. On the route, worst conditions are waves of 0.66 m with period 9.2 s and wind of 10.1 kt. To reach PFZ #2, head SE for 65.2 km, taking about 4 h 36 min at 7 kt. This route stays 217 km inside the maritime boundary, same as a straight line. \n\nPotential fishing zones were retrieved from a stored copy. Live cyclone and lightning data could not be checked. This route is advisory only, not a navigation chart.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [
+        "incois/pfz: stale_cache"
+      ],
+      "llm_unavailable": false,
+      "ms": 6401
+    },
+    {
+      "id": "R03",
+      "category": "route",
+      "lang": "ta",
+      "style": "plain",
+      "q": "இராமேஸ்வரத்தில் இருந்து மீன்பிடி மண்டலத்திற்கு பாதுகாப்பான வழி என்ன?",
+      "en": "What is the safe way from Rameswaram to the fishing zone?",
+      "expect": {
+        "intent": "route",
+        "location": [
+          "rameswaram"
+        ]
+      },
+      "got": {
+        "language": "ta",
+        "intent": "route",
+        "location": "Rameswaram",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "route_found": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "GO.\n\nஐந்து மணி நேரம் பழைய சேமிப்பிலிருந்து இன் கோயிஸ் / பி எப் இசட் தரவு எடுக்கப்பட்டது. புயல் மற்றும் மின்னல் தரவு கிடைக்கவில்லை; அவற்றை சோதிக்க முடியவில்லை. மீன் பிடி பகுதி பி எப் இசட் #1 இராமேஸ்வரத்திலிருந்து மேற்கு தென்மேற்காக 47.5 கி.மீ தொலைவிலும், பி எப் இசட் #2 இராமேஸ்வரத்திலிருந்து மேற்கு தென்மேற்காக 94.3 கி.மீ தொலைவிலும் உள்ளது. இலங்கை - இந்தியா கடல் எல்லை 23.1 கி.மீ தொலைவில் கிழக்கே உள்ளது. பரிந்துரைக்கப்பட்ட பாதை 51.4 கி.மீ தூரம், 7 நாட் வேகத்தில் சுமார் 4 மணி 6 நிமிடம் ஆகும். பாதையின் பகுதிகள்: 4.4 கி.மீ தெற்கு, 9.4 கி.மீ தென்மேற்கு, 37.6 கி.மீ மேற்கு தென்மேற்கு. இந்தப் பாதை கடல் எல்லைக்குள்ளேயே குறைந்தபட்சம் 20.8 கி.மீ தள்ளிச் செல்கிறது (பாதுகாப்பு விளிம்பு 2 கி.மீ). நேர்க்கோடு இந்திய நீரில்தான் உள்ளது, எல்லைக்கு மிக அருகில் 23 கி.மீ தூரத்தில் உள்ளது. இது ஒரு வழிகாட்டுதல் மட்டுமே, வழிப்பகுதி வரைபடம் அல்ல.",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [
+        "incois/pfz: stale_cache"
+      ],
+      "llm_unavailable": false,
+      "ms": 9058
+    },
+    {
+      "id": "R04",
+      "category": "route",
+      "lang": "hi",
+      "style": "plain",
+      "q": "वेरावल से मछली वाले क्षेत्र तक सबसे अच्छा रास्ता कौन सा है?",
+      "en": "What is the best route from Veraval to the fishing zone?",
+      "expect": {
+        "intent": "route",
+        "location": [
+          "veraval"
+        ]
+      },
+      "got": {
+        "language": "hi",
+        "intent": "route",
+        "location": "Veraval",
+        "day": "tomorrow",
+        "part": "morning",
+        "vessel": null,
+        "heading_deg": null,
+        "speed_kt": null,
+        "pfz_index": null,
+        "planner": "llm"
+      },
+      "field_ok": {
+        "intent": true,
+        "location": true
+      },
+      "language_ok": true,
+      "understood": true,
+      "behaviour": {
+        "answered": true,
+        "numbers_verified": true,
+        "reply_language": true,
+        "verdict_given": true,
+        "route_found": true
+      },
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "GO.\n\nवेरावल के लिए हवा 3.1 नॉट, झोंके 7.8 नॉट और हवा की दिशा 180 deg है। लहरों की ऊँचाई 0.6 m और लहर की अवधि 10.35 s है। स्वेल ऊँचाई 0.5 m और स्वेल अवधि 8.3 s है। दृश्यता 14.8 km, समुद्र का तापमान 29.7 degC, धारा 0.756 kt और धारा की दिशा 297 deg है।\n\nमछली पकड़ने के क्षेत्र:\n- PFZ #1: 26.3 km W (बेयरिंग 260°) वेरावल से, गुजरात सेक्टर\n- PFZ #2: 41.8 km SE (बेयरिंग 134°) वेरावल से, गुजरात सेक्टर\n- PFZ #3: 119.7 km WNW (बेयरिंग 298°) वेरावल से, गुजरात सेक्टर\n\nरूट की जानकारी:\nपहला चरण 25 km W, समय 1 h 53 min (7 kt की गति पर)। यह रूट समुद्री सीमा के अंदर कम से कम 342.2 km रहता है। सीधी रेखा भी भारतीय पानी में रहती है, सीमा से सबसे नज़दीक 342.2 km। रूट पर सबसे खराब स्थिति: लहरें 0.6 m (अवधि 10.2 s), हवा 3.1 kt।\n\nकुछ डेटा पुराना या संचित प्रति से है क्योंकि लाइव स्रोत ने उत्तर नहीं दिया।\nहम चक्रवात और बिजली (लाइटनिंग) की दूरी की जाँच नहीं कर सके।\nयह सलाह है, नेविगेशन चार्ट नहीं।",
+      "answer_source": "llm",
+      "unsupported_numbers": [],
+      "degradation": [
+        "route sea state: no forecast grid could be fetched — the harbour forecast was applied to the whole route",
+        "incois/pfz: stale_cache"
+      ],
+      "llm_unavailable": false,
+      "ms": 15120
     },
     {
       "id": "A01",

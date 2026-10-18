@@ -17,6 +17,7 @@ from marine.tools.ocean import (
     get_wave_forecast,
     get_wind_forecast,
 )
+from marine.tools.route import RouteQuery, RouteSummary, plan_sea_route
 from marine.tools.safety import (
     RiskQuery,
     SafetyBriefing,
@@ -49,6 +50,7 @@ TOOLS = {
     "cyclone_status": cyclone_status,
     "lightning_status": lightning_status,
     "fan_out": fan_out,
+    "plan_sea_route": plan_sea_route,
 }
 
 __all__ = [
@@ -59,6 +61,8 @@ __all__ = [
     "PointWindow",
     "ResolvedLocation",
     "RiskQuery",
+    "RouteQuery",
+    "RouteSummary",
     "SafetyBriefing",
     "SeriesResult",
     "ToolContext",
@@ -76,6 +80,7 @@ __all__ = [
     "get_wind_forecast",
     "lightning_status",
     "named_window",
+    "plan_sea_route",
     "predict_boundary_crossing",
     "resolve_location",
     "safety_briefing",

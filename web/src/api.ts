@@ -85,6 +85,18 @@ export interface AskResult {
     pfz_bearings?: { rank: number; to: [number, number]; distance_km: number; bearing_deg: number; compass: string; state: string }[];
     nearest_imbl?: { name: string; other_state: string; distance_km: number; bearing_deg: number; compass: string; closest: [number, number]; zone: string };
     track?: { points: [number, number][]; crossing: [number, number] | null; boundary: string | null; minutes: number | null; within_horizon: boolean };
+    route?: {
+      found: boolean;
+      reason: string | null;
+      destination: string;
+      dest: [number, number];
+      points: [number, number][];
+      distance_km: number;
+      eta_min: number;
+      min_imbl_km: number | null;
+      direct_crosses_border: boolean;
+      sea_state_source: string;
+    };
     conditions?: Record<string, { value: number; unit: string; valid_time: string; provenance: Provenance }>;
   };
 }

@@ -324,6 +324,20 @@ def check_line(
     )
 
 
+def route_bbox(
+    start: tuple[float, float], goal: tuple[float, float]
+) -> tuple[float, float, float, float]:
+    """(south, west, north, east) searched around a trip — also the forecast grid's extent."""
+    span = max(abs(goal[0] - start[0]), abs(goal[1] - start[1]))
+    pad = max(0.15, 0.3 * span)
+    return (
+        min(start[0], goal[0]) - pad,
+        min(start[1], goal[1]) - pad,
+        max(start[0], goal[0]) + pad,
+        max(start[1], goal[1]) + pad,
+    )
+
+
 def plan_route(
     start: tuple[float, float],
     goal: tuple[float, float],
@@ -342,17 +356,7 @@ def plan_route(
     and the risk engine's verdict will say so.
     """
     t0 = time.perf_counter()
-    span = max(abs(goal[0] - start[0]), abs(goal[1] - start[1]))
-    pad = max(0.15, 0.3 * span)
-    grid = build_grid(
-        min(start[0], goal[0]) - pad,
-        min(start[1], goal[1]) - pad,
-        max(start[0], goal[0]) + pad,
-        max(start[1], goal[1]) + pad,
-        sea,
-        step_deg=step_deg,
-        margin_km=margin_km,
-    )
+    grid = build_grid(*route_bbox(start, goal), sea, step_deg=step_deg, margin_km=margin_km)
     direct = check_line(grid, sea, start, goal)
     gi = _cell_of(grid, *goal)
     if grid.foreign[gi]:

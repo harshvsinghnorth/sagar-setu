@@ -59,6 +59,7 @@ class Brief(BaseModel):
     pfz: list[str] = Field(default_factory=list)
     pfz_date: str | None = None
     boundary: list[str] = Field(default_factory=list)
+    route: list[str] = Field(default_factory=list)
     analytics: list[str] = Field(default_factory=list)
     gaps: list[str] = Field(default_factory=list)
     degradation: list[str] = Field(default_factory=list)
@@ -81,6 +82,68 @@ def _fmt_obs(o, label: str) -> str:
         "snapshot": "STORED SNAPSHOT",
     }[o.provenance]
     return f"{label} {o.value:g} {o.unit} [{o.id}; {o.source}; for {o.valid_time.astimezone().strftime('%H:%M')} local; grid {o.distance_km:g} km away; fetched {age_s} ago; {freshness}]"
+
+
+def _route_brief(r) -> tuple[list[str], set[float], list[str]]:
+    """Route lines for the brief, the numbers they introduce, and any degradation note.
+    Distances, bearings and times are geometry computed from the route, like PFZ distances;
+    the sea-state numbers are route_* ledger observations."""
+    lines = [
+        f"destination: {r.destination}, {r.direct_distance_km:g} km to the {r.direct_compass} "
+        "in a straight line"
+    ]
+    nums: set[float] = {r.direct_distance_km, r.direct_bearing_deg}
+    degraded: list[str] = []
+    if not r.found:
+        lines.append(f"no route: {r.reason}")
+        if r.direct_crosses_border:
+            lines.append("the straight line to it crosses into another country's waters")
+        return lines, nums, degraded
+    h, m = divmod(round(r.eta_min), 60)
+    lines.append(
+        f"suggested route: {r.distance_km:g} km, about {h} h {m} min at {r.speed_kt:g} kt"
+    )
+    lines.append("legs: " + "; ".join(f"{leg.distance_km:g} km {leg.compass}" for leg in r.legs))
+    lines.append(
+        f"the route stays at least {r.min_imbl_km:g} km inside the maritime boundary "
+        f"(safety margin {r.margin_km:g} km)"
+    )
+    extra = round(r.distance_km - r.direct_distance_km, 1)
+    if r.direct_crosses_border:
+        lines.append(
+            "the straight line would cross into another country's waters"
+            + (f"; the route adds {extra:g} km to stay out of them" if extra > 0.1 else "")
+        )
+    elif r.direct_crosses_land:
+        lines.append("the straight line crosses land; the route goes round it")
+    else:
+        lines.append(
+            f"the straight line stays in Indian waters, closest {r.direct_min_imbl_km:g} km "
+            "to the boundary"
+        )
+    lines.append(
+        f"worst on the route: waves {r.max_wave_m:g} m (period {r.period_at_max_wave_s:g} s), "
+        f"wind {r.max_wind_kt:g} kt"
+    )
+    if r.avoided_hazard:
+        lines.append("the route detours around water that is at do-not-sail level for this boat")
+    if r.reason:
+        lines.append(f"{r.reason} for this boat")
+    if r.sea_state_source != "grid":
+        degraded.append(
+            "route sea state: no forecast grid could be fetched — the harbour forecast was "
+            "applied to the whole route"
+        )
+    lines.append(
+        "advisory only: the coastline is approximate and shallow water and sandbanks are not "
+        "modelled — this is not a navigation chart"
+    )
+    nums |= {
+        r.distance_km, float(h), float(m), r.eta_min, r.speed_kt, r.min_imbl_km, r.margin_km,
+        abs(extra), r.direct_min_imbl_km, r.max_wave_m, r.period_at_max_wave_s, r.max_wind_kt,
+    }
+    nums |= {leg.distance_km for leg in r.legs} | {leg.bearing_deg for leg in r.legs}
+    return lines, {x for x in nums if x is not None}, degraded
 
 
 def build_brief(
@@ -181,6 +244,13 @@ def build_brief(
                 )
             )
             nums |= {c.minutes_to_crossing, c.distance_to_crossing_km, 90.0}
+        if geo.route_note:
+            b.route.append(geo.route_note)
+        if geo.route:
+            lines, route_nums, degraded = _route_brief(geo.route)
+            b.route += lines
+            b.degradation += degraded
+            nums |= route_nums
     if analytics:
         if analytics.latest:
             b.analytics.append(_fmt_obs(analytics.latest, "chlorophyll-a"))
@@ -257,6 +327,9 @@ def template_answer(b: Brief) -> str:
         )
         lines += [f"• {p}" for p in b.pfz]
     lines += [f"• {x}" for x in b.boundary]
+    if b.route:
+        lines.append("Route:")
+        lines += [f"• {x}" for x in b.route]
     lines += [f"• {x}" for x in b.analytics]
     if b.degradation:
         lines.append("Data note: " + "; ".join(b.degradation) + ".")
@@ -277,7 +350,8 @@ Absolute rules:
 5. Give the practical bearing and distance for fishing zones as a fisherman would use them (compass point and km).
 6. Do not add safety tips, disclaimers or advice beyond what the BRIEF supports.
 7. Do not mention the evidence ids like obs_0012, the source names, or the word BRIEF.
-8. Keep each number with the unit the BRIEF gives it, translated correctly: kt = knots (a SPEED — wind, gusts, boat speed; never seconds), s = seconds (wave period), m = metres, km = kilometres, mg/m3 = milligrams per cubic metre. Knots in Tamil is நாட், in Hindi नॉट, in Malayalam നോട്ട്."""
+8. Keep each number with the unit the BRIEF gives it, translated correctly: kt = knots (a SPEED — wind, gusts, boat speed; never seconds), s = seconds (wave period), m = metres, km = kilometres, mg/m3 = milligrams per cubic metre. Knots in Tamil is நாட், in Hindi नॉट, in Malayalam നോട്ട്.
+9. If the BRIEF has a route: give the legs as compass direction and km, the time, how far inside the maritime boundary it stays, and what the straight line would have meant. End with one short sentence that this is advice, not a navigation chart."""
 
 
 def brief_text(b: Brief) -> str:
@@ -296,6 +370,8 @@ def brief_text(b: Brief) -> str:
         parts.append("fishing zones:\n" + "\n".join(f"- {p}" for p in b.pfz))
     if b.boundary:
         parts.append("boundary:\n" + "\n".join(f"- {x}" for x in b.boundary))
+    if b.route:
+        parts.append("route:\n" + "\n".join(f"- {x}" for x in b.route))
     if b.analytics:
         parts.append("analytics:\n" + "\n".join(f"- {x}" for x in b.analytics))
     if b.degradation:

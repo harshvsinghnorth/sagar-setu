@@ -1018,3 +1018,59 @@ knots in Tamil, Hindi and Malayalam; re-asked live, it wrote "15.3 நாட்"
 Tests: 115 → 124 (every bug above has a regression test). `results.json` merges the latest
 run of each question; 10 early-run answers are deterministic templates written while the
 model was out of quota, and are labelled as such in the report.
+
+### Step 30 · Phase 5 — route optimisation
+
+Bhashini is still blocked on keys, so Phase 5 moved to the next item in the build order:
+"route optimisation first (demos best on a map)". A fisherman asks *"what is the best route
+from Kochi to the fishing zone?"*; the system routes to the nearest INCOIS zone (or the one
+named — "PFZ #2", "second zone"), draws it, and the risk engine grades the whole trip.
+
+**Data first.** Open-Meteo answers a whole grid in one request: 81 points around Palk Bay in
+1.6 s (marine) and 1.3 s (weather). Every point gets values — land points snap to the
+nearest sea cell — so land and borders must come from our own polygons, not from nulls.
+Checked the Palk Bay geometry before relying on it: the IMBL there sits very close to the
+Indian coast (8 km east of Rameswaram; the bay's centre at 9.6°N 79.5°E is Sri Lankan
+water), and the Indian side of the bay is classed `eez`, so it is navigable.
+
+**`geo/route.py`** (pure, unit-tested): A* over ~2 km cells. Hard constraints: inside India's
+EEZ, ≥ 2 km from every IMBL, off land (EEZ + land union, so land near the line is not
+mistaken for foreign water). Cost = travel time at speed made good (current along the
+heading) × a sea-state penalty that grows with wave height, wind and steepness relative to
+the vessel's *caution* thresholds, and more on the bow than astern. Cells at the vessel's
+do-not-sail level are avoided when any route avoids them; otherwise the route goes through and
+the verdict says so. Path smoothing only takes shortcuts that stay in legal water — a test
+samples every 0.5 km of the result. A destination in another state's water is refused.
+The case that matters: between two Indian points whose straight line cuts into Sri Lankan
+water at the IMBL's corner near 9.67°N 79.38°E, the route bends west, adds 3.2 km, and stays
+3.7 km inside.
+
+**Integration.** New intent `route` (route phrases outrank both the find-fish pattern and the
+safety keywords; "PFZ #2" / "second zone" → `pfz_index`). The geospatial specialist — which
+CLAUDE.md gives A* to — calls `plan_sea_route`, which fetches the grid through the normal
+cache → live → stale-cache chain and writes the conditions at every node the route passes as
+`route_*` observations. They are kept out of the harbour summary on purpose: the ledger's
+`worst()` has no spatial filter, so sharing variable names would have paired the worst wave
+with a period from a different node and corrupted the steepness check. Instead
+`merge_route_conditions` raises the risk inputs to the route's worst, taking the period from
+the same node. Live check: harbour 0.64 m, route 1.04 m — the verdict used 1.04 m.
+No grid at all → the harbour forecast is applied to the whole area and the answer says so.
+The brief gains route lines (legs as compass + km, time, margin, what the straight line
+would have meant) and synthesis rule 9 requires the "not a navigation chart" sentence.
+The map draws the route over a dashed straight line, red when that line would cross the IMBL.
+
+**Question bank:** R01–R04 (English, Tamil, Hindi; one asks for zone #2). All pass:
+**53 / 53 understood and behaved.**
+
+**Limitations, stated plainly:**
+- *Coastline.* Land comes from the Marine Regions EEZ outline, which is coarse at the scale of
+  narrow islands and harbour channels. Rameswaram → Gulf of Mannar can slip across the
+  Dhanushkodi strip; Kochi's route leaves southward rather than through the port channel.
+  A higher-resolution land layer (e.g. Natural Earth 1:10m, public domain) would fix most of
+  it — not yet added. Shallow water and sandbanks are not modelled at all.
+- *Verifier blind spot, again.* The Tamil route answer wrote "five hours old" as a word
+  (ஐந்து); the verifier only reads digits. True here, unchecked in general.
+- Current direction is taken as the direction of flow (oceanographic convention) — not yet
+  verified against Open-Meteo's documentation; it only affects travel time, not safety.
+
+Tests 131 → 136.

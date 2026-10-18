@@ -27,6 +27,9 @@ class RiskQuery(BaseModel):
     vessel: VesselClass = VesselClass.TRADITIONAL
     heading_deg: float | None = Field(default=None, ge=0, lt=360)
     speed_kt: float | None = Field(default=None, ge=0, le=40)
+    # Ledger ids of route_* observations (plan_sea_route): the verdict then covers the whole
+    # trip — the worst of harbour and route — not just the departure point.
+    route_obs: list[str] = Field(default_factory=list)
 
 
 class FeedStatus(BaseModel):
@@ -94,10 +97,36 @@ def inputs_from_ledger(ledger: EvidenceLedger, start: datetime, end: datetime) -
     )
 
 
+def merge_route_conditions(inputs: RiskInputs, ledger: EvidenceLedger, ids: list[str]) -> None:
+    """Raise wave and wind to the worst point on the route when that is worse than the
+    harbour. The wave period comes from the SAME route node as the worst wave (paired by the
+    observation note), so steepness is never computed from two different places."""
+    obs = [o for o in (ledger.get(i) for i in ids) if o is not None]
+    waves = [o for o in obs if o.variable == "route_wave_height"]
+    if waves:
+        w = max(waves, key=lambda o: o.value)
+        if inputs.wave_height_m is None or w.value > inputs.wave_height_m:
+            per = next(
+                (o for o in obs if o.variable == "route_wave_period" and o.note == w.note), None
+            )
+            inputs.wave_height_m = w.value
+            inputs.wave_period_s = per.value if per and per.value > 0 else None
+            inputs.evidence["wave_height"] = [w.id]
+            inputs.evidence["wave_period"] = [per.id] if per else []
+    winds = [o for o in obs if o.variable == "route_wind_speed"]
+    if winds:
+        v = max(winds, key=lambda o: o.value)
+        if inputs.wind_kt is None or v.value > inputs.wind_kt:
+            inputs.wind_kt = v.value
+            inputs.evidence["wind"] = [v.id]
+
+
 def assess_sailing_risk(ctx: ToolContext, q: RiskQuery) -> RiskVerdict:
     """Deterministic verdict from whatever is already in the ledger for the window.
     Call the fetch tools (or `safety_briefing`) first."""
     inputs = inputs_from_ledger(ctx.ledger, q.start, q.end)
+    if q.route_obs:
+        merge_route_conditions(inputs, ctx.ledger, q.route_obs)
     pos = check_position(ctx, q)
     inputs.outside_indian_waters = pos.status.zone == "outside_india"
     inputs.boundary_name = pos.status.nearest_imbl.name if pos.status.nearest_imbl else None

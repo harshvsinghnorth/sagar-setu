@@ -20,8 +20,17 @@ OFF_KOCHI, KOCHI_OFFSHORE = (10.00, 76.15), (10.50, 75.80)  # open Arabian Sea, 
 
 
 def sea(
-    south=8.5, north=10.8, west=75.4, east=80.4, *, wave=0.6, period=8.0, wind=8.0,
-    current=0.0, current_to=0.0, override=None,
+    south=8.5,
+    north=10.8,
+    west=75.4,
+    east=80.4,
+    *,
+    wave=0.6,
+    period=8.0,
+    wind=8.0,
+    current=0.0,
+    current_to=0.0,
+    override=None,
 ) -> SeaField:
     la, lo = np.meshgrid(np.arange(south, north, 0.1), np.arange(west, east, 0.1), indexing="ij")
     la, lo = la.ravel(), lo.ravel()
@@ -30,8 +39,15 @@ def sea(
     if override is not None:
         w = np.where(override(la, lo), 3.0, w)
     return SeaField(
-        la, lo, w, np.full(n, period), np.full(n, 225.0), np.full(n, wind), np.full(n, 225.0),
-        np.full(n, current), np.full(n, current_to),
+        la,
+        lo,
+        w,
+        np.full(n, period),
+        np.full(n, 225.0),
+        np.full(n, wind),
+        np.full(n, 225.0),
+        np.full(n, current),
+        np.full(n, current_to),
     )
 
 

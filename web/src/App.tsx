@@ -23,6 +23,7 @@ const EXAMPLES = [
   "क्या कल सुबह वेरावल से समुद्र में जाना सुरक्षित है?",
   "Where are the fish near Paradip today?",
   "How far is the Sri Lanka border from Rameswaram if I head 90 at 8 knots?",
+  "What is the best route from Kochi to the fishing zone?",
 ];
 
 export default function App() {

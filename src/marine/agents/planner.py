@@ -32,6 +32,7 @@ class Intent(StrEnum):
     SAFETY = "safety"  # go / no-go for a trip
     PFZ = "pfz"  # where are the fish (INCOIS advisory)
     BOUNDARY = "boundary"  # distance to / crossing of IMBL / EEZ
+    ROUTE = "route"  # best / safest way to a fishing zone
     CONDITIONS = "conditions"  # waves, wind, visibility, currents, SST — no verdict asked
     CHLOROPHYLL = "chlorophyll"  # productivity, catch decline, anomaly
     GENERAL_KNOWLEDGE = "general_knowledge"  # marine knowledge, no live data needed
@@ -39,7 +40,14 @@ class Intent(StrEnum):
     CLARIFY = "clarify"  # cannot proceed without asking (no location, etc.)
 
 
-NEEDS_LOCATION = {Intent.SAFETY, Intent.PFZ, Intent.BOUNDARY, Intent.CONDITIONS, Intent.CHLOROPHYLL}
+NEEDS_LOCATION = {
+    Intent.SAFETY,
+    Intent.PFZ,
+    Intent.BOUNDARY,
+    Intent.CONDITIONS,
+    Intent.CHLOROPHYLL,
+    Intent.ROUTE,
+}
 
 
 class Plan(BaseModel):
@@ -56,6 +64,12 @@ class Plan(BaseModel):
     vessel: VesselClass | None = None
     heading_deg: float | None = Field(default=None, ge=0, lt=360)
     speed_kt: float | None = Field(default=None, ge=0, le=40)
+    pfz_index: int | None = Field(
+        default=None,
+        ge=1,
+        le=10,
+        description="For a route: which fishing zone, 1 = nearest ('PFZ #2', 'second zone'), or null",
+    )
     clarify_question: str | None = Field(
         default=None,
         description="If intent is clarify: the question to ask, in the user's language",
@@ -81,20 +95,22 @@ def tasks_for(plan: Plan) -> list[Task]:
     """The typed DAG. Tasks with no shared dependency run in parallel."""
     i = plan.intent
     t: list[Task] = []
-    # A boundary question is a safety question: the engine grades the crossing.
-    if i in (Intent.SAFETY, Intent.CONDITIONS, Intent.BOUNDARY):
+    # A boundary question is a safety question: the engine grades the crossing. So is a
+    # route: the engine grades the worst conditions anywhere along it.
+    if i in (Intent.SAFETY, Intent.CONDITIONS, Intent.BOUNDARY, Intent.ROUTE):
         t.append(Task(id="ocean", agent="ocean_weather", tool="fan_out"))
-    if i in (Intent.SAFETY, Intent.PFZ, Intent.BOUNDARY):
+    if i in (Intent.SAFETY, Intent.PFZ, Intent.BOUNDARY, Intent.ROUTE):
         t.append(
             Task(
                 id="geo",
                 agent="geospatial",
-                tool="get_pfz_advisory+check_position+predict_boundary_crossing",
+                tool="get_pfz_advisory+check_position+predict_boundary_crossing"
+                + ("+plan_sea_route" if i == Intent.ROUTE else ""),
             )
         )
     if i in (Intent.CHLOROPHYLL, Intent.PFZ):
         t.append(Task(id="analytics", agent="analytics", tool="get_chlorophyll+anomaly"))
-    if i in (Intent.SAFETY, Intent.BOUNDARY):
+    if i in (Intent.SAFETY, Intent.BOUNDARY, Intent.ROUTE):
         t.append(
             Task(id="risk", agent="risk", tool="assess_sailing_risk", depends_on=["ocean", "geo"])
         )
@@ -134,6 +150,20 @@ def detect_script(text: str) -> str:
 
 
 KEYWORDS: dict[Intent, tuple[str, ...]] = {
+    # First: "safest way to the fishing zone" is a route, not a safety or PFZ question.
+    Intent.ROUTE: (
+        "route",
+        "best way",
+        "safest way",
+        "shortest way",
+        "how do i get to",
+        "how to reach",
+        "how do i reach",
+        "path to",
+        "way to the fishing",
+        "way to the pfz",
+        "navigate to",
+    ),
     Intent.SAFETY: (
         "safe",
         "safety",
@@ -244,6 +274,17 @@ HINGLISH = frozenset(
 )
 
 
+_PFZ_NUMBER = re.compile(r"\b(?:pfz|zone)\s*(?:#|no\.?|number)?\s*(\d{1,2})\b")
+_ORDINALS = {"nearest": 1, "closest": 1, "first": 1, "second": 2, "third": 3}
+
+
+def _pfz_index(q: str) -> int | None:
+    m = _PFZ_NUMBER.search(q)
+    if m and 1 <= int(m.group(1)) <= 10:
+        return int(m.group(1))
+    return next((n for w, n in _ORDINALS.items() if re.search(rf"\b{w}\b", q)), None)
+
+
 def _day(q: str) -> Day:
     return next((d for w, d in DAY_WORDS.items() if re.search(rf"\b{re.escape(w)}\b", q)), "tomorrow")
 
@@ -329,8 +370,13 @@ def fast_plan(query: str) -> Plan | None:
     if detect_script(query) != "en":
         return None
     q = query.lower()
-    intent: Intent | None = Intent.PFZ if FISH_FINDING.search(q) else None
-    for cand, words in KEYWORDS.items():  # dict order = priority: safety first
+    # Priority: a route phrase, then "find / where … fish", then the keyword table in order.
+    intent: Intent | None = None
+    if any(w in q for w in KEYWORDS[Intent.ROUTE]):
+        intent = Intent.ROUTE
+    elif FISH_FINDING.search(q):
+        intent = Intent.PFZ
+    for cand, words in KEYWORDS.items():
         if intent is not None:
             break
         if any(w in q for w in words):
@@ -360,6 +406,7 @@ def fast_plan(query: str) -> Plan | None:
         vessel=vessel,
         heading_deg=float(hm.group(1)) if hm else None,
         speed_kt=float(sm.group(1)) if sm else None,
+        pfz_index=_pfz_index(q) if intent == Intent.ROUTE else None,
         source="fast_path",
     )
 
@@ -372,6 +419,7 @@ Classify `intent`:
 - safety: asking whether it is safe / OK to go to sea or fish (go / no-go).
 - pfz: asking where the fish are, fishing zones, INCOIS PFZ advisory.
 - boundary: distance to or crossing of the maritime boundary (Sri Lanka, Pakistan, EEZ), detention risk.
+- route: the best / safest / shortest way to get from the harbour to a fishing zone. Set `pfz_index` if a particular zone is named (1 = nearest, "PFZ #2" or "second zone" = 2), else null.
 - conditions: asking about waves, wind, swell, visibility, currents, sea temperature — without asking for a verdict.
 - chlorophyll: productivity, plankton, why the catch is declining, unusual water colour.
 - general_knowledge: a marine/fishing question that needs no live data (what is a PFZ, what does 2 m swell mean, why is the sea rough in monsoon). Put a short factual answer in `knowledge_answer`, in the user's language, with NO specific forecast numbers for any place or date. NOT general_knowledge if the question names a specific harbour or place and asks what is happening there or why (e.g. "why is the catch falling near Chennai?" is chlorophyll; "how high are the waves at Kochi?" is conditions) — those need live data for that place.
