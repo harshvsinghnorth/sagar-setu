@@ -25,6 +25,7 @@ truststore.inject_into_ssl()
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from marine.config import SNAPSHOT_DIR  # noqa: E402
 from marine.fixtures import GULF_OF_MANNAR, HARBOURS  # noqa: E402
+from marine.sources.base import cache_read  # noqa: E402
 
 POINTS = {**HARBOURS, "gulf_of_mannar": GULF_OF_MANNAR}
 
@@ -123,23 +124,64 @@ async def fetch(client: httpx.AsyncClient, name: str, url: str, out: Path) -> di
     return rec
 
 
+def _keep_or_recover(new: dict, old: dict | None, url: str, out: Path) -> dict:
+    """A failed refresh must not stamp today's date on yesterday's file.
+
+    1. If the app's own runtime cache holds a copy of this URL that is newer than the old
+       snapshot, promote it — real data, with its TRUE fetch time.
+    2. Otherwise keep the previous record unchanged (its file is untouched on disk).
+    Either way the failed attempt is recorded, so the manifest never hides it.
+    """
+    if new.get("status") == 200:
+        return new
+    failed = {"at": new["fetched_at"], "error": new.get("error")}
+    cached = cache_read(url)
+    old_at = datetime.fromisoformat(old["fetched_at"]) if old and old.get("status") == 200 else None
+    if cached and (old_at is None or cached[1] > old_at):
+        payload, fetched_at = cached
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(payload), encoding="utf-8")
+        print(f"         recovered from the runtime cache, fetched {fetched_at.isoformat()}")
+        return {
+            "source": new["source"], "url": url, "fetched_at": fetched_at.isoformat(),
+            "status": 200, "file": str(out.relative_to(SNAPSHOT_DIR.parent.parent)),
+            "note": "copied from the runtime cache: the live refresh failed",
+            "refresh_failed": failed,
+        }
+    if old and old.get("status") == 200:
+        print(f"         kept the previous snapshot from {old['fetched_at']}")
+        return {**old, "refresh_failed": failed}
+    return new
+
+
 async def main() -> None:
+    prev_path = SNAPSHOT_DIR / "manifest.json"
+    prev = json.loads(prev_path.read_text(encoding="utf-8")) if prev_path.exists() else {}
     manifest: dict = {"created_at": datetime.now(UTC).isoformat(), "points": {}, "global": {}}
     # NOAA CoastWatch returns 403 to the default python-httpx User-Agent.
     headers = {"User-Agent": "Mozilla/5.0 SagarSetu/0.1 (marine decision support; research)"}
     async with httpx.AsyncClient(timeout=90, follow_redirects=True, headers=headers) as client:
         print("global sources")
         for name, url in GLOBAL_SOURCES.items():
-            manifest["global"][name] = await fetch(client, name, url, SNAPSHOT_DIR / f"{name}.json")
+            out = SNAPSHOT_DIR / f"{name}.json"
+            rec = await fetch(client, name, url, out)
+            manifest["global"][name] = _keep_or_recover(
+                rec, prev.get("global", {}).get(name), url, out
+            )
         for harbour, (lat, lon) in POINTS.items():
             print(f"{harbour} ({lat}, {lon})")
             manifest["points"][harbour] = {"lat": lat, "lon": lon, "sources": {}}
+            urls = point_sources(lat, lon)
             tasks = [
                 fetch(client, name, url, SNAPSHOT_DIR / harbour / f"{name}.json")
-                for name, url in point_sources(lat, lon).items()
+                for name, url in urls.items()
             ]
+            old_src = prev.get("points", {}).get(harbour, {}).get("sources", {})
             for rec in await asyncio.gather(*tasks):
-                manifest["points"][harbour]["sources"][rec["source"]] = rec
+                name = rec["source"]
+                manifest["points"][harbour]["sources"][name] = _keep_or_recover(
+                    rec, old_src.get(name), urls[name], SNAPSHOT_DIR / harbour / f"{name}.json"
+                )
     (SNAPSHOT_DIR / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     print(f"\nwrote {SNAPSHOT_DIR / 'manifest.json'}")
 

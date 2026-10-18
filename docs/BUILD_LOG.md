@@ -1088,3 +1088,28 @@ as more authoritative than it is.
 unsourced" for a 15 m boat), and `/health` reports it next to the numbers. A parametrised
 test pins all three. The 92-day evaluation used only the traditional table, so its figures
 are unaffected. Tests 136 → 139.
+
+### Step 32 · Refreshing the offline snapshot — and a dishonest timestamp it exposed
+
+The frozen snapshot (the offline fallback) dated from 2026-09-15. Refreshed for all five
+harbours and the Gulf of Mannar: Open-Meteo marine and weather, NOAA chlorophyll and INCOIS
+Argo all returned 200.
+
+INCOIS's PFZ WFS did not: a 90 s ReadTimeout, twice. The PFZ file on disk stayed the
+September advisory — but the manifest recorded the failed attempt's timestamp as its
+`fetched_at`, so offline the system would have labelled a month-old advisory as fetched
+today. That is exactly the hidden degradation CLAUDE.md rule 3 forbids.
+
+`scripts/snapshot.py` now handles a failed source in `_keep_or_recover`:
+1. if the app's runtime cache holds a newer copy of the same URL, promote it with its **true**
+   fetch time and a note ("copied from the runtime cache: the live refresh failed");
+2. otherwise keep the previous record untouched;
+3. either way, record the failed attempt under `refresh_failed`.
+
+Result: the snapshot's PFZ advisory is now 2026-10-15 (81 zones, Julian day 288), fetched
+2026-10-16T04:49Z, with the 2026-10-18 failure recorded beside it.
+
+- *Brittle test found:* `test_no_pfz_near_veraval_in_snapshot_returns_empty_not_a_guess`
+  asserted that Gujarat had no advisory on the snapshot day — true in September, false after
+  the refresh. Rewritten to build the "nothing in range" case from the data (drop the Gujarat
+  zones) instead of assuming a particular day's advisory.

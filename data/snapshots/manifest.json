@@ -1,5 +1,5 @@
 {
- "created_at": "2026-09-15T10:20:03.176303+00:00",
+ "created_at": "2026-10-18T18:27:54.754405+00:00",
  "points": {
   "kochi": {
    "lat": 9.97,
@@ -8,36 +8,36 @@
     "open_meteo_marine": {
      "source": "open_meteo_marine",
      "url": "https://marine-api.open-meteo.com/v1/marine?latitude=9.97&longitude=76.28&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,wind_wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:04.174762+00:00",
+     "fetched_at": "2026-10-18T18:29:25.544666+00:00",
      "status": 200,
-     "latency_ms": 1032,
-     "bytes": 26332,
+     "latency_ms": 777,
+     "bytes": 26258,
      "file": "data\\snapshots\\kochi\\open_meteo_marine.json"
     },
     "open_meteo_weather": {
      "source": "open_meteo_weather",
      "url": "https://api.open-meteo.com/v1/forecast?latitude=9.97&longitude=76.28&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m,visibility,precipitation,weather_code,cape&wind_speed_unit=kn&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:04.179773+00:00",
+     "fetched_at": "2026-10-18T18:29:25.545975+00:00",
      "status": 200,
-     "latency_ms": 1786,
-     "bytes": 20000,
+     "latency_ms": 1460,
+     "bytes": 19908,
      "file": "data\\snapshots\\kochi\\open_meteo_weather.json"
     },
     "noaa_viirs_chl": {
      "source": "noaa_viirs_chl",
      "url": "https://coastwatch.noaa.gov/erddap/griddap/noaacwNPPN20VIIRSDINEOFDaily.json?chlor_a%5B(2026-08-15T12:00:00Z):(last)%5D%5B(0.0)%5D%5B(9.97)%5D%5B(76.28)%5D",
-     "fetched_at": "2026-09-15T10:20:04.182774+00:00",
+     "fetched_at": "2026-10-18T18:29:25.546685+00:00",
      "status": 200,
-     "latency_ms": 2287,
-     "bytes": 2056,
+     "latency_ms": 3163,
+     "bytes": 4255,
      "file": "data\\snapshots\\kochi\\noaa_viirs_chl.json"
     },
     "incois_argo_temp": {
      "source": "incois_argo_temp",
      "url": "https://erddap.incois.gov.in/erddap/griddap/incois_argo_10d_VAM.json?TEMP%5B(last)%5D%5B(5)%5D%5B(9.97)%5D%5B(76.28)%5D",
-     "fetched_at": "2026-09-15T10:20:04.186774+00:00",
+     "fetched_at": "2026-10-18T18:29:25.546685+00:00",
      "status": 200,
-     "latency_ms": 411,
+     "latency_ms": 390,
      "bytes": 310,
      "file": "data\\snapshots\\kochi\\incois_argo_temp.json"
     }
@@ -50,36 +50,36 @@
     "open_meteo_marine": {
      "source": "open_meteo_marine",
      "url": "https://marine-api.open-meteo.com/v1/marine?latitude=20.9&longitude=70.37&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,wind_wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:06.471731+00:00",
+     "fetched_at": "2026-10-18T18:29:28.710773+00:00",
      "status": 200,
-     "latency_ms": 273,
-     "bytes": 26130,
+     "latency_ms": 192,
+     "bytes": 26295,
      "file": "data\\snapshots\\veraval\\open_meteo_marine.json"
     },
     "open_meteo_weather": {
      "source": "open_meteo_weather",
      "url": "https://api.open-meteo.com/v1/forecast?latitude=20.9&longitude=70.37&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m,visibility,precipitation,weather_code,cape&wind_speed_unit=kn&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:06.474736+00:00",
+     "fetched_at": "2026-10-18T18:29:28.712191+00:00",
      "status": 200,
-     "latency_ms": 197,
-     "bytes": 20084,
+     "latency_ms": 813,
+     "bytes": 19596,
      "file": "data\\snapshots\\veraval\\open_meteo_weather.json"
     },
     "noaa_viirs_chl": {
      "source": "noaa_viirs_chl",
      "url": "https://coastwatch.noaa.gov/erddap/griddap/noaacwNPPN20VIIRSDINEOFDaily.json?chlor_a%5B(2026-08-15T12:00:00Z):(last)%5D%5B(0.0)%5D%5B(20.9)%5D%5B(70.37)%5D",
-     "fetched_at": "2026-09-15T10:20:06.479487+00:00",
+     "fetched_at": "2026-10-18T18:29:28.712191+00:00",
      "status": 200,
-     "latency_ms": 1119,
-     "bytes": 2068,
+     "latency_ms": 2424,
+     "bytes": 4269,
      "file": "data\\snapshots\\veraval\\noaa_viirs_chl.json"
     },
     "incois_argo_temp": {
      "source": "incois_argo_temp",
      "url": "https://erddap.incois.gov.in/erddap/griddap/incois_argo_10d_VAM.json?TEMP%5B(last)%5D%5B(5)%5D%5B(20.9)%5D%5B(70.37)%5D",
-     "fetched_at": "2026-09-15T10:20:06.482487+00:00",
+     "fetched_at": "2026-10-18T18:29:28.712191+00:00",
      "status": 200,
-     "latency_ms": 106,
+     "latency_ms": 72,
      "bytes": 313,
      "file": "data\\snapshots\\veraval\\incois_argo_temp.json"
     }
@@ -92,36 +92,36 @@
     "open_meteo_marine": {
      "source": "open_meteo_marine",
      "url": "https://marine-api.open-meteo.com/v1/marine?latitude=13.09&longitude=80.29&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,wind_wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:07.599956+00:00",
+     "fetched_at": "2026-10-18T18:29:31.137693+00:00",
      "status": 200,
-     "latency_ms": 271,
-     "bytes": 25758,
+     "latency_ms": 197,
+     "bytes": 26021,
      "file": "data\\snapshots\\chennai\\open_meteo_marine.json"
     },
     "open_meteo_weather": {
      "source": "open_meteo_weather",
      "url": "https://api.open-meteo.com/v1/forecast?latitude=13.09&longitude=80.29&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m,visibility,precipitation,weather_code,cape&wind_speed_unit=kn&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:07.602996+00:00",
+     "fetched_at": "2026-10-18T18:29:31.138225+00:00",
      "status": 200,
-     "latency_ms": 191,
-     "bytes": 20153,
+     "latency_ms": 2004,
+     "bytes": 19855,
      "file": "data\\snapshots\\chennai\\open_meteo_weather.json"
     },
     "noaa_viirs_chl": {
      "source": "noaa_viirs_chl",
      "url": "https://coastwatch.noaa.gov/erddap/griddap/noaacwNPPN20VIIRSDINEOFDaily.json?chlor_a%5B(2026-08-15T12:00:00Z):(last)%5D%5B(0.0)%5D%5B(13.09)%5D%5B(80.29)%5D",
-     "fetched_at": "2026-09-15T10:20:07.606035+00:00",
+     "fetched_at": "2026-10-18T18:29:31.139298+00:00",
      "status": 200,
-     "latency_ms": 1277,
-     "bytes": 2089,
+     "latency_ms": 2344,
+     "bytes": 4328,
      "file": "data\\snapshots\\chennai\\noaa_viirs_chl.json"
     },
     "incois_argo_temp": {
      "source": "incois_argo_temp",
      "url": "https://erddap.incois.gov.in/erddap/griddap/incois_argo_10d_VAM.json?TEMP%5B(last)%5D%5B(5)%5D%5B(13.09)%5D%5B(80.29)%5D",
-     "fetched_at": "2026-09-15T10:20:07.609022+00:00",
+     "fetched_at": "2026-10-18T18:29:31.140007+00:00",
      "status": 200,
-     "latency_ms": 109,
+     "latency_ms": 89,
      "bytes": 313,
      "file": "data\\snapshots\\chennai\\incois_argo_temp.json"
     }
@@ -134,36 +134,36 @@
     "open_meteo_marine": {
      "source": "open_meteo_marine",
      "url": "https://marine-api.open-meteo.com/v1/marine?latitude=20.26&longitude=86.67&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,wind_wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:08.874869+00:00",
+     "fetched_at": "2026-10-18T18:29:33.484314+00:00",
      "status": 200,
-     "latency_ms": 271,
-     "bytes": 26443,
+     "latency_ms": 195,
+     "bytes": 26543,
      "file": "data\\snapshots\\paradip\\open_meteo_marine.json"
     },
     "open_meteo_weather": {
      "source": "open_meteo_weather",
      "url": "https://api.open-meteo.com/v1/forecast?latitude=20.26&longitude=86.67&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m,visibility,precipitation,weather_code,cape&wind_speed_unit=kn&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:08.888361+00:00",
+     "fetched_at": "2026-10-18T18:29:33.485793+00:00",
      "status": 200,
-     "latency_ms": 193,
-     "bytes": 19992,
+     "latency_ms": 919,
+     "bytes": 19366,
      "file": "data\\snapshots\\paradip\\open_meteo_weather.json"
     },
     "noaa_viirs_chl": {
      "source": "noaa_viirs_chl",
      "url": "https://coastwatch.noaa.gov/erddap/griddap/noaacwNPPN20VIIRSDINEOFDaily.json?chlor_a%5B(2026-08-15T12:00:00Z):(last)%5D%5B(0.0)%5D%5B(20.26)%5D%5B(86.67)%5D",
-     "fetched_at": "2026-09-15T10:20:08.891640+00:00",
+     "fetched_at": "2026-10-18T18:29:33.485793+00:00",
      "status": 200,
-     "latency_ms": 1144,
-     "bytes": 2069,
+     "latency_ms": 2043,
+     "bytes": 4272,
      "file": "data\\snapshots\\paradip\\noaa_viirs_chl.json"
     },
     "incois_argo_temp": {
      "source": "incois_argo_temp",
      "url": "https://erddap.incois.gov.in/erddap/griddap/incois_argo_10d_VAM.json?TEMP%5B(last)%5D%5B(5)%5D%5B(20.26)%5D%5B(86.67)%5D",
-     "fetched_at": "2026-09-15T10:20:08.891640+00:00",
+     "fetched_at": "2026-10-18T18:29:33.486796+00:00",
      "status": 200,
-     "latency_ms": 117,
+     "latency_ms": 111,
      "bytes": 311,
      "file": "data\\snapshots\\paradip\\incois_argo_temp.json"
     }
@@ -176,78 +176,78 @@
     "open_meteo_marine": {
      "source": "open_meteo_marine",
      "url": "https://marine-api.open-meteo.com/v1/marine?latitude=11.62&longitude=92.73&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,wind_wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:10.036611+00:00",
+     "fetched_at": "2026-10-18T18:29:35.531560+00:00",
      "status": 200,
-     "latency_ms": 271,
-     "bytes": 25898,
+     "latency_ms": 189,
+     "bytes": 25815,
      "file": "data\\snapshots\\port_blair\\open_meteo_marine.json"
     },
     "open_meteo_weather": {
      "source": "open_meteo_weather",
      "url": "https://api.open-meteo.com/v1/forecast?latitude=11.62&longitude=92.73&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m,visibility,precipitation,weather_code,cape&wind_speed_unit=kn&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:10.040611+00:00",
+     "fetched_at": "2026-10-18T18:29:35.531560+00:00",
      "status": 200,
-     "latency_ms": 194,
-     "bytes": 20157,
+     "latency_ms": 1086,
+     "bytes": 19866,
      "file": "data\\snapshots\\port_blair\\open_meteo_weather.json"
     },
     "noaa_viirs_chl": {
      "source": "noaa_viirs_chl",
      "url": "https://coastwatch.noaa.gov/erddap/griddap/noaacwNPPN20VIIRSDINEOFDaily.json?chlor_a%5B(2026-08-15T12:00:00Z):(last)%5D%5B(0.0)%5D%5B(11.62)%5D%5B(92.73)%5D",
-     "fetched_at": "2026-09-15T10:20:10.044631+00:00",
+     "fetched_at": "2026-10-18T18:29:35.531560+00:00",
      "status": 200,
-     "latency_ms": 1257,
-     "bytes": 2083,
+     "latency_ms": 1946,
+     "bytes": 4317,
      "file": "data\\snapshots\\port_blair\\noaa_viirs_chl.json"
     },
     "incois_argo_temp": {
      "source": "incois_argo_temp",
      "url": "https://erddap.incois.gov.in/erddap/griddap/incois_argo_10d_VAM.json?TEMP%5B(last)%5D%5B(5)%5D%5B(11.62)%5D%5B(92.73)%5D",
-     "fetched_at": "2026-09-15T10:20:10.047618+00:00",
+     "fetched_at": "2026-10-18T18:29:35.532556+00:00",
      "status": 200,
-     "latency_ms": 239,
+     "latency_ms": 72,
      "bytes": 313,
      "file": "data\\snapshots\\port_blair\\incois_argo_temp.json"
     }
    }
   },
   "gulf_of_mannar": {
-   "lat": 9.05,
-   "lon": 79.1,
+   "lat": 9.15,
+   "lon": 79.4,
    "sources": {
     "open_meteo_marine": {
      "source": "open_meteo_marine",
-     "url": "https://marine-api.open-meteo.com/v1/marine?latitude=9.05&longitude=79.1&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,wind_wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:11.302082+00:00",
+     "url": "https://marine-api.open-meteo.com/v1/marine?latitude=9.15&longitude=79.4&hourly=wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,wind_wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction&past_days=7&forecast_days=8&timezone=UTC",
+     "fetched_at": "2026-10-18T18:29:37.479212+00:00",
      "status": 200,
-     "latency_ms": 274,
-     "bytes": 26140,
+     "latency_ms": 190,
+     "bytes": 26223,
      "file": "data\\snapshots\\gulf_of_mannar\\open_meteo_marine.json"
     },
     "open_meteo_weather": {
      "source": "open_meteo_weather",
-     "url": "https://api.open-meteo.com/v1/forecast?latitude=9.05&longitude=79.1&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m,visibility,precipitation,weather_code,cape&wind_speed_unit=kn&past_days=7&forecast_days=8&timezone=UTC",
-     "fetched_at": "2026-09-15T10:20:11.308062+00:00",
+     "url": "https://api.open-meteo.com/v1/forecast?latitude=9.15&longitude=79.4&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m,visibility,precipitation,weather_code,cape&wind_speed_unit=kn&past_days=7&forecast_days=8&timezone=UTC",
+     "fetched_at": "2026-10-18T18:29:37.480689+00:00",
      "status": 200,
-     "latency_ms": 907,
-     "bytes": 20483,
+     "latency_ms": 311,
+     "bytes": 20284,
      "file": "data\\snapshots\\gulf_of_mannar\\open_meteo_weather.json"
     },
     "noaa_viirs_chl": {
      "source": "noaa_viirs_chl",
-     "url": "https://coastwatch.noaa.gov/erddap/griddap/noaacwNPPN20VIIRSDINEOFDaily.json?chlor_a%5B(2026-08-15T12:00:00Z):(last)%5D%5B(0.0)%5D%5B(9.05)%5D%5B(79.1)%5D",
-     "fetched_at": "2026-09-15T10:20:11.311573+00:00",
+     "url": "https://coastwatch.noaa.gov/erddap/griddap/noaacwNPPN20VIIRSDINEOFDaily.json?chlor_a%5B(2026-08-15T12:00:00Z):(last)%5D%5B(0.0)%5D%5B(9.15)%5D%5B(79.4)%5D",
+     "fetched_at": "2026-10-18T18:29:37.480689+00:00",
      "status": 200,
-     "latency_ms": 1208,
-     "bytes": 2039,
+     "latency_ms": 2048,
+     "bytes": 4220,
      "file": "data\\snapshots\\gulf_of_mannar\\noaa_viirs_chl.json"
     },
     "incois_argo_temp": {
      "source": "incois_argo_temp",
-     "url": "https://erddap.incois.gov.in/erddap/griddap/incois_argo_10d_VAM.json?TEMP%5B(last)%5D%5B(5)%5D%5B(9.05)%5D%5B(79.1)%5D",
-     "fetched_at": "2026-09-15T10:20:11.315110+00:00",
+     "url": "https://erddap.incois.gov.in/erddap/griddap/incois_argo_10d_VAM.json?TEMP%5B(last)%5D%5B(5)%5D%5B(9.15)%5D%5B(79.4)%5D",
+     "fetched_at": "2026-10-18T18:29:37.480689+00:00",
      "status": 200,
-     "latency_ms": 110,
+     "latency_ms": 194,
      "bytes": 312,
      "file": "data\\snapshots\\gulf_of_mannar\\incois_argo_temp.json"
     }
@@ -258,11 +258,14 @@
   "incois_pfz_lines": {
    "source": "incois_pfz_lines",
    "url": "https://incois.gov.in/geoserver/PFZ_Automation/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=PFZ_Automation:pfzlines&outputFormat=application/json",
-   "fetched_at": "2026-09-15T10:20:03.674861+00:00",
+   "fetched_at": "2026-10-16T04:49:18.105190+00:00",
    "status": 200,
-   "latency_ms": 416,
-   "bytes": 1123049,
-   "file": "data\\snapshots\\incois_pfz_lines.json"
+   "file": "data\\snapshots\\incois_pfz_lines.json",
+   "note": "copied from the runtime cache: the live refresh failed",
+   "refresh_failed": {
+    "at": "2026-10-18T18:27:55.262485+00:00",
+    "error": "ReadTimeout: "
+   }
   }
  }
 }

@@ -143,9 +143,13 @@ def test_nearest_pfz_from_kochi_is_kerala_and_offshore(zones):
     assert d == pytest.approx(hits[0].distance_km, abs=0.5)
 
 
-def test_no_pfz_near_veraval_in_snapshot_returns_empty_not_a_guess(zones):
-    # Gujarat had no advisory on the snapshot day. The right answer is "none", not a number.
-    assert nearest_zones(*HARBOURS["veraval"], zones) == []
+def test_no_pfz_within_range_returns_empty_not_a_guess(zones):
+    # When a sector has no advisory nearby, the right answer is "none", not a number. Built
+    # from the data rather than assumed: drop every Gujarat zone, and Veraval has nothing
+    # within range. (The first version asserted the September snapshot had no Gujarat
+    # advisory — true that day, false on the next refresh.)
+    others = [z for z in zones if z.state != "GUJARAT"]
+    assert nearest_zones(*HARBOURS["veraval"], others) == []
 
 
 def test_nearest_zones_are_sorted_and_capped(zones):
