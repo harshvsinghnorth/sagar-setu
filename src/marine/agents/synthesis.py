@@ -20,6 +20,8 @@ from datetime import UTC, datetime
 from pydantic import BaseModel, Field
 
 from marine.agents.llm import LLM, LLMUnavailable
+from marine.agents.localize import LANGS as LOCALIZED
+from marine.agents.localize import localized_template
 from marine.agents.planner import Intent, Plan
 from marine.agents.specialists import AnalyticsFinding, GeoFinding, OceanFinding
 from marine.ledger import EvidenceLedger
@@ -301,9 +303,17 @@ def build_brief(
 # -- template answer (no model needed) ---------------------------------------------------------
 
 
+def template_language(b: Brief) -> str:
+    return b.language if b.language in LOCALIZED else "en"
+
+
 def template_answer(b: Brief) -> str:
-    """Deterministic English answer, valid by construction. The floor when no LLM is available,
+    """Deterministic answer, valid by construction — in Tamil, Hindi or Malayalam when the
+    asker used one (agents/localize.py), else English. The floor when no LLM is available,
     and the fallback when the verifier rejects the model's draft twice."""
+    localized = localized_template(b)
+    if localized is not None:
+        return localized
     lines: list[str] = []
     if b.intent == Intent.OFF_TOPIC:
         return "I can only help with sea conditions, fishing zones and maritime boundaries along the Indian coast. Ask me, for example: 'Is it safe to go out from Kochi tomorrow morning?'"
@@ -524,7 +534,7 @@ async def synthesize(llm: LLM | None, b: Brief, *, on_chunk=None) -> Answer:
         text = template_answer(b)
         return Answer(
             text=text,
-            language="en",
+            language=template_language(b),
             verdict=b.verdict,
             source="template",
             verification=verify(text, b),
@@ -562,7 +572,7 @@ async def synthesize(llm: LLM | None, b: Brief, *, on_chunk=None) -> Answer:
     text = template_answer(b)
     return Answer(
         text=text,
-        language="en",
+        language=template_language(b),
         verdict=b.verdict,
         source="template_fallback",
         verification=verify(text, b),

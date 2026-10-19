@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { askStream, fetchHealth, fetchQuestionBank, fetchStaticGeo, type AgentEvent, type AskResult, type QuestionBank as Bank, type StaticGeo, type Vessel } from "./api";
+import { API, askStream, fetchHealth, fetchQuestionBank, fetchStaticGeo, MODEL_HOST, START_HINT, type AgentEvent, type AskResult, type Health, type QuestionBank as Bank, type StaticGeo, type Vessel } from "./api";
 import MapView from "./components/MapView";
 import QuestionBank from "./components/QuestionBank";
 import Ledger from "./components/Ledger";
@@ -28,7 +28,8 @@ const EXAMPLES = [
 
 export default function App() {
   const [geo, setGeo] = useState<StaticGeo | null>(null);
-  const [health, setHealth] = useState<{ llm: string; snapshot_created_at: string | null } | null>(null);
+  const [health, setHealth] = useState<Health | null>(null);
+  const [apiDown, setApiDown] = useState(false);
   const [vessel, setVessel] = useState<Vessel>(() => (localStorage.getItem("vessel") as Vessel) || "traditional");
   const [query, setQuery] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -37,10 +38,27 @@ export default function App() {
   const abort = useRef<AbortController | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
 
+  // Poll /health: the status line must show the API coming back (and the map and question
+  // bank must load then) without a page reload, and must show when the model is unreachable.
   useEffect(() => {
-    fetchStaticGeo().then(setGeo).catch(() => setGeo(null));
-    fetchHealth().then(setHealth).catch(() => setHealth(null));
-    fetchQuestionBank().then(setBank).catch(() => setBank(null));
+    let alive = true;
+    let loaded = false;
+    const poll = () =>
+      fetchHealth()
+        .then((h) => {
+          if (!alive) return;
+          setHealth(h);
+          setApiDown(false);
+          if (!loaded) {
+            loaded = true;
+            fetchStaticGeo().then(setGeo).catch(() => { loaded = false; });
+            fetchQuestionBank().then(setBank).catch(() => setBank(null));
+          }
+        })
+        .catch(() => { if (alive) setApiDown(true); });
+    poll();
+    const timer = setInterval(poll, 10_000);
+    return () => { alive = false; clearInterval(timer); };
   }, []);
   useEffect(() => { localStorage.setItem("vessel", vessel); }, [vessel]);
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: "smooth" }); }, [turns]);
@@ -53,10 +71,18 @@ export default function App() {
   }, [latest]);
 
   const busy = turns.some((t) => t.busy);
+  const down = health?.unreachable ?? [];
+  const modelDown = down.includes("*") || down.includes(MODEL_HOST) || !!latest?.plan.model_unavailable;
+  const dataDown = down.some((h) => h !== MODEL_HOST);
 
   async function submit(q: string) {
     const text = q.trim();
     if (!text || busy) return;
+    if (apiDown) {
+      const id = Date.now();
+      setTurns((ts) => [...ts, { id, query: text, text: "", events: [], result: null, busy: false, error: `Cannot reach the Sagar Setu server at ${API}. ${START_HINT}` }]);
+      return;
+    }
     setQuery("");
     const id = Date.now();
     setTurns((ts) => [...ts, { id, query: text, text: "", events: [], result: null, error: null, busy: true }]);
@@ -88,8 +114,19 @@ export default function App() {
           <h1>Sagar Setu <span className="sub">सागर सेतु</span></h1>
           <p className="tag">Ask about the sea in your language. Every number shown has a source.</p>
           <div className="status">
-            <span className={`dot ${health ? "ok" : "bad"}`} />
-            {health ? <>model: {health.llm}</> : "API offline"}
+            <span className={`dot ${apiDown || !health ? "bad" : modelDown || dataDown ? "warn" : "ok"}`} />
+            {apiDown ? (
+              <span title={START_HINT}>server not reachable at {API}</span>
+            ) : !health ? (
+              "connecting…"
+            ) : modelDown ? (
+              <span title="Answers are planned and written without the language model. Every number is still checked against the ledger.">
+                deterministic mode — model unreachable
+              </span>
+            ) : (
+              <>model: {health.llm}</>
+            )}
+            {health && !apiDown && dataDown && <span className="muted"> · live data unreachable, using stored copy</span>}
             {bank && (
               <button className={`bank-open ${showBank ? "on" : ""}`} onClick={() => setShowBank((s) => !s)}>
                 Question bank ({bank.questions.length})
@@ -128,6 +165,11 @@ export default function App() {
               <div className="q">{t.query}</div>
               <AgentTrace events={t.events} busy={t.busy && !t.result} />
               {t.result?.verdict && <VerdictCard v={t.result.verdict} window={t.result.window} />}
+              {t.result?.plan.model_unavailable && (
+                <div className="banner degraded">
+                  <b>Language model unreachable.</b> This answer was planned and written without it, from fixed templates. The verdict comes from the safety engine as always, and every number is checked against the ledger.
+                </div>
+              )}
               {t.result?.degradation.length ? (
                 <div className="banner degraded">
                   <b>Some data is not current:</b> {t.result.degradation.join("; ")}

@@ -8,6 +8,13 @@
       "port": 8000
     },
     {
+      "name": "api-offline",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "uvicorn", "marine.api:app", "--port", "8000"],
+      "env": { "FORCE_OFFLINE": "1" },
+      "port": 8000
+    },
+    {
       "name": "web",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--", "--port", "5173", "--strictPort"],

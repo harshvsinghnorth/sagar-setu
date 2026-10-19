@@ -81,6 +81,7 @@ class Plan(BaseModel):
     # filled in by the planner, not the model
     location: ResolvedLocation | None = None
     source: Literal["fast_path", "llm"] = "fast_path"
+    model_unavailable: bool = False  # the model was needed and could not be reached
     elapsed_ms: int = 0
 
 
@@ -177,6 +178,12 @@ KEYWORDS: dict[Intent, tuple[str, ...]] = {
         "can i go",
         "should i go",
         "go fishing",
+        "take my",
+        "take the boat",
+        "take our",
+        "head out",
+        "set out",
+        "leave",
     ),
     Intent.PFZ: (
         "pfz",
@@ -211,6 +218,11 @@ KEYWORDS: dict[Intent, tuple[str, ...]] = {
         "fewer fish",
         "catch dropped",
         "green water",
+        "greener",
+        "water colour",
+        "water color",
+        "colour of the water",
+        "color of the water",
         "upwelling",
     ),
     Intent.CONDITIONS: (
@@ -423,7 +435,7 @@ Classify `intent`:
 - safety: asking whether it is safe / OK to go to sea or fish (go / no-go).
 - pfz: asking where the fish are, fishing zones, INCOIS PFZ advisory.
 - boundary: distance to or crossing of the maritime boundary (Sri Lanka, Pakistan, EEZ), detention risk.
-- route: the best / safest / shortest way to get from the harbour to a fishing zone. Set `pfz_index` if a particular zone is named (1 = nearest, "PFZ #2" or "second zone" = 2), else null.
+- route: the best / safest / shortest way or path to get from the harbour to a fishing zone. Set `pfz_index` if a particular zone is named (1 = nearest, "PFZ #2" or "second zone" = 2), else null. Asking only how FAR a zone is, or where it is, is pfz, not route.
 - conditions: asking about waves, wind, swell, visibility, currents, sea temperature — without asking for a verdict.
 - chlorophyll: productivity, plankton, why the catch is declining, unusual water colour.
 - general_knowledge: a marine/fishing question that needs no live data (what is a PFZ, what does 2 m swell mean, why is the sea rough in monsoon). Put a short factual answer in `knowledge_answer`, in the user's language, with NO specific forecast numbers for any place or date. NOT general_knowledge if the question names a specific harbour or place and asks what is happening there or why (e.g. "why is the catch falling near Chennai?" is chlorophyll; "how high are the waves at Kochi?" is conditions) — those need live data for that place.
@@ -441,7 +453,7 @@ Rules:
 
 async def llm_plan(llm: LLM, query: str) -> Plan:
     plan = await complete_structured(llm, PLANNER_SYSTEM, query, Plan, max_tokens=600)
-    plan.source = "llm"
+    plan.source, plan.model_unavailable = "llm", False
     if plan.location_name:
         plan.location = resolve_location(LocationQuery(name=plan.location_name))
     if plan.intent in NEEDS_LOCATION and plan.location is None:
@@ -456,27 +468,22 @@ async def llm_plan(llm: LLM, query: str) -> Plan:
 
 
 async def make_plan(query: str, llm: LLM | None, *, force_llm: bool = False) -> Plan:
-    """Fast path first; LLM only when needed. With no LLM at all, non-fast-path questions
-    become a clarify plan in English — the system still answers, honestly."""
+    """English fast path first; the model for everything else. If the model is unreachable,
+    Tamil / Hindi / Malayalam questions fall back to the deterministic Indic path, and what
+    still cannot be planned gets an honest reply in the asker's language."""
+    from marine.agents.indic import indic_plan, offline_clarify  # indic imports this module
+
     t0 = time.perf_counter()
     plan = None if force_llm else fast_plan(query)
     if plan is None:
-        if llm is None:
-            plan = Plan(
-                language=detect_script(query),
-                english_query=query,
-                intent=Intent.CLARIFY,
-                clarify_question="I could not understand the question without the language model. Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-            )
-        else:
+        why = "not configured"
+        if llm is not None:
             try:
                 plan = await llm_plan(llm, query)
             except LLMUnavailable as e:
-                plan = Plan(
-                    language=detect_script(query),
-                    english_query=query,
-                    intent=Intent.CLARIFY,
-                    clarify_question=f"The language model is unavailable ({e}). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-                )
+                why = str(e)
+        if plan is None:
+            plan = indic_plan(query) or offline_clarify(query, why)
+            plan.model_unavailable = True
     plan.elapsed_ms = round((time.perf_counter() - t0) * 1000)
     return plan

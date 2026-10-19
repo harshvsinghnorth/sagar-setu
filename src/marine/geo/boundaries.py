@@ -218,7 +218,14 @@ def predict_crossing(
         if not hit.is_empty:
             for g in getattr(hit, "geoms", [hit]):
                 p = g if g.geom_type == "Point" else Point(g.coords[0])
-                candidates.append((path.project(p), "India EEZ outer limit", "high seas", p))
+                d = path.project(p)
+                # The EEZ polygon's edge is also the COASTLINE: leaving harbour crosses it into
+                # the EEZ, and a track that meets land crosses it again. Only an edge with
+                # non-Indian water just beyond it is the outer limit being crossed.
+                bx, by = path.interpolate(d + 0.3).coords[0]
+                if _india_union_prepared().contains(Point(*plane.to_lonlat(bx, by))):
+                    continue
+                candidates.append((d, "India EEZ outer limit", "high seas", p))
     if not candidates:
         return CrossingPrediction(False, None, None, None, None, None, None, horizon_min, track)
     d_km, name, other, p = min(candidates, key=lambda c: c[0])

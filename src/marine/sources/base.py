@@ -24,6 +24,7 @@ import httpx
 import truststore
 from pydantic import BaseModel
 
+from marine import net
 from marine.config import CACHE_DIR, SNAPSHOT_DIR, settings
 from marine.ledger import Observation, Provenance
 
@@ -176,15 +177,20 @@ async def try_live(url: str, ttl: timedelta, timeout_s: float | None = None) -> 
 
 
 async def _network(url: str, now: datetime, timeout_s: float | None = None) -> FetchOutcome | str:
+    skipped = net.skip_reason(url)
+    if skipped:  # the host failed to connect moments ago: don't wait out another timeout
+        return f"host unreachable: {skipped}"
     t0 = time.perf_counter()
     try:
         r = await client().get(url, timeout=timeout_s or settings.fetch_timeout_s)
+        net.record_success(url)
         if r.status_code == 200:
             payload = r.json()
             cache_write(url, payload, now)
             return FetchOutcome(payload, "live", now, round((time.perf_counter() - t0) * 1000))
         error = f"HTTP {r.status_code}"
     except (TimeoutError, httpx.HTTPError, ValueError) as e:
+        net.record_failure(url, e)
         error = type(e).__name__
     log.warning(
         "fetch failed (%s) after %d ms: %s", error, (time.perf_counter() - t0) * 1000, url[:120]

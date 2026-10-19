@@ -70,6 +70,7 @@ export interface AskResult {
     vessel: Vessel | null;
     heading_deg: number | null;
     speed_kt: number | null;
+    model_unavailable?: boolean;
   };
   answer: { text: string; language: string; source: string; verified: boolean; unsupported: string[] };
   verdict: Verdict | null;
@@ -117,23 +118,58 @@ export interface AskHandlers {
   onError: (msg: string) => void;
 }
 
-/** POST /ask and parse the SSE stream by hand (EventSource is GET-only). */
+export const START_HINT = "Start it with: uv run uvicorn marine.api:app --port 8000";
+const ASK_TIMEOUT_MS = 60_000;
+
+/** POST /ask and parse the SSE stream by hand (EventSource is GET-only). Every way this can
+ * fail ends in exactly one plain-language onError — never a bare "Failed to fetch", never a
+ * turn that silently stops. */
 export async function askStream(
   body: { query: string; vessel?: Vessel; lat?: number; lon?: number; heading_deg?: number; speed_kt?: number },
   h: AskHandlers,
   signal?: AbortSignal,
 ): Promise<void> {
-  const res = await fetch(`${API}/ask`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-    signal,
-  });
-  if (!res.ok || !res.body) {
-    h.onError(`API ${res.status}`);
-    return;
+  const timeout = new AbortController();
+  const timer = setTimeout(() => timeout.abort(), ASK_TIMEOUT_MS);
+  signal?.addEventListener("abort", () => timeout.abort());
+  let gotResult = false;
+  let gotError = false;
+  const onResult = (r: AskResult) => { gotResult = true; h.onResult(r); };
+  const onError = (m: string) => { gotError = true; h.onError(m); };
+  try {
+    let res: Response;
+    try {
+      res = await fetch(`${API}/ask`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+        signal: timeout.signal,
+      });
+    } catch {
+      onError(timeout.signal.aborted && !signal?.aborted
+        ? `No answer after ${ASK_TIMEOUT_MS / 1000} s — the server may be overloaded. Try again.`
+        : `Cannot reach the Sagar Setu server at ${API}. ${START_HINT}`);
+      return;
+    }
+    if (!res.ok || !res.body) {
+      onError(`The server returned an error (HTTP ${res.status}). Try again; if it repeats, check the API terminal.`);
+      return;
+    }
+    await readStream(res.body, { ...h, onResult, onError });
+  } catch {
+    onError(timeout.signal.aborted && !signal?.aborted
+      ? `The answer took longer than ${ASK_TIMEOUT_MS / 1000} s and was stopped. Try again.`
+      : "The connection to the server dropped while answering. Try again.");
+  } finally {
+    clearTimeout(timer);
   }
-  const reader = res.body.getReader();
+  if (!gotResult && !gotError && !signal?.aborted) {
+    h.onError("The answer was cut off before it finished — the server stopped responding. Try again.");
+  }
+}
+
+async function readStream(stream: ReadableStream<Uint8Array>, h: AskHandlers): Promise<void> {
+  const reader = stream.getReader();
   const dec = new TextDecoder();
   let buf = "";
   for (;;) {
@@ -166,10 +202,21 @@ export async function fetchStaticGeo(): Promise<StaticGeo> {
   return r.json();
 }
 
-export async function fetchHealth(): Promise<{ ok: boolean; llm: string; snapshot_created_at: string | null }> {
+export interface Health {
+  ok: boolean;
+  llm: string;
+  snapshot_created_at: string | null;
+  unreachable?: string[]; // hosts that failed to connect in the last minute
+}
+
+export async function fetchHealth(): Promise<Health> {
   const r = await fetch(`${API}/health`);
+  if (!r.ok) throw new Error(`API ${r.status}`);
   return r.json();
 }
+
+/** The language-model host, as /health names it in `unreachable`. */
+export const MODEL_HOST = "generativelanguage.googleapis.com";
 
 export interface BankQuestion {
   id: string;

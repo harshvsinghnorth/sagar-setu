@@ -94,6 +94,25 @@ def test_heading_west_from_gulf_of_mannar_does_not_cross_within_90_min():
     assert not c.crosses_within_horizon
 
 
+@pytest.mark.parametrize(
+    "start, heading",
+    [((10.77, 79.85), 90.0), ((9.97, 76.28), 270.0), ((13.09, 80.29), 90.0)],
+)
+def test_leaving_harbour_is_not_crossing_the_eez_outer_limit(start, heading):
+    # The EEZ polygon starts at the coast, so stepping off a harbour crosses its edge INTO
+    # the EEZ. That once read as "crosses the India EEZ outer limit in 0.5 min" — DO NOT SAIL
+    # for every boundary question asked from a harbour.
+    c = predict_crossing(*start, heading, 10.0)
+    assert c.minutes_to_crossing is None or c.minutes_to_crossing > 60, c.boundary
+
+
+def test_the_real_eez_outer_limit_is_still_found():
+    # Due east from off Chennai the first boundary is the mainland EEZ's 200 nm limit, into
+    # the high seas between it and the Andaman & Nicobar EEZ.
+    c = predict_crossing(13.1, 80.5, 90.0, 20.0)
+    assert c.boundary == "India EEZ outer limit" and 300 < c.distance_to_crossing_km < 400
+
+
 def test_slower_boat_takes_longer_to_reach_the_line():
     fast = predict_crossing(*GULF_OF_MANNAR, heading_deg=90, speed_kt=12)
     slow = predict_crossing(*GULF_OF_MANNAR, heading_deg=90, speed_kt=4)

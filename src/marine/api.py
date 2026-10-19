@@ -26,6 +26,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from shapely.geometry import mapping, shape
 
+from marine import net
 from marine.agents.llm import LLMUnavailable, get_llm
 from marine.agents.synthesis import RESET
 from marine.config import ROOT, SNAPSHOT_DIR, STATIC_DIR, settings
@@ -187,6 +188,9 @@ def health() -> dict:
         "ok": True,
         "llm": provider,
         "gemini_model": settings.gemini_model,
+        # Hosts that failed to connect in the last minute: the interface shows "model
+        # unreachable" / "live data unreachable" instead of pretending all is well.
+        "unreachable": net.down_hosts(),
         "snapshot_created_at": snap,
         "vessel_classes": [v.value for v in VesselClass],
         "thresholds": {
@@ -224,6 +228,7 @@ def _result_payload(state: dict) -> dict:
             "vessel": plan.vessel,
             "heading_deg": plan.heading_deg,
             "speed_kt": plan.speed_kt,
+            "model_unavailable": plan.model_unavailable,
         },
         "answer": {
             "text": ans.text,

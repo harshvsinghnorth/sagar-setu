@@ -20,6 +20,7 @@ from typing import Protocol, TypeVar
 import httpx
 from pydantic import BaseModel, ValidationError
 
+from marine import net
 from marine.config import settings
 
 log = logging.getLogger(__name__)
@@ -114,22 +115,32 @@ class GeminiLLM:
             "generationConfig": cfg,
         }
 
+    def _check_reachable(self) -> None:
+        """Fail at once if the API host failed to connect moments ago (marine.net breaker)."""
+        skipped = net.skip_reason(self._url(self.models[0], "generateContent"))
+        if skipped:
+            raise LLMUnavailable(f"gemini: host unreachable ({skipped})")
+
     async def complete(self, system, user, *, json_mode=False, max_tokens=1024) -> str:
         t0 = time.perf_counter()
         last = ""
+        self._check_reachable()
         for model in self._candidates():
+            url = self._url(model, "generateContent")
             try:
                 async with self._client() as c:
                     for _attempt in range(2):
                         r = await c.post(
-                            self._url(model, "generateContent"),
+                            url,
                             headers={"x-goog-api-key": self.api_key},
                             json=self._body(model, system, user, json_mode, max_tokens),
                         )
                         if not self._rejects_thinking_config(model, r.status_code, r.text):
                             break
             except httpx.HTTPError as e:  # network trouble affects every model: fail fast
+                net.record_failure(url, e)
                 raise LLMUnavailable(f"gemini: {type(e).__name__}") from e
+            net.record_success(url)
             if r.status_code in _FALLBACK_STATUSES:
                 _park(model, r.status_code, r.text)
                 last = f"{model}: HTTP {r.status_code} {r.text[:200]}"
@@ -149,14 +160,16 @@ class GeminiLLM:
 
     async def stream(self, system, user, *, max_tokens=1024) -> AsyncIterator[str]:
         last = ""
+        self._check_reachable()
         for model in self._candidates():
+            url = self._url(model, "streamGenerateContent") + "?alt=sse"
             for _attempt in range(2):
                 resend = False
                 try:
                     async with self._client() as c:
                         async with c.stream(
                             "POST",
-                            self._url(model, "streamGenerateContent") + "?alt=sse",
+                            url,
                             headers={"x-goog-api-key": self.api_key},
                             json=self._body(model, system, user, False, max_tokens),
                         ) as r:
@@ -183,6 +196,7 @@ class GeminiLLM:
                                         continue
                                 return
                 except httpx.HTTPError as e:
+                    net.record_failure(url, e)
                     raise LLMUnavailable(f"gemini stream: {type(e).__name__}") from e
                 if not resend:
                     break

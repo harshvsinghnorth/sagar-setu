@@ -41,6 +41,7 @@ button, input, select { font: inherit; }
 .status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink2); }
 .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--nogo); }
 .status .dot.ok { background: var(--go); }
+.status .dot.warn { background: var(--caution); }
 .status .vessel { margin-left: auto; display: flex; gap: 6px; align-items: center; }
 .status select { padding: 2px 4px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
 

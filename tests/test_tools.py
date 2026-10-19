@@ -92,8 +92,29 @@ def test_resolve_landing_centre_with_sector():
 
 
 def test_resolve_fuzzy_spelling():
-    r = resolve_location(LocationQuery(name="vypin"))
-    assert r and r.name == "Vypeen" and r.match == "fuzzy"
+    r = resolve_location(LocationQuery(name="neendakra"))
+    assert r and r.name == "Neendakara" and r.match == "fuzzy"
+
+
+@pytest.mark.parametrize(
+    "asked, lat",
+    [
+        ("Kollam", 8.88),  # the data's own "Kollam" is a Kozhikode landing centre at 11.45 N
+        ("Vypin", 9.97),
+        ("Colachel", 8.17),
+        ("Thiruvananthapuram", 8.38),
+        ("Goa", 15.49),
+    ],
+)
+def test_everyday_names_reach_the_right_landing_centre(asked, lat):
+    r = resolve_location(LocationQuery(name=asked))
+    assert r and r.score == 1.0 and abs(r.lat - lat) < 0.05, r
+
+
+def test_pondicherry_alias_still_works_both_ways():
+    for name in ("Pondicherry", "Puducherry"):
+        r = resolve_location(LocationQuery(name=name))
+        assert r and abs(r.lat - 11.91) < 0.05
 
 
 def test_resolve_unknown_is_none_not_a_guess():

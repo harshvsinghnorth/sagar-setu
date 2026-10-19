@@ -36,7 +36,6 @@ BANK = ROOT / "data" / "question_bank" / "bank.json"
 RESULTS = ROOT / "data" / "question_bank" / "results.json"
 REPORT = ROOT / "docs" / "question_bank_results.md"
 
-LLM_DOWN = "language model is unavailable"
 NEEDS_VERDICT = {"safety", "route"}  # a route is graded by the engine like a safety question
 FIELDS = ("intent", "location", "day", "part", "vessel", "heading_deg", "speed_kt", "pfz_index")
 
@@ -85,11 +84,7 @@ async def run_one(item: dict, retries: int, backoff: float, offline: bool = Fals
         except Exception as e:  # a crash is a result, not a reason to stop the run
             return {"id": item["id"], "error": f"{type(e).__name__}: {e}"}
         plan = state["plan"]
-        if (
-            _val(plan.intent) == "clarify"
-            and LLM_DOWN in (plan.clarify_question or "")
-            and attempt < retries
-        ):
+        if _val(plan.intent) == "clarify" and plan.model_unavailable and attempt < retries:
             attempt += 1
             print(f"    model unavailable, retry {attempt}/{retries} in {backoff:.0f}s")
             await asyncio.sleep(backoff * attempt)
@@ -109,7 +104,7 @@ async def run_one(item: dict, retries: int, backoff: float, offline: bool = Fals
         "heading_deg": plan.heading_deg,
         "speed_kt": plan.speed_kt,
         "pfz_index": plan.pfz_index,
-        "planner": plan.source,
+        "planner": plan.source + (" (offline)" if plan.model_unavailable else ""),
     }
     exp = item["expect"]
     field_ok = {f: _matches(f, exp[f], got[f]) for f in FIELDS if f in exp}
@@ -138,7 +133,11 @@ async def run_one(item: dict, retries: int, backoff: float, offline: bool = Fals
     if offline and verdict is not None:
         # Rule 3: with the network gone, every data answer must say it is not live.
         behaviour["degradation_stated"] = bool(ans.degradation)
-    llm_down = LLM_DOWN in (plan.clarify_question or "")
+    # Not scored: the model was needed (the question could not be planned without it) and
+    # was unreachable. A question the deterministic paths answered offline IS scored.
+    llm_down = (
+        plan.model_unavailable and got["intent"] == "clarify" and "clarify" not in expected_intents
+    )
 
     return {
         "id": item["id"],

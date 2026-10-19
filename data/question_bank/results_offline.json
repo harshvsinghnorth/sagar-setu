@@ -1,86 +1,68 @@
 {
   "summary": {
-    "run_at": "2026-10-18T18:47:45+00:00",
+    "run_at": "2026-10-19T04:19:01+00:00",
     "questions": 53,
-    "scored": 20,
+    "scored": 44,
     "errors": [],
     "llm_unavailable": [
-      "S02",
-      "S04",
-      "S07",
-      "S08",
-      "S09",
-      "S10",
-      "S11",
-      "S12",
-      "C04",
-      "C05",
-      "P04",
-      "P05",
-      "P06",
-      "B04",
-      "B05",
-      "B06",
-      "R03",
-      "R04",
-      "A02",
-      "A03",
-      "A04",
       "G01",
       "G02",
       "G03",
       "G04",
       "G05",
-      "Q01",
-      "Q02",
-      "Q03",
       "O01",
       "O02",
       "O03",
       "O04"
     ],
-    "understood": "20/20 (100 %)",
-    "behaved": "20/20 (100 %)",
+    "understood": "44/44 (100 %)",
+    "behaved": "44/44 (100 %)",
     "by_language": {
-      "en": "19/19 (100 %)",
-      "hi": "1/1 (100 %)"
+      "en": "24/24 (100 %)",
+      "hi": "8/8 (100 %)",
+      "ml": "1/1 (100 %)",
+      "ta": "11/11 (100 %)"
     },
     "by_category": {
-      "boundary": "3/3 (100 %)",
-      "chlorophyll": "1/1 (100 %)",
-      "conditions": "4/4 (100 %)",
-      "pfz": "4/4 (100 %)",
-      "route": "2/2 (100 %)",
-      "safety": "6/6 (100 %)"
+      "boundary": "6/6 (100 %)",
+      "chlorophyll": "4/4 (100 %)",
+      "clarify": "3/3 (100 %)",
+      "conditions": "6/6 (100 %)",
+      "pfz": "7/7 (100 %)",
+      "route": "4/4 (100 %)",
+      "safety": "14/14 (100 %)"
     },
     "by_style": {
       "code-mixed": "1/1 (100 %)",
+      "colloquial": "2/2 (100 %)",
       "misspelled": "2/2 (100 %)",
-      "plain": "17/17 (100 %)"
+      "plain": "39/39 (100 %)"
     },
     "fields": {
-      "language": "20/20 (100 %)",
-      "intent": "20/20 (100 %)",
-      "location": "20/20 (100 %)",
-      "day": "10/10 (100 %)",
-      "part": "6/6 (100 %)",
-      "vessel": "1/1 (100 %)",
-      "heading_deg": "2/2 (100 %)",
-      "speed_kt": "2/2 (100 %)",
+      "language": "44/44 (100 %)",
+      "intent": "44/44 (100 %)",
+      "location": "41/41 (100 %)",
+      "day": "21/21 (100 %)",
+      "part": "12/12 (100 %)",
+      "vessel": "4/4 (100 %)",
+      "heading_deg": "3/3 (100 %)",
+      "speed_kt": "3/3 (100 %)",
       "pfz_index": "1/1 (100 %)"
     },
     "behaviour": {
-      "answered": "20/20 (100 %)",
-      "numbers_verified": "20/20 (100 %)",
-      "reply_language": "20/20 (100 %)",
-      "verdict_given": "8/8 (100 %)",
-      "degradation_stated": "11/11 (100 %)",
-      "route_found": "2/2 (100 %)"
+      "answered": "44/44 (100 %)",
+      "numbers_verified": "44/44 (100 %)",
+      "reply_language": "44/44 (100 %)",
+      "verdict_given": "18/18 (100 %)",
+      "degradation_stated": "24/24 (100 %)",
+      "route_found": "4/4 (100 %)",
+      "no_verdict": "3/3 (100 %)"
     },
     "answer_sources": {
-      "template_fallback": 20
+      "template": 3,
+      "template_fallback": 41
     },
-    "median_ms": 5873
+    "median_ms": 152
   },
   "rows": [
     {
@@ -139,7 +121,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 8414
+      "ms": 9253
     },
     {
       "id": "S02",
@@ -158,37 +140,43 @@
       },
       "got": {
         "language": "en",
-        "intent": "clarify",
-        "location": null,
+        "intent": "safety",
+        "location": "Vizhinjam",
         "day": "tomorrow",
         "part": "morning",
-        "vessel": null,
+        "vessel": "traditional",
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
         "planner": "fast_path"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
+        "intent": true,
+        "location": true,
         "day": true,
-        "vessel": false
+        "vessel": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": true
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
       },
       "behaved": true,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "verdict": "DO NOT SAIL",
+      "answer": "DO NOT SAIL — traditional craft off Vizhinjam, Tue 20 Oct 05:00–12:00 IST.\n• visibility 0.58 km ≤ no-go threshold 2 km\n• wave height 0.86 m\n• wave period 11.6 s\n• swell height 0.8 m\n• swell period 10.3 s\n• wind 4.3 kt\n• gusts 11.3 kt\n• wind direction 333 deg\n• visibility 0.58 km\n• sea temperature 31 degC\n• current 0.216 kt\n• current direction 180 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 23.2 km WNW (bearing 281°) from Vizhinjam, Kerala sector, advisory dated 2026-10-15\n• PFZ #2: 53.2 km SW (bearing 227°) from Vizhinjam, Kerala sector, advisory dated 2026-10-15\n• PFZ #3: 60.7 km WNW (bearing 282°) from Vizhinjam, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Sri Lanka - India (Sri Lanka) 209 km to the ESE\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3674
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 336
     },
     {
       "id": "S03",
@@ -248,7 +236,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 6001
+      "ms": 309
     },
     {
       "id": "S04",
@@ -267,37 +255,43 @@
       },
       "got": {
         "language": "en",
-        "intent": "clarify",
-        "location": null,
-        "day": "tomorrow",
+        "intent": "safety",
+        "location": "Paradip",
+        "day": "day_after",
         "part": "morning",
-        "vessel": null,
+        "vessel": "mechanised",
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
         "planner": "fast_path"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
-        "day": false,
-        "vessel": false
+        "intent": true,
+        "location": true,
+        "day": true,
+        "vessel": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": true
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
       },
       "behaved": true,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "verdict": "GO",
+      "answer": "GO — mechanised craft off Paradip, Wed 21 Oct 05:00–12:00 IST.\n• wave height 1.04 m\n• wave period 13.15 s\n• swell height 0.94 m\n• swell period 12 s\n• wind 7.6 kt\n• gusts 16.9 kt\n• wind direction 358 deg\n• visibility 7.8 km\n• sea temperature 30.3 degC\n• current 0.54 kt\n• current direction 217 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 39.6 km SE (bearing 126°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• PFZ #2: 69.4 km SSW (bearing 200°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• PFZ #3: 85 km SW (bearing 216°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 271.2 km to the E\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3699
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 341
     },
     {
       "id": "S05",
@@ -351,7 +345,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5844
+      "ms": 256
     },
     {
       "id": "S06",
@@ -414,7 +408,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5879
+      "ms": 215
     },
     {
       "id": "S07",
@@ -436,37 +430,43 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
+        "intent": "safety",
+        "location": "Kochi",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
+        "intent": true,
+        "location": true,
         "day": true,
         "part": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "DO NOT SAIL",
+      "answer": "கடலுக்குப் போக வேண்டாம் (DO NOT SAIL) — நாட்டுப் படகு, Kochi, Tue 20 Oct 05:00–12:00 IST.\n• பார்வைத் தூரம் 0.58 கி.மீ — கடலுக்குப் போகக்கூடாத வரம்பான 2 கி.மீ-க்குக் குறைவு\n• அலை உயரம்: 0.86 மீ\n• அலை இடைவெளி: 11.6 வினாடி\n• நீள் அலை உயரம்: 0.8 மீ\n• நீள் அலை இடைவெளி: 10.3 வினாடி\n• காற்றின் வேகம்: 4.3 நாட்\n• திடீர் காற்று: 11.3 நாட்\n• காற்று வரும் திசை: 333°\n• பார்வைத் தூரம்: 0.58 கி.மீ\n• கடல் நீர் வெப்பநிலை: 31°C\n• நீரோட்ட வேகம்: 0.216 நாட்\n• நீரோட்டத் திசை: 180°\nமீன் கிடைக்கக்கூடிய பகுதிகள் (INCOIS PFZ அறிவிப்பு 2026-10-15):\n• PFZ #1: Kochi-இலிருந்து மேற்கு-தென்மேற்கு (WSW) திசையில் 25.7 கி.மீ (திசைக்கோணம் 239°), Kerala பகுதி\n• PFZ #2: Kochi-இலிருந்து வடமேற்கு (NW) திசையில் 59.2 கி.மீ (திசைக்கோணம் 304°), Kerala பகுதி\n• PFZ #3: Kochi-இலிருந்து தெற்கு (S) திசையில் 64.7 கி.மீ (திசைக்கோணம் 187°), Kerala பகுதி\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Maldives - India (மாலத்தீவு) — தெற்கு-தென்மேற்கு (SSW) திசையில் 277.1 கி.மீ\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — அலை: சேமித்த நகல்; காற்று, வானிலை: சேமித்த நகல்; மீன்பிடி மண்டலம்: சேமித்த நகல்.\nசரிபார்க்க முடியாதவை: புயல், மின்னல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3661
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 151
     },
     {
       "id": "S08",
@@ -485,37 +485,43 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
-        "day": "tomorrow",
-        "part": "morning",
+        "intent": "safety",
+        "location": "Nagapattinam",
+        "day": "today",
+        "part": "evening",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
-        "day": false,
-        "part": false
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "கடலுக்குப் போகலாம் (GO) — நாட்டுப் படகு, Nagapattinam, Mon 19 Oct 17:00–21:00 IST.\n• அலை உயரம்: 0.94 மீ\n• அலை இடைவெளி: 11.6 வினாடி\n• நீள் அலை உயரம்: 0.82 மீ\n• நீள் அலை இடைவெளி: 9.85 வினாடி\n• காற்றின் வேகம்: 8.9 நாட்\n• திடீர் காற்று: 12.4 நாட்\n• காற்று வரும் திசை: 273°\n• பார்வைத் தூரம்: 6.34 கி.மீ\n• கடல் நீர் வெப்பநிலை: 30.3°C\n• நீரோட்ட வேகம்: 0.162 நாட்\n• நீரோட்டத் திசை: 45°\nமீன் கிடைக்கக்கூடிய பகுதிகள் (INCOIS PFZ அறிவிப்பு 2026-10-15):\n• PFZ #1: Nagapattinam-இலிருந்து வடகிழக்கு (NE) திசையில் 40.6 கி.மீ (திசைக்கோணம் 52°), North Tamilnadu பகுதி\n• PFZ #2: Nagapattinam-இலிருந்து கிழக்கு-தென்கிழக்கு (ESE) திசையில் 40.9 கி.மீ (திசைக்கோணம் 117°), North Tamilnadu பகுதி\n• PFZ #3: Nagapattinam-இலிருந்து வடகிழக்கு (NE) திசையில் 96.8 கி.மீ (திசைக்கோணம் 38°), North Tamilnadu பகுதி\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Sri Lanka - India (இலங்கை) — தென்கிழக்கு (SE) திசையில் 76.8 கி.மீ\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — அலை: சேமித்த நகல்; காற்று, வானிலை: சேமித்த நகல்; மீன்பிடி மண்டலம்: சேமித்த நகல்.\nசரிபார்க்க முடியாதவை: புயல், மின்னல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3713
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 111
     },
     {
       "id": "S09",
@@ -539,38 +545,44 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
+        "intent": "safety",
+        "location": "Kasimedu",
         "day": "tomorrow",
-        "part": "morning",
-        "vessel": null,
+        "part": "early_morning",
+        "vessel": "traditional",
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
+        "intent": true,
+        "location": true,
         "day": true,
         "part": true,
-        "vessel": false
+        "vessel": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "எச்சரிக்கையுடன் மட்டும் (CAUTION) — நாட்டுப் படகு, Kasimedu, Tue 20 Oct 03:00–08:00 IST.\n• பார்வைத் தூரம் 4.9 கி.மீ — எச்சரிக்கை வரம்பான 5 கி.மீ-க்குக் குறைவு\n• அலை உயரம்: 0.48 மீ\n• அலை இடைவெளி: 9.85 வினாடி\n• நீள் அலை உயரம்: 0.38 மீ\n• நீள் அலை இடைவெளி: 7.4 வினாடி\n• காற்றின் வேகம்: 5.9 நாட்\n• திடீர் காற்று: 14.4 நாட்\n• காற்று வரும் திசை: 347°\n• பார்வைத் தூரம்: 4.9 கி.மீ\n• கடல் நீர் வெப்பநிலை: 30.1°C\n• நீரோட்ட வேகம்: 0.486 நாட்\n• நீரோட்டத் திசை: 194°\nமீன் கிடைக்கக்கூடிய பகுதிகள் (INCOIS PFZ அறிவிப்பு 2026-10-15):\n• PFZ #1: Kasimedu-இலிருந்து கிழக்கு (E) திசையில் 54.1 கி.மீ (திசைக்கோணம் 101°), North Tamilnadu பகுதி\n• PFZ #2: Kasimedu-இலிருந்து தென்கிழக்கு (SE) திசையில் 69.6 கி.மீ (திசைக்கோணம் 136°), North Tamilnadu பகுதி\n• PFZ #3: Kasimedu-இலிருந்து தெற்கு-தென்கிழக்கு (SSE) திசையில் 85.8 கி.மீ (திசைக்கோணம் 159°), North Tamilnadu பகுதி\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Sri Lanka - India (இலங்கை) — தெற்கு-தென்கிழக்கு (SSE) திசையில் 280.1 கி.மீ\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — அலை: சேமித்த நகல்; காற்று, வானிலை: சேமித்த நகல்; மீன்பிடி மண்டலம்: சேமித்த நகல்.\nசரிபார்க்க முடியாதவை: புயல், மின்னல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3711
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 131
     },
     {
       "id": "S10",
@@ -592,37 +604,43 @@
       },
       "got": {
         "language": "hi",
-        "intent": "clarify",
-        "location": null,
+        "intent": "safety",
+        "location": "Veraval",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
+        "intent": true,
+        "location": true,
         "day": true,
         "part": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "समुद्र में जा सकते हैं (GO) — पारंपरिक नाव, Veraval, Tue 20 Oct 05:00–12:00 IST।\n• लहर की ऊँचाई: 0.66 मी.\n• लहर अंतराल: 10.55 सेकंड\n• स्वेल (लंबी लहर) की ऊँचाई: 0.66 मी.\n• स्वेल अंतराल: 8.95 सेकंड\n• हवा की रफ़्तार: 4.8 नॉट\n• हवा के झोंके: 10.5 नॉट\n• हवा की दिशा: 344°\n• दृश्यता: 14.68 कि.मी.\n• समुद्र का तापमान: 29.8°C\n• धारा की रफ़्तार: 0.81 नॉट\n• धारा की दिशा: 300°\nमछली मिलने के संभावित क्षेत्र (INCOIS PFZ सूचना 2026-10-15):\n• PFZ #1: Veraval से पश्चिम (W) दिशा में 26.3 कि.मी. (दिशा-कोण 260°), Gujarat क्षेत्र\n• PFZ #2: Veraval से दक्षिण-पूर्व (SE) दिशा में 41.8 कि.मी. (दिशा-कोण 134°), Gujarat क्षेत्र\n• PFZ #3: Veraval से पश्चिम-उत्तरपश्चिम (WNW) दिशा में 119.7 कि.मी. (दिशा-कोण 298°), Gujarat क्षेत्र\n• स्थिति: भारतीय बंदरगाह / ज़मीन पर; सबसे नज़दीकी समुद्री सीमा: Pakistan - India (पाकिस्तान) — पश्चिम-उत्तरपश्चिम (WNW) दिशा में 361.9 कि.मी.\nडेटा सूचना: लाइव डेटा नहीं मिला — लहरें: सहेजी गई प्रति; हवा और मौसम: सहेजी गई प्रति; मछली क्षेत्र: सहेजी गई प्रति।\nजाँच नहीं हो सकी: चक्रवात, बिजली (तड़ित)।",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3684
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 162
     },
     {
       "id": "S11",
@@ -640,36 +658,42 @@
       },
       "got": {
         "language": "hi",
-        "intent": "clarify",
-        "location": null,
+        "intent": "safety",
+        "location": "Paradip",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
+        "intent": true,
+        "location": true,
         "day": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "समुद्र में जा सकते हैं (GO) — पारंपरिक नाव, Paradip, Tue 20 Oct 05:00–12:00 IST।\n• लहर की ऊँचाई: 0.96 मी.\n• लहर अंतराल: 12.7 सेकंड\n• स्वेल (लंबी लहर) की ऊँचाई: 0.78 मी.\n• स्वेल अंतराल: 12.4 सेकंड\n• हवा की रफ़्तार: 9.1 नॉट\n• हवा के झोंके: 19 नॉट\n• हवा की दिशा: 355°\n• दृश्यता: 5.86 कि.मी.\n• समुद्र का तापमान: 30.4°C\n• धारा की रफ़्तार: 0.54 नॉट\n• धारा की दिशा: 225°\nमछली मिलने के संभावित क्षेत्र (INCOIS PFZ सूचना 2026-10-15):\n• PFZ #1: Paradip से दक्षिण-पूर्व (SE) दिशा में 39.6 कि.मी. (दिशा-कोण 126°), Orissa क्षेत्र\n• PFZ #2: Paradip से दक्षिण-दक्षिणपश्चिम (SSW) दिशा में 69.4 कि.मी. (दिशा-कोण 200°), Orissa क्षेत्र\n• PFZ #3: Paradip से दक्षिण-पश्चिम (SW) दिशा में 85 कि.मी. (दिशा-कोण 216°), Orissa क्षेत्र\n• स्थिति: भारतीय बंदरगाह / ज़मीन पर; सबसे नज़दीकी समुद्री सीमा: Bangladesh - India (बांग्लादेश) — पूर्व (E) दिशा में 271.2 कि.मी.\nडेटा सूचना: लाइव डेटा नहीं मिला — लहरें: सहेजी गई प्रति; हवा और मौसम: सहेजी गई प्रति; मछली क्षेत्र: सहेजी गई प्रति।\nजाँच नहीं हो सकी: चक्रवात, बिजली (तड़ित)।",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3756
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 127
     },
     {
       "id": "S12",
@@ -691,37 +715,43 @@
       },
       "got": {
         "language": "ml",
-        "intent": "clarify",
-        "location": null,
+        "intent": "safety",
+        "location": "Kochi",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
+        "intent": true,
+        "location": true,
         "day": true,
         "part": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "verdict_given": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "DO NOT SAIL",
+      "answer": "കടലിൽ പോകരുത് (DO NOT SAIL) — പരമ്പരാഗത വള്ളം, Kochi, Tue 20 Oct 05:00–12:00 IST.\n• കാഴ്ചദൂരം 0.58 കി.മീ — കടലിൽ പോകരുതാത്ത പരിധിയായ 2 കി.മീ-ൽ താഴെ\n• തിരമാലയുടെ ഉയരം: 0.86 മീ\n• തിര ഇടവേള: 11.6 സെക്കൻഡ്\n• ഓളത്തിര ഉയരം: 0.8 മീ\n• ഓളത്തിര ഇടവേള: 10.3 സെക്കൻഡ്\n• കാറ്റിന്റെ വേഗം: 4.3 നോട്ട്\n• ശക്തമായ കാറ്റ്: 11.3 നോട്ട്\n• കാറ്റിന്റെ ദിശ: 333°\n• കാഴ്ചദൂരം: 0.58 കി.മീ\n• കടൽ ജല താപനില: 31°C\n• ഒഴുക്കിന്റെ വേഗം: 0.216 നോട്ട്\n• ഒഴുക്കിന്റെ ദിശ: 180°\nമത്സ്യ സാധ്യതാ മേഖലകൾ (INCOIS PFZ അറിയിപ്പ് 2026-10-15):\n• PFZ #1: Kochi-ൽ നിന്ന് പടിഞ്ഞാറ്-തെക്കുപടിഞ്ഞാറ് (WSW) ദിശയിൽ 25.7 കി.മീ (ദിശാകോൺ 239°), Kerala മേഖല\n• PFZ #2: Kochi-ൽ നിന്ന് വടക്കുപടിഞ്ഞാറ് (NW) ദിശയിൽ 59.2 കി.മീ (ദിശാകോൺ 304°), Kerala മേഖല\n• PFZ #3: Kochi-ൽ നിന്ന് തെക്ക് (S) ദിശയിൽ 64.7 കി.മീ (ദിശാകോൺ 187°), Kerala മേഖല\n• സ്ഥാനം: ഇന്ത്യൻ തുറമുഖം / കര; ഏറ്റവും അടുത്ത സമുദ്രാതിർത്തി: Maldives - India (മാലദ്വീപ്) — തെക്ക്-തെക്കുപടിഞ്ഞാറ് (SSW) ദിശയിൽ 277.1 കി.മീ\nഡാറ്റ കുറിപ്പ്: തത്സമയ ഡാറ്റ ലഭിച്ചില്ല — തിര: സൂക്ഷിച്ച പകർപ്പ്; കാറ്റ്, കാലാവസ്ഥ: സൂക്ഷിച്ച പകർപ്പ്; മത്സ്യ മേഖല: സൂക്ഷിച്ച പകർപ്പ്.\nപരിശോധിക്കാൻ കഴിയാത്തത്: ചുഴലിക്കാറ്റ്, ഇടിമിന്നൽ.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3689
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 187
     },
     {
       "id": "S13",
@@ -770,7 +800,7 @@
       },
       "behaved": true,
       "verdict": "GO",
-      "answer": "GO — traditional craft off Porbandar, Tue 20 Oct 05:00–12:00 IST.\n• wave height 0.66 m\n• wave period 10.55 s\n• swell height 0.66 m\n• swell period 8.95 s\n• wind 4.8 kt\n• gusts 10.5 kt\n• wind direction 344 deg\n• visibility 14.68 km\n• sea temperature 29.8 degC\n• current 0.81 kt\n• current direction 300 deg\nFishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 25.6 km SW (bearing 235°) from Porbandar, Gujarat sector, advisory dated 2026-10-15\n• PFZ #2: 54.3 km W (bearing 260°) from Porbandar, Gujarat sector, advisory dated 2026-10-15\n• PFZ #3: 83.6 km SSE (bearing 148°) from Porbandar, Gujarat sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Pakistan - India (Pakistan) 250.4 km to the WNW\nData note: open_meteo/marine: snapshot; open_meteo/weather: snapshot; incois/pfz: snapshot.\nNot available: cyclone; cyclone_cone_hours; lightning_distance_km.",
+      "answer": "समुद्र में जा सकते हैं (GO) — पारंपरिक नाव, Porbandar, Tue 20 Oct 05:00–12:00 IST।\n• लहर की ऊँचाई: 0.66 मी.\n• लहर अंतराल: 10.55 सेकंड\n• स्वेल (लंबी लहर) की ऊँचाई: 0.66 मी.\n• स्वेल अंतराल: 8.95 सेकंड\n• हवा की रफ़्तार: 4.8 नॉट\n• हवा के झोंके: 10.5 नॉट\n• हवा की दिशा: 344°\n• दृश्यता: 14.68 कि.मी.\n• समुद्र का तापमान: 29.8°C\n• धारा की रफ़्तार: 0.81 नॉट\n• धारा की दिशा: 300°\nमछली मिलने के संभावित क्षेत्र (INCOIS PFZ सूचना 2026-10-15):\n• PFZ #1: Porbandar से दक्षिण-पश्चिम (SW) दिशा में 25.6 कि.मी. (दिशा-कोण 235°), Gujarat क्षेत्र\n• PFZ #2: Porbandar से पश्चिम (W) दिशा में 54.3 कि.मी. (दिशा-कोण 260°), Gujarat क्षेत्र\n• PFZ #3: Porbandar से दक्षिण-दक्षिणपूर्व (SSE) दिशा में 83.6 कि.मी. (दिशा-कोण 148°), Gujarat क्षेत्र\n• स्थिति: भारतीय बंदरगाह / ज़मीन पर; सबसे नज़दीकी समुद्री सीमा: Pakistan - India (पाकिस्तान) — पश्चिम-उत्तरपश्चिम (WNW) दिशा में 250.4 कि.मी.\nडेटा सूचना: लाइव डेटा नहीं मिला — लहरें: सहेजी गई प्रति; हवा और मौसम: सहेजी गई प्रति; मछली क्षेत्र: सहेजी गई प्रति।\nजाँच नहीं हो सकी: चक्रवात, बिजली (तड़ित)।",
       "answer_source": "template_fallback",
       "unsupported_numbers": [],
       "degradation": [
@@ -779,7 +809,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5970
+      "ms": 241
     },
     {
       "id": "S14",
@@ -832,7 +862,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5767
+      "ms": 176
     },
     {
       "id": "C01",
@@ -883,7 +913,7 @@
         "open_meteo/weather: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5779
+      "ms": 148
     },
     {
       "id": "C02",
@@ -935,7 +965,7 @@
         "open_meteo/weather: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5754
+      "ms": 163
     },
     {
       "id": "C03",
@@ -985,7 +1015,7 @@
         "open_meteo/weather: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5803
+      "ms": 193
     },
     {
       "id": "C04",
@@ -1004,36 +1034,39 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
+        "intent": "conditions",
+        "location": "Tuticorin",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
+        "intent": true,
+        "location": true,
         "day": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "answer": "Tuticorin கடல் நிலை, Tue 20 Oct 05:00–12:00 IST:\n• அலை உயரம்: 0.92 மீ\n• அலை இடைவெளி: 12.6 வினாடி\n• நீள் அலை உயரம்: 0.82 மீ\n• நீள் அலை இடைவெளி: 10.2 வினாடி\n• காற்றின் வேகம்: 7.6 நாட்\n• திடீர் காற்று: 10.5 நாட்\n• காற்று வரும் திசை: 358°\n• பார்வைத் தூரம்: 4.18 கி.மீ\n• கடல் நீர் வெப்பநிலை: 30.5°C\n• நீரோட்ட வேகம்: 0.162 நாட்\n• நீரோட்டத் திசை: 315°\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — அலை: சேமித்த நகல்; காற்று, வானிலை: சேமித்த நகல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3799
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 32
     },
     {
       "id": "C05",
@@ -1053,37 +1086,40 @@
       },
       "got": {
         "language": "hi",
-        "intent": "clarify",
-        "location": null,
-        "day": "tomorrow",
-        "part": "morning",
+        "intent": "conditions",
+        "location": "Sassoon Dock",
+        "day": "today",
+        "part": "night",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
-        "day": false,
-        "part": false
+        "intent": true,
+        "location": true,
+        "day": true,
+        "part": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "answer": "Sassoon Dock के पास समुद्र की स्थिति, Mon 19 Oct 21:00–03:00 IST:\n• लहर की ऊँचाई: 0.64 मी.\n• लहर अंतराल: 10.55 सेकंड\n• स्वेल (लंबी लहर) की ऊँचाई: 0.64 मी.\n• स्वेल अंतराल: 9 सेकंड\n• हवा की रफ़्तार: 2.7 नॉट\n• हवा के झोंके: 10.1 नॉट\n• हवा की दिशा: 345°\n• दृश्यता: 14.7 कि.मी.\n• समुद्र का तापमान: 30°C\n• धारा की रफ़्तार: 0.756 नॉट\n• धारा की दिशा: 310°\nडेटा सूचना: लाइव डेटा नहीं मिला — लहरें: सहेजी गई प्रति; हवा और मौसम: सहेजी गई प्रति।",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3744
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 36
     },
     {
       "id": "C06",
@@ -1141,7 +1177,7 @@
         "open_meteo/weather: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5738
+      "ms": 165
     },
     {
       "id": "P01",
@@ -1183,7 +1219,7 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 39.6 km SE (bearing 126°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• PFZ #2: 69.4 km SSW (bearing 200°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• PFZ #3: 85 km SW (bearing 216°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 271.2 km to the E\n• chlorophyll-a 6.375 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 5.3 km away; fetched 16 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 2.599 mg/m3 (sd 0.929); latest is 4.06 standard deviations from it; 7-day trend rising\n• interpretation: chlorophyll is well above its recent baseline — consistent with upwelling or river/runoff input; higher plankton often precedes better catches, but this is an association, not a guarantee\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 39.6 km SE (bearing 126°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• PFZ #2: 69.4 km SSW (bearing 200°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• PFZ #3: 85 km SW (bearing 216°) from Paradip, Orissa sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 271.2 km to the E\n• chlorophyll-a 6.375 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 5.3 km away; fetched 10 h ago; STORED SNAPSHOT]\n• 59-day baseline mean 2.599 mg/m3 (sd 0.929); latest is 4.06 standard deviations from it; 7-day trend rising\n• interpretation: chlorophyll is well above its recent baseline — consistent with upwelling or river/runoff input; higher plankton often precedes better catches, but this is an association, not a guarantee\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
       "answer_source": "template_fallback",
       "unsupported_numbers": [],
       "degradation": [
@@ -1191,7 +1227,7 @@
         "noaa_coastwatch/viirs_chl: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5831
+      "ms": 2257
     },
     {
       "id": "P02",
@@ -1231,7 +1267,7 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 25.7 km WSW (bearing 239°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #2: 59.2 km NW (bearing 304°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #3: 64.7 km S (bearing 187°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 277.1 km to the SSW\n• chlorophyll-a 3.442 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 1.8 km away; fetched 16 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 25.7 km WSW (bearing 239°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #2: 59.2 km NW (bearing 304°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• PFZ #3: 64.7 km S (bearing 187°) from Kochi, Kerala sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 277.1 km to the SSW\n• chlorophyll-a 3.442 mg/m3 [obs_0060; noaa_coastwatch/viirs_chl; for 17:30 local; grid 1.8 km away; fetched 10 h ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
       "answer_source": "template_fallback",
       "unsupported_numbers": [],
       "degradation": [
@@ -1239,7 +1275,7 @@
         "noaa_coastwatch/viirs_chl: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5846
+      "ms": 154
     },
     {
       "id": "P03",
@@ -1279,7 +1315,7 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 24.8 km WNW (bearing 296°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• PFZ #2: 58.4 km WNW (bearing 301°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• PFZ #3: 71.6 km WNW (bearing 292°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 611.2 km to the S\n• chlorophyll-a 3.442 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 415.1 km away; fetched 16 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 24.8 km WNW (bearing 296°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• PFZ #2: 58.4 km WNW (bearing 301°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• PFZ #3: 71.6 km WNW (bearing 292°) from Malpe, Karnataka sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 611.2 km to the S\n• chlorophyll-a 3.442 mg/m3 [obs_0060; noaa_coastwatch/viirs_chl; for 17:30 local; grid 415.1 km away; fetched 10 h ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
       "answer_source": "template_fallback",
       "unsupported_numbers": [],
       "degradation": [
@@ -1287,7 +1323,7 @@
         "noaa_coastwatch/viirs_chl: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5970
+      "ms": 208
     },
     {
       "id": "P04",
@@ -1305,36 +1341,39 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
-        "day": "tomorrow",
+        "intent": "pfz",
+        "location": "Cuddalore",
+        "day": "today",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
-        "day": false
+        "intent": true,
+        "location": true,
+        "day": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "answer": "மீன் கிடைக்கக்கூடிய பகுதிகள் (INCOIS PFZ அறிவிப்பு 2026-10-15):\n• PFZ #1: Cuddalore-இலிருந்து கிழக்கு (E) திசையில் 47.5 கி.மீ (திசைக்கோணம் 79°), North Tamilnadu பகுதி\n• PFZ #2: Cuddalore-இலிருந்து கிழக்கு-தென்கிழக்கு (ESE) திசையில் 67.9 கி.மீ (திசைக்கோணம் 106°), North Tamilnadu பகுதி\n• PFZ #3: Cuddalore-இலிருந்து தென்கிழக்கு (SE) திசையில் 80.7 கி.மீ (திசைக்கோணம் 144°), North Tamilnadu பகுதி\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Sri Lanka - India (இலங்கை) — தென்கிழக்கு (SE) திசையில் 168.1 கி.மீ\n• பச்சையம் (chlorophyll-a): 22.684 mg/m3\n• 59 நாள் சராசரி 6.965 mg/m3 (திட்ட விலக்கம் 7.637); இப்போதைய அளவு அதிலிருந்து 2.06 திட்ட விலக்கம்; 7 நாள் போக்கு: நிலையானது\n• பச்சையம் வழக்கத்தை விட மிக அதிகம் — கடலின் அடியிலிருந்து ஊட்டச்சத்து மேலே வருவது அல்லது ஆற்று நீர் கலப்பதுடன் ஒத்துப்போகிறது; அதிக நுண்ணுயிர் பெரும்பாலும் நல்ல பிடிப்புக்கு முன்வரும், ஆனால் இது தொடர்பு மட்டுமே, உத்தரவாதம் அல்ல\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — மீன்பிடி மண்டலம்: சேமித்த நகல்; பச்சையம்: சேமித்த நகல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3716
+      "degradation": [
+        "incois/pfz: snapshot",
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 57
     },
     {
       "id": "P05",
@@ -1351,35 +1390,38 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
+        "intent": "pfz",
+        "location": "Rameswaram",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "answer": "மீன் கிடைக்கக்கூடிய பகுதிகள் (INCOIS PFZ அறிவிப்பு 2026-10-15):\n• PFZ #1: Rameswaram-இலிருந்து மேற்கு-தென்மேற்கு (WSW) திசையில் 47.5 கி.மீ (திசைக்கோணம் 239°), South Tamilnadu பகுதி\n• PFZ #2: Rameswaram-இலிருந்து மேற்கு-தென்மேற்கு (WSW) திசையில் 94.3 கி.மீ (திசைக்கோணம் 239°), South Tamilnadu பகுதி\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Sri Lanka - India (இலங்கை) — கிழக்கு (E) திசையில் 23.1 கி.மீ\n• பச்சையம் (chlorophyll-a): 1.12 mg/m3\n• 59 நாள் சராசரி 1.533 mg/m3 (திட்ட விலக்கம் 0.273); இப்போதைய அளவு அதிலிருந்து -1.51 திட்ட விலக்கம்; 7 நாள் போக்கு: நிலையானது\n• பச்சையம் வழக்கத்தை விட மிகக் குறைவு — ஊட்டச்சத்து குறைந்த மேல் நீருடன் ஒத்துப்போகிறது; குறைந்த உற்பத்தித்திறன் பிடிப்பு குறைவதற்கான ஒரு சாத்தியமான காரணம் மட்டுமே, நிரூபிக்கப்பட்ட காரணம் அல்ல\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — மீன்பிடி மண்டலம்: சேமித்த நகல்; பச்சையம்: சேமித்த நகல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3687
+      "degradation": [
+        "incois/pfz: snapshot",
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 105
     },
     {
       "id": "P06",
@@ -1396,35 +1438,38 @@
       },
       "got": {
         "language": "hi",
-        "intent": "clarify",
-        "location": null,
+        "intent": "pfz",
+        "location": "Porbandar",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "answer": "मछली मिलने के संभावित क्षेत्र (INCOIS PFZ सूचना 2026-10-15):\n• PFZ #1: Porbandar से दक्षिण-पश्चिम (SW) दिशा में 25.6 कि.मी. (दिशा-कोण 235°), Gujarat क्षेत्र\n• PFZ #2: Porbandar से पश्चिम (W) दिशा में 54.3 कि.मी. (दिशा-कोण 260°), Gujarat क्षेत्र\n• PFZ #3: Porbandar से दक्षिण-दक्षिणपूर्व (SSE) दिशा में 83.6 कि.मी. (दिशा-कोण 148°), Gujarat क्षेत्र\n• स्थिति: भारतीय बंदरगाह / ज़मीन पर; सबसे नज़दीकी समुद्री सीमा: Pakistan - India (पाकिस्तान) — पश्चिम-उत्तरपश्चिम (WNW) दिशा में 250.4 कि.मी.\n• क्लोरोफिल-a: 3.657 mg/m3\n• 59 दिन का औसत 2.847 mg/m3 (मानक विचलन 1.942); अभी का मान उससे 0.42 मानक विचलन दूर; 7 दिन का रुझान: घट रहा है\n• क्लोरोफिल अपनी सामान्य सीमा में है — आँकड़े पकड़ में बदलाव की वजह उत्पादकता को नहीं बताते\nडेटा सूचना: लाइव डेटा नहीं मिला — मछली क्षेत्र: सहेजी गई प्रति; क्लोरोफिल: सहेजी गई प्रति।",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3695
+      "degradation": [
+        "incois/pfz: snapshot",
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 61
     },
     {
       "id": "P07",
@@ -1464,7 +1509,7 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 41.3 km SSW (bearing 194°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• PFZ #2: 50.2 km ENE (bearing 76°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• PFZ #3: 56.5 km S (bearing 180°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 645.4 km to the E\n• chlorophyll-a 6.375 mg/m3 [obs_0069; noaa_coastwatch/viirs_chl; for 17:30 local; grid 461.3 km away; fetched 16 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 2.599 mg/m3 (sd 0.929); latest is 4.06 standard deviations from it; 7-day trend rising\n• interpretation: chlorophyll is well above its recent baseline — consistent with upwelling or river/runoff input; higher plankton often precedes better catches, but this is an association, not a guarantee\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
+      "answer": "Fishing zones (INCOIS PFZ advisory 2026-10-15):\n• PFZ #1: 41.3 km SSW (bearing 194°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• PFZ #2: 50.2 km ENE (bearing 76°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• PFZ #3: 56.5 km S (bearing 180°) from Visakhapatnam, North Andhrapradesh sector, advisory dated 2026-10-15\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 645.4 km to the E\n• chlorophyll-a 6.375 mg/m3 [obs_0060; noaa_coastwatch/viirs_chl; for 17:30 local; grid 461.3 km away; fetched 10 h ago; STORED SNAPSHOT]\n• 59-day baseline mean 2.599 mg/m3 (sd 0.929); latest is 4.06 standard deviations from it; 7-day trend rising\n• interpretation: chlorophyll is well above its recent baseline — consistent with upwelling or river/runoff input; higher plankton often precedes better catches, but this is an association, not a guarantee\nData note: incois/pfz: snapshot; noaa_coastwatch/viirs_chl: snapshot.",
       "answer_source": "template_fallback",
       "unsupported_numbers": [],
       "degradation": [
@@ -1472,7 +1517,7 @@
         "noaa_coastwatch/viirs_chl: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5804
+      "ms": 83
     },
     {
       "id": "B01",
@@ -1522,7 +1567,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5867
+      "ms": 205
     },
     {
       "id": "B02",
@@ -1576,7 +1621,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 6014
+      "ms": 178
     },
     {
       "id": "B03",
@@ -1626,7 +1671,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5969
+      "ms": 216
     },
     {
       "id": "B04",
@@ -1643,35 +1688,40 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
+        "intent": "boundary",
+        "location": "Rameswaram",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "எச்சரிக்கையுடன் மட்டும் (CAUTION) — நாட்டுப் படகு, Rameswaram, Tue 20 Oct 05:00–12:00 IST.\n• பார்வைத் தூரம் 4.18 கி.மீ — எச்சரிக்கை வரம்பான 5 கி.மீ-க்குக் குறைவு\n• அலை உயரம்: 0.92 மீ\n• அலை இடைவெளி: 12.6 வினாடி\n• நீள் அலை உயரம்: 0.82 மீ\n• நீள் அலை இடைவெளி: 10.2 வினாடி\n• காற்றின் வேகம்: 7.6 நாட்\n• திடீர் காற்று: 10.5 நாட்\n• காற்று வரும் திசை: 358°\n• பார்வைத் தூரம்: 4.18 கி.மீ\n• கடல் நீர் வெப்பநிலை: 30.5°C\n• நீரோட்ட வேகம்: 0.162 நாட்\n• நீரோட்டத் திசை: 315°\nமீன் கிடைக்கக்கூடிய பகுதிகள் (INCOIS PFZ அறிவிப்பு 2026-10-15):\n• PFZ #1: Rameswaram-இலிருந்து மேற்கு-தென்மேற்கு (WSW) திசையில் 47.5 கி.மீ (திசைக்கோணம் 239°), South Tamilnadu பகுதி\n• PFZ #2: Rameswaram-இலிருந்து மேற்கு-தென்மேற்கு (WSW) திசையில் 94.3 கி.மீ (திசைக்கோணம் 239°), South Tamilnadu பகுதி\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Sri Lanka - India (இலங்கை) — கிழக்கு (E) திசையில் 23.1 கி.மீ\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — அலை: சேமித்த நகல்; காற்று, வானிலை: சேமித்த நகல்; மீன்பிடி மண்டலம்: சேமித்த நகல்.\nசரிபார்க்க முடியாதவை: புயல், மின்னல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3708
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 68
     },
     {
       "id": "B05",
@@ -1690,37 +1740,42 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
+        "intent": "boundary",
+        "location": "Nagapattinam",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
-        "heading_deg": null,
-        "speed_kt": null,
+        "heading_deg": 90.0,
+        "speed_kt": 10.0,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false,
-        "heading_deg": false,
-        "speed_kt": false
+        "intent": true,
+        "location": true,
+        "heading_deg": true,
+        "speed_kt": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "எச்சரிக்கையுடன் மட்டும் (CAUTION) — நாட்டுப் படகு, Nagapattinam, Tue 20 Oct 05:00–12:00 IST.\n• பார்வைத் தூரம் 4.18 கி.மீ — எச்சரிக்கை வரம்பான 5 கி.மீ-க்குக் குறைவு\n• அலை உயரம்: 0.92 மீ\n• அலை இடைவெளி: 12.6 வினாடி\n• நீள் அலை உயரம்: 0.82 மீ\n• நீள் அலை இடைவெளி: 10.2 வினாடி\n• காற்றின் வேகம்: 7.6 நாட்\n• திடீர் காற்று: 10.5 நாட்\n• காற்று வரும் திசை: 358°\n• பார்வைத் தூரம்: 4.18 கி.மீ\n• கடல் நீர் வெப்பநிலை: 30.5°C\n• நீரோட்ட வேகம்: 0.162 நாட்\n• நீரோட்டத் திசை: 315°\nமீன் கிடைக்கக்கூடிய பகுதிகள் (INCOIS PFZ அறிவிப்பு 2026-10-15):\n• PFZ #1: Nagapattinam-இலிருந்து வடகிழக்கு (NE) திசையில் 40.6 கி.மீ (திசைக்கோணம் 52°), North Tamilnadu பகுதி\n• PFZ #2: Nagapattinam-இலிருந்து கிழக்கு-தென்கிழக்கு (ESE) திசையில் 40.9 கி.மீ (திசைக்கோணம் 117°), North Tamilnadu பகுதி\n• PFZ #3: Nagapattinam-இலிருந்து வடகிழக்கு (NE) திசையில் 96.8 கி.மீ (திசைக்கோணம் 38°), North Tamilnadu பகுதி\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Sri Lanka - India (இலங்கை) — தென்கிழக்கு (SE) திசையில் 76.8 கி.மீ\n• சொன்ன திசையிலும் வேகத்திலும் சென்றால் 485.3 நிமிடத்தில் (149.8 கி.மீ) Sri Lanka - India எல்லையை அடைவீர்கள் — 90 நிமிட எச்சரிக்கை நேரத்துக்கு அப்பால்\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — அலை: சேமித்த நகல்; காற்று, வானிலை: சேமித்த நகல்; மீன்பிடி மண்டலம்: சேமித்த நகல்.\nசரிபார்க்க முடியாதவை: புயல், மின்னல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3684
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 78
     },
     {
       "id": "B06",
@@ -1737,35 +1792,40 @@
       },
       "got": {
         "language": "hi",
-        "intent": "clarify",
-        "location": null,
+        "intent": "boundary",
+        "location": "Porbandar",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "समुद्र में जा सकते हैं (GO) — पारंपरिक नाव, Porbandar, Tue 20 Oct 05:00–12:00 IST।\n• लहर की ऊँचाई: 0.66 मी.\n• लहर अंतराल: 10.55 सेकंड\n• स्वेल (लंबी लहर) की ऊँचाई: 0.66 मी.\n• स्वेल अंतराल: 8.95 सेकंड\n• हवा की रफ़्तार: 4.8 नॉट\n• हवा के झोंके: 10.5 नॉट\n• हवा की दिशा: 344°\n• दृश्यता: 14.68 कि.मी.\n• समुद्र का तापमान: 29.8°C\n• धारा की रफ़्तार: 0.81 नॉट\n• धारा की दिशा: 300°\nमछली मिलने के संभावित क्षेत्र (INCOIS PFZ सूचना 2026-10-15):\n• PFZ #1: Porbandar से दक्षिण-पश्चिम (SW) दिशा में 25.6 कि.मी. (दिशा-कोण 235°), Gujarat क्षेत्र\n• PFZ #2: Porbandar से पश्चिम (W) दिशा में 54.3 कि.मी. (दिशा-कोण 260°), Gujarat क्षेत्र\n• PFZ #3: Porbandar से दक्षिण-दक्षिणपूर्व (SSE) दिशा में 83.6 कि.मी. (दिशा-कोण 148°), Gujarat क्षेत्र\n• स्थिति: भारतीय बंदरगाह / ज़मीन पर; सबसे नज़दीकी समुद्री सीमा: Pakistan - India (पाकिस्तान) — पश्चिम-उत्तरपश्चिम (WNW) दिशा में 250.4 कि.मी.\nडेटा सूचना: लाइव डेटा नहीं मिला — लहरें: सहेजी गई प्रति; हवा और मौसम: सहेजी गई प्रति; मछली क्षेत्र: सहेजी गई प्रति।\nजाँच नहीं हो सकी: चक्रवात, बिजली (तड़ित)।",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3727
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 126
     },
     {
       "id": "R01",
@@ -1818,7 +1878,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 10251
+      "ms": 280
     },
     {
       "id": "R02",
@@ -1874,7 +1934,7 @@
         "incois/pfz: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 10085
+      "ms": 212
     },
     {
       "id": "R03",
@@ -1891,35 +1951,43 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
+        "intent": "route",
+        "location": "Rameswaram",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "verdict_given": true,
+        "route_found": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "எச்சரிக்கையுடன் மட்டும் (CAUTION) — நாட்டுப் படகு, Rameswaram, Tue 20 Oct 05:00–12:00 IST.\n• பார்வைத் தூரம் 4.18 கி.மீ — எச்சரிக்கை வரம்பான 5 கி.மீ-க்குக் குறைவு\n• அலை உயரம்: 0.92 மீ\n• அலை இடைவெளி: 12.6 வினாடி\n• நீள் அலை உயரம்: 0.82 மீ\n• நீள் அலை இடைவெளி: 10.2 வினாடி\n• காற்றின் வேகம்: 7.6 நாட்\n• திடீர் காற்று: 10.5 நாட்\n• காற்று வரும் திசை: 358°\n• பார்வைத் தூரம்: 4.18 கி.மீ\n• கடல் நீர் வெப்பநிலை: 30.5°C\n• நீரோட்ட வேகம்: 0.162 நாட்\n• நீரோட்டத் திசை: 315°\nமீன் கிடைக்கக்கூடிய பகுதிகள் (INCOIS PFZ அறிவிப்பு 2026-10-15):\n• PFZ #1: Rameswaram-இலிருந்து மேற்கு-தென்மேற்கு (WSW) திசையில் 47.5 கி.மீ (திசைக்கோணம் 239°), South Tamilnadu பகுதி\n• PFZ #2: Rameswaram-இலிருந்து மேற்கு-தென்மேற்கு (WSW) திசையில் 94.3 கி.மீ (திசைக்கோணம் 239°), South Tamilnadu பகுதி\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Sri Lanka - India (இலங்கை) — கிழக்கு (E) திசையில் 23.1 கி.மீ\nவழி:\n• சேருமிடம்: PFZ #1, நேர்கோட்டில் மேற்கு-தென்மேற்கு (WSW) திசையில் 52.2 கி.மீ\n• பரிந்துரைக்கும் வழி: 81.2 கி.மீ, 7 நாட் வேகத்தில் சுமார் 6 மணி 14 நிமிடம்\n• பகுதிகள்: தென்கிழக்கு (SE) 18.7 கி.மீ; தெற்கு-தென்மேற்கு (SSW) 5 கி.மீ; மேற்கு (W) 57.5 கி.மீ\n• வழி கடல் எல்லையிலிருந்து குறைந்தது 5.9 கி.மீ உள்ளே இருக்கும் (பாதுகாப்பு இடைவெளி 2 கி.மீ)\n• நேர்கோடு நிலத்தின் மேல் செல்கிறது; வழி அதைச் சுற்றிச் செல்கிறது\n• வழியில் மோசமான நிலை: அலை 0.92 மீ (இடைவெளி 12.4 வினாடி), காற்று 7.6 நாட்\n• இது ஆலோசனை மட்டுமே: கடற்கரைக் கோடு தோராயமானது; ஆழமற்ற நீர், மணல் திட்டுகள் கணக்கில் இல்லை — இது கடல் வரைபடம் அல்ல\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — அலை: சேமித்த நகல்; காற்று, வானிலை: சேமித்த நகல்; வழிக்கான கடல் நிலைக் கட்டம் கிடைக்கவில்லை; துறைமுக முன்னறிவிப்பே முழு வழிக்கும் பயன்படுத்தப்பட்டது; மீன்பிடி மண்டலம்: சேமித்த நகல்.\nசரிபார்க்க முடியாதவை: புயல், மின்னல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3725
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "route sea state: no forecast grid could be fetched — the harbour forecast was applied to the whole route",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 150
     },
     {
       "id": "R04",
@@ -1936,35 +2004,43 @@
       },
       "got": {
         "language": "hi",
-        "intent": "clarify",
-        "location": null,
+        "intent": "route",
+        "location": "Veraval",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true,
+        "verdict_given": true,
+        "route_found": true,
+        "degradation_stated": true
       },
-      "behaved": false,
-      "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "behaved": true,
+      "verdict": "GO",
+      "answer": "समुद्र में जा सकते हैं (GO) — पारंपरिक नाव, Veraval, Tue 20 Oct 05:00–12:00 IST।\n• लहर की ऊँचाई: 0.66 मी.\n• लहर अंतराल: 10.55 सेकंड\n• स्वेल (लंबी लहर) की ऊँचाई: 0.66 मी.\n• स्वेल अंतराल: 8.95 सेकंड\n• हवा की रफ़्तार: 4.8 नॉट\n• हवा के झोंके: 10.5 नॉट\n• हवा की दिशा: 344°\n• दृश्यता: 14.68 कि.मी.\n• समुद्र का तापमान: 29.8°C\n• धारा की रफ़्तार: 0.81 नॉट\n• धारा की दिशा: 300°\nमछली मिलने के संभावित क्षेत्र (INCOIS PFZ सूचना 2026-10-15):\n• PFZ #1: Veraval से पश्चिम (W) दिशा में 26.3 कि.मी. (दिशा-कोण 260°), Gujarat क्षेत्र\n• PFZ #2: Veraval से दक्षिण-पूर्व (SE) दिशा में 41.8 कि.मी. (दिशा-कोण 134°), Gujarat क्षेत्र\n• PFZ #3: Veraval से पश्चिम-उत्तरपश्चिम (WNW) दिशा में 119.7 कि.मी. (दिशा-कोण 298°), Gujarat क्षेत्र\n• स्थिति: भारतीय बंदरगाह / ज़मीन पर; सबसे नज़दीकी समुद्री सीमा: Pakistan - India (पाकिस्तान) — पश्चिम-उत्तरपश्चिम (WNW) दिशा में 361.9 कि.मी.\nरास्ता:\n• मंज़िल: PFZ #1, सीधी रेखा में पश्चिम (W) दिशा में 25.3 कि.मी.\n• सुझाया गया रास्ता: 25.3 कि.मी., 7 नॉट की रफ़्तार से लगभग 1 घंटे 52 मिनट\n• हिस्से: पश्चिम (W) 25.3 कि.मी.\n• रास्ता समुद्री सीमा से कम से कम 341.9 कि.मी. अंदर रहता है (सुरक्षा दूरी 2 कि.मी.)\n• सीधी रेखा भारतीय जल में ही रहती है; सीमा से सबसे कम दूरी 341.9 कि.मी.\n• रास्ते पर सबसे खराब: लहर 0.66 मी. (अंतराल 10.6 सेकंड), हवा 4.8 नॉट\n• यह केवल सलाह है: तट-रेखा अनुमानित है, उथला पानी और रेत के टीले शामिल नहीं हैं — यह नौवहन चार्ट नहीं है\nडेटा सूचना: लाइव डेटा नहीं मिला — लहरें: सहेजी गई प्रति; हवा और मौसम: सहेजी गई प्रति; रास्ते के लिए समुद्री पूर्वानुमान का ग्रिड नहीं मिला; बंदरगाह का पूर्वानुमान पूरे रास्ते पर लगाया गया; मछली क्षेत्र: सहेजी गई प्रति।\nजाँच नहीं हो सकी: चक्रवात, बिजली (तड़ित)।",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3769
+      "degradation": [
+        "open_meteo/marine: snapshot",
+        "open_meteo/weather: snapshot",
+        "route sea state: no forecast grid could be fetched — the harbour forecast was applied to the whole route",
+        "incois/pfz: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 153
     },
     {
       "id": "A01",
@@ -2004,14 +2080,14 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "• chlorophyll-a 3.442 mg/m3 [obs_0060; noaa_coastwatch/viirs_chl; for 17:30 local; grid 1.8 km away; fetched 17 min ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: noaa_coastwatch/viirs_chl: snapshot.",
+      "answer": "• chlorophyll-a 3.442 mg/m3 [obs_0060; noaa_coastwatch/viirs_chl; for 17:30 local; grid 1.8 km away; fetched 10 h ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: noaa_coastwatch/viirs_chl: snapshot.",
       "answer_source": "template_fallback",
       "unsupported_numbers": [],
       "degradation": [
         "noaa_coastwatch/viirs_chl: snapshot"
       ],
       "llm_unavailable": false,
-      "ms": 5885
+      "ms": 104
     },
     {
       "id": "A02",
@@ -2028,8 +2104,8 @@
       },
       "got": {
         "language": "en",
-        "intent": "clarify",
-        "location": null,
+        "intent": "chlorophyll",
+        "location": "Mangalore",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
@@ -2039,11 +2115,11 @@
         "planner": "fast_path"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
@@ -2051,12 +2127,14 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "answer": "• chlorophyll-a 3.442 mg/m3 [obs_0060; noaa_coastwatch/viirs_chl; for 17:30 local; grid 358.8 km away; fetched 10 h ago; STORED SNAPSHOT]\n• 59-day baseline mean 7.214 mg/m3 (sd 4.657); latest is -0.81 standard deviations from it; 7-day trend falling\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nData note: noaa_coastwatch/viirs_chl: snapshot.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3706
+      "degradation": [
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 102
     },
     {
       "id": "A03",
@@ -2074,35 +2152,37 @@
       },
       "got": {
         "language": "ta",
-        "intent": "clarify",
-        "location": null,
+        "intent": "chlorophyll",
+        "location": "Chennai",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "answer": "• பச்சையம் (chlorophyll-a): 22.684 mg/m3\n• 59 நாள் சராசரி 6.965 mg/m3 (திட்ட விலக்கம் 7.637); இப்போதைய அளவு அதிலிருந்து 2.06 திட்ட விலக்கம்; 7 நாள் போக்கு: நிலையானது\n• பச்சையம் வழக்கத்தை விட மிக அதிகம் — கடலின் அடியிலிருந்து ஊட்டச்சத்து மேலே வருவது அல்லது ஆற்று நீர் கலப்பதுடன் ஒத்துப்போகிறது; அதிக நுண்ணுயிர் பெரும்பாலும் நல்ல பிடிப்புக்கு முன்வரும், ஆனால் இது தொடர்பு மட்டுமே, உத்தரவாதம் அல்ல\nதரவுக் குறிப்பு: நேரடித் தரவு கிடைக்கவில்லை — பச்சையம்: சேமித்த நகல்.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3724
+      "degradation": [
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 13
     },
     {
       "id": "A04",
@@ -2119,35 +2199,37 @@
       },
       "got": {
         "language": "hi",
-        "intent": "clarify",
-        "location": null,
+        "intent": "chlorophyll",
+        "location": "Veraval",
         "day": "tomorrow",
         "part": "morning",
         "vessel": null,
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
-        "intent": false,
-        "location": false
+        "intent": true,
+        "location": true
       },
       "language_ok": true,
-      "understood": false,
+      "understood": true,
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false
+        "reply_language": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
-      "answer_source": "template",
+      "answer": "• क्लोरोफिल-a: 3.657 mg/m3\n• 59 दिन का औसत 2.847 mg/m3 (मानक विचलन 1.942); अभी का मान उससे 0.42 मानक विचलन दूर; 7 दिन का रुझान: घट रहा है\n• क्लोरोफिल अपनी सामान्य सीमा में है — आँकड़े पकड़ में बदलाव की वजह उत्पादकता को नहीं बताते\nडेटा सूचना: लाइव डेटा नहीं मिला — क्लोरोफिल: सहेजी गई प्रति।",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
-      "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3717
+      "degradation": [
+        "noaa_coastwatch/viirs_chl: snapshot"
+      ],
+      "llm_unavailable": false,
+      "ms": 14
     },
     {
       "id": "G01",
@@ -2169,7 +2251,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2184,12 +2266,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "The language model is unavailable (gemini: host unreachable), so I can only answer the common questions right now: safety, waves and wind, fishing zones, the border and routes, for a named harbour. For example: 'Is it safe off Kochi tomorrow morning?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3803
+      "ms": 57
     },
     {
       "id": "G02",
@@ -2211,7 +2293,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2226,12 +2308,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "The language model is unavailable (gemini: host unreachable), so I can only answer the common questions right now: safety, waves and wind, fishing zones, the border and routes, for a named harbour. For example: 'Is it safe off Kochi tomorrow morning?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3785
+      "ms": 107
     },
     {
       "id": "G03",
@@ -2253,7 +2335,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2268,12 +2350,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "The language model is unavailable (gemini: host unreachable), so I can only answer the common questions right now: safety, waves and wind, fishing zones, the border and routes, for a named harbour. For example: 'Is it safe off Kochi tomorrow morning?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3680
+      "ms": 5
     },
     {
       "id": "G04",
@@ -2295,7 +2377,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2305,17 +2387,17 @@
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false,
+        "reply_language": true,
         "no_verdict": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "மொழி மாதிரி இப்போது கிடைக்கவில்லை (gemini: host unreachable). இப்போது ஒரு துறைமுகத்தின் பெயருடன் கேட்கும் கேள்விகளுக்கு மட்டும் பதில் தர முடியும்: பாதுகாப்பு, அலை, காற்று, மீன் கிடைக்கும் பகுதி, எல்லை, வழி. உதாரணம்: 'நாளை காலை கொச்சியில் இருந்து கடலுக்கு போகலாமா?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3721
+      "ms": 7
     },
     {
       "id": "G05",
@@ -2337,7 +2419,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2347,17 +2429,17 @@
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false,
+        "reply_language": true,
         "no_verdict": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "भाषा मॉडल अभी उपलब्ध नहीं है (gemini: host unreachable)। अभी मैं किसी बंदरगाह के नाम के साथ पूछे गए आम सवालों का ही जवाब दे सकता हूँ: सुरक्षा, लहर, हवा, मछली क्षेत्र, सीमा और रास्ता। जैसे: 'क्या कल सुबह वेरावल से समुद्र में जाना सुरक्षित है?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3818
+      "ms": 5
     },
     {
       "id": "Q01",
@@ -2379,7 +2461,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": true
@@ -2394,12 +2476,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "Which harbour or landing centre are you going from? For example: 'Is it safe off Kochi tomorrow morning?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3658
+      "llm_unavailable": false,
+      "ms": 5
     },
     {
       "id": "Q02",
@@ -2421,7 +2503,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": true
@@ -2431,17 +2513,17 @@
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false,
+        "reply_language": true,
         "no_verdict": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "எந்தத் துறைமுகத்தில் இருந்து போகிறீர்கள்? உதாரணம்: 'நாளை காலை கொச்சியில் இருந்து கடலுக்கு போகலாமா?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3691
+      "llm_unavailable": false,
+      "ms": 5
     },
     {
       "id": "Q03",
@@ -2463,7 +2545,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": true
@@ -2478,12 +2560,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "Which harbour or landing centre are you going from? For example: 'Is it safe off Kochi tomorrow morning?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
-      "llm_unavailable": true,
-      "ms": 3714
+      "llm_unavailable": false,
+      "ms": 4
     },
     {
       "id": "O01",
@@ -2505,7 +2587,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2520,12 +2602,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "The language model is unavailable (gemini: host unreachable), so I can only answer the common questions right now: safety, waves and wind, fishing zones, the border and routes, for a named harbour. For example: 'Is it safe off Kochi tomorrow morning?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3728
+      "ms": 6
     },
     {
       "id": "O02",
@@ -2547,7 +2629,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2562,12 +2644,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "The language model is unavailable (gemini: host unreachable), so I can only answer the common questions right now: safety, waves and wind, fishing zones, the border and routes, for a named harbour. For example: 'Is it safe off Kochi tomorrow morning?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3788
+      "ms": 5
     },
     {
       "id": "O03",
@@ -2589,7 +2671,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2599,17 +2681,17 @@
       "behaviour": {
         "answered": true,
         "numbers_verified": true,
-        "reply_language": false,
+        "reply_language": true,
         "no_verdict": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "भाषा मॉडल अभी उपलब्ध नहीं है (gemini: host unreachable)। अभी मैं किसी बंदरगाह के नाम के साथ पूछे गए आम सवालों का ही जवाब दे सकता हूँ: सुरक्षा, लहर, हवा, मछली क्षेत्र, सीमा और रास्ता। जैसे: 'क्या कल सुबह वेरावल से समुद्र में जाना सुरक्षित है?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3710
+      "ms": 5
     },
     {
       "id": "O04",
@@ -2634,7 +2716,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path"
+        "planner": "fast_path (offline)"
       },
       "field_ok": {
         "intent": false
@@ -2649,12 +2731,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "The language model is unavailable (gemini: ConnectError). Please ask in English, e.g. 'Is it safe off Kochi tomorrow morning?'",
+      "answer": "The language model is unavailable (gemini: host unreachable), so I can only answer the common questions right now: safety, waves and wind, fishing zones, the border and routes, for a named harbour. For example: 'Is it safe off Kochi tomorrow morning?'",
       "answer_source": "template",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": true,
-      "ms": 3671
+      "ms": 5
     }
   ]
 }

@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     fetch_timeout_s: float = 2.0
     # Sources that are slow by nature (WFS downloads) get this budget in the snapshot job only.
     snapshot_timeout_s: float = 60.0
+    # FORCE_OFFLINE=1: refuse every outbound request (data sources and the model), as if the
+    # wifi were off — for rehearsing the offline demo. Cache and snapshot still answer.
+    force_offline: bool = False
 
 
 settings = Settings()
