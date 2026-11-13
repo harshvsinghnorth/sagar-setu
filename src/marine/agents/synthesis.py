@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import AsyncIterator
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 
 from pydantic import BaseModel, Field
 
@@ -26,7 +26,7 @@ from marine.agents.planner import Intent, Plan
 from marine.agents.specialists import AnalyticsFinding, GeoFinding, OceanFinding
 from marine.ledger import EvidenceLedger
 from marine.risk.rules import RiskVerdict
-from marine.risk.thresholds import TABLES
+from marine.risk.thresholds import LIGHTNING_WARNING_CAUTION_KM, TABLES
 from marine.tools.windows import describe_window
 
 LANG_NAMES = {
@@ -58,6 +58,8 @@ class Brief(BaseModel):
     conditions: list[str] = Field(
         default_factory=list
     )  # "wave height 1.02 m (open_meteo/marine, forecast for 06:00 IST, 8 km from your point)"
+    # Cyclone and official lightning-warning checks, fixed-format lines (tools/hazards.py).
+    hazards: list[str] = Field(default_factory=list)
     pfz: list[str] = Field(default_factory=list)
     pfz_date: str | None = None
     boundary: list[str] = Field(default_factory=list)
@@ -199,6 +201,8 @@ def build_brief(
         b.degradation += [
             f"{s}: {p}" for s, p in ocean.sources.items() if p in ("stale_cache", "snapshot")
         ]
+        b.hazards = list(ocean.hazards)
+        nums.add(LIGHTNING_WARNING_CAUTION_KM)
         b.gaps += ocean.missing
         b.gaps += [f"disagreement: {d}" for d in ocean.disagreements]
     if verdict:
@@ -210,12 +214,23 @@ def build_brief(
         b.reasons = verdict.reasons
         b.gaps += verdict.data_gaps
         th = TABLES[verdict.vessel_class]
-        for band in (th.wave_height_m, th.wind_kt, th.visibility_km, th.steepness):
+        for band in (
+            th.wave_height_m,
+            th.wind_kt,
+            th.visibility_km,
+            th.steepness,
+            th.cyclone_hours,
+        ):
             nums |= {band.caution, band.no_go}
         for p in verdict.parameters:
             if p.value is not None:
                 nums.add(p.value)
     if geo:
+        age = pfz_age_days(geo.pfz_date)
+        if age is not None and age > PFZ_STALE_DAYS:
+            # A live answer can still be old: on 2026-11-13 INCOIS served a 70-day-old advisory.
+            b.degradation.append(f"incois/pfz: advisory dated {geo.pfz_date} is {age} days old")
+            nums.add(float(age))
         if geo.pfz:
             b.pfz_date = geo.pfz_date
             for i, z in enumerate(geo.pfz, 1):
@@ -303,6 +318,34 @@ def build_brief(
 # -- template answer (no model needed) ---------------------------------------------------------
 
 
+# INCOIS issues PFZ advisories daily; one older than this is flagged as old in the answer.
+PFZ_STALE_DAYS = 3
+
+
+def pfz_age_days(advisory_date: str | None, today: date | None = None) -> int | None:
+    if not advisory_date:
+        return None
+    try:
+        d = date.fromisoformat(advisory_date[:10])
+    except ValueError:
+        return None
+    return ((today or datetime.now(UTC).date()) - d).days
+
+
+# Ledger gap variables → the words a person would use.
+GAP_LABELS = {
+    "lightning_strikes": "lightning strike locations",
+    "lightning_warnings": "official lightning warnings",
+    "cyclone": "cyclone check",
+    "pfz_distance_km": "fishing zones near this harbour",
+}
+
+
+def gap_label(gap: str) -> str:
+    var = gap.split(":")[0]
+    return GAP_LABELS.get(var, var.replace("_", " "))
+
+
 def template_language(b: Brief) -> str:
     return b.language if b.language in LOCALIZED else "en"
 
@@ -337,6 +380,7 @@ def template_answer(b: Brief) -> str:
         lines.append(f"Conditions off {b.location}, {b.window}:")
     for c in b.conditions:
         lines.append(f"• {c.split(' [')[0]}")
+    lines += [f"• {h}" for h in b.hazards]
     if b.pfz:
         lines.append(
             f"Fishing zones (INCOIS PFZ advisory {b.pfz_date or ''}):"
@@ -352,7 +396,9 @@ def template_answer(b: Brief) -> str:
     if b.degradation:
         lines.append("Data note: " + "; ".join(b.degradation) + ".")
     if b.gaps:
-        lines.append("Not available: " + "; ".join(g.split(":")[0] for g in b.gaps) + ".")
+        lines.append(
+            "Not available: " + "; ".join(dict.fromkeys(gap_label(g) for g in b.gaps)) + "."
+        )
     return "\n".join(lines)
 
 
@@ -369,7 +415,8 @@ Absolute rules:
 6. Do not add safety tips, disclaimers or advice beyond what the BRIEF supports.
 7. Do not mention the evidence ids like obs_0012, the source names, or the word BRIEF.
 8. Keep each number with the unit the BRIEF gives it, translated correctly: kt = knots (a SPEED — wind, gusts, boat speed; never seconds), s = seconds (wave period), m = metres, km = kilometres, mg/m3 = milligrams per cubic metre. Knots in Tamil is நாட், in Hindi नॉट, in Malayalam നോട്ട്.
-9. If the BRIEF has a route: give the legs as compass direction and km, the time, how far inside the maritime boundary it stays, and what the straight line would have meant. End with one short sentence that this is advice, not a navigation chart."""
+9. If the BRIEF has "hazard checks", say in one or two short sentences what the cyclone check and the lightning check found, exactly as stated there (a storm's name and the office that issued a lightning warning may be mentioned). These lines report checks; they are not a safety judgement of their own.
+10. If the BRIEF has a route: give the legs as compass direction and km, the time, how far inside the maritime boundary it stays, and what the straight line would have meant. End with one short sentence that this is advice, not a navigation chart."""
 
 
 def brief_text(b: Brief) -> str:
@@ -384,6 +431,8 @@ def brief_text(b: Brief) -> str:
         )
     if b.conditions:
         parts.append("conditions (worst in window):\n" + "\n".join(f"- {c}" for c in b.conditions))
+    if b.hazards:
+        parts.append("hazard checks:\n" + "\n".join(f"- {h}" for h in b.hazards))
     if b.pfz:
         parts.append("fishing zones:\n" + "\n".join(f"- {p}" for p in b.pfz))
     if b.boundary:

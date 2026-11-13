@@ -4,6 +4,7 @@ the fetches first. No model here (CLAUDE.md rule 1)."""
 
 from __future__ import annotations
 
+import asyncio
 import time
 from datetime import datetime
 
@@ -14,6 +15,7 @@ from marine.risk.rules import RiskInputs, RiskVerdict, evaluate
 from marine.risk.thresholds import VesselClass
 from marine.sources import imd
 from marine.tools.context import ToolContext
+from marine.tools.hazards import HazardQuery, check_hazards
 from marine.tools.ocean import PointWindow, SeriesResult, fan_out
 from marine.tools.spatial import HeadingQuery, check_position, predict_boundary_crossing
 from marine.tools.windows import describe_window
@@ -30,6 +32,8 @@ class RiskQuery(BaseModel):
     # Ledger ids of route_* observations (plan_sea_route): the verdict then covers the whole
     # trip — the worst of harbour and route — not just the departure point.
     route_obs: list[str] = Field(default_factory=list)
+    # The harbour's district, when known: a lightning warning that names it covers the point.
+    district: str | None = None
 
 
 class FeedStatus(BaseModel):
@@ -38,21 +42,27 @@ class FeedStatus(BaseModel):
     reason: str
 
 
+def _status(ctx: ToolContext, feed: str, proof: str, gap: str) -> FeedStatus:
+    """A check counts only if `check_hazards` left its proof observation in the ledger. If it
+    was never run, or the feed failed, the gap is recorded so the answer can say so."""
+    if proof in ctx.ledger.variables():
+        return FeedStatus(feed=feed, available=True, reason="ok")
+    known = next((m.reason for m in ctx.ledger.missing if m.variable == gap), None)
+    if known is None:
+        known = f"the {feed} check was not run for this request"
+        ctx.ledger.add_missing(gap, known, [])
+    return FeedStatus(feed=feed, available=False, reason=known)
+
+
 def cyclone_status(ctx: ToolContext) -> FeedStatus:
-    """Is there a cyclone-cone feed? Today: no (IMD key). Recorded as a ledger gap."""
-    ok = imd.available()
-    if not ok:
-        ctx.ledger.add_missing("cyclone_cone_hours", imd.missing_reason(), [imd.SOURCE_NAME])
-    return FeedStatus(feed="cyclone", available=ok, reason=imd.missing_reason() if not ok else "ok")
+    """Was the cyclone check (GDACS, via `check_hazards`) made for this request?"""
+    return _status(ctx, "cyclone", "active_cyclones", "cyclone")
 
 
 def lightning_status(ctx: ToolContext) -> FeedStatus:
-    ok = imd.available()
-    if not ok:
-        ctx.ledger.add_missing("lightning_distance_km", imd.missing_reason(), [imd.SOURCE_NAME])
-    return FeedStatus(
-        feed="lightning", available=ok, reason=imd.missing_reason() if not ok else "ok"
-    )
+    """Were official lightning warnings (NDMA SACHET, via `check_hazards`) checked? Strike
+    locations remain unavailable either way (IMD key)."""
+    return _status(ctx, "lightning", "lightning_warnings_in_force", "lightning_warnings")
 
 
 def _ids(obs) -> list[str]:
@@ -83,7 +93,22 @@ def inputs_from_ledger(ledger: EvidenceLedger, start: datetime, end: datetime) -
     ):
         if o:
             ev[k] = [o.id]
+    # Hazard checks (tools/hazards.py). Each leaves a proof observation when it was made;
+    # only then may the engine read the absence of a threat as "no threat".
+    cyc_proof = ledger.series("active_cyclones", start, end)
+    cyc = ledger.worst("cyclone_cone_hours", start, end, higher_is_worse=False)
+    lit_proof = ledger.series("lightning_warnings_in_force", start, end)
+    lit = ledger.worst("lightning_warning_distance_km", start, end, higher_is_worse=False)
+    if cyc or cyc_proof:
+        ev["cyclone"] = [(cyc or cyc_proof[-1]).id]
+    if lit or lit_proof:
+        ev["lightning_warning"] = [(lit or lit_proof[-1]).id]
     return RiskInputs(
+        cyclone_hours=cyc.value if cyc else None,
+        cyclone_name=(cyc.note or "").split(":")[0] if cyc else None,
+        lightning_warning_km=lit.value if lit else None,
+        lightning_warning_text=(lit.note or "").split(";")[0] if lit else None,
+        lightning_warnings_checked=bool(lit_proof),
         wave_height_m=hs.value if hs else None,
         wave_period_s=period.value if period else None,
         wind_kt=wind.value if wind else None,
@@ -91,8 +116,8 @@ def inputs_from_ledger(ledger: EvidenceLedger, start: datetime, end: datetime) -
         visibility_km=vis.value if vis else None,
         cape_jkg=cape.value if cape else None,
         weather_code=int(code_obs.value) if code_obs else None,
-        lightning_data_available=imd.available(),
-        cyclone_data_available=imd.available(),
+        lightning_data_available=imd.available(),  # a STRIKE feed: still none (IMD key)
+        cyclone_data_available=bool(cyc_proof) or cyc is not None,
         evidence=ev,
     )
 
@@ -153,9 +178,16 @@ class SafetyBriefing(BaseModel):
 
 
 async def safety_briefing(ctx: ToolContext, q: RiskQuery) -> SafetyBriefing:
-    """Fan out waves/wind/visibility/sea concurrently, then the deterministic verdict."""
+    """Fan out waves/wind/visibility/sea and the cyclone and lightning-warning checks
+    concurrently, then the deterministic verdict."""
     t0 = time.perf_counter()
-    fetched = await fan_out(ctx, PointWindow(lat=q.lat, lon=q.lon, start=q.start, end=q.end))
+    fetched, _ = await asyncio.gather(
+        fan_out(ctx, PointWindow(lat=q.lat, lon=q.lon, start=q.start, end=q.end)),
+        check_hazards(
+            ctx,
+            HazardQuery(lat=q.lat, lon=q.lon, start=q.start, end=q.end, district=q.district),
+        ),
+    )
     verdict = assess_sailing_risk(ctx, q)
     return SafetyBriefing(
         verdict=verdict,

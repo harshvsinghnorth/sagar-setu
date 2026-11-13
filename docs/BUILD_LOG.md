@@ -1330,3 +1330,96 @@ status, and the Tamil example answered in Tamil from templates with the banner; 
   to do when something fails, likely questions with honest answers, and the numbers to
   remember.
 - Tests 153 → 194.
+
+### Step 40 · Can we check cyclones and lightning without the IMD key? (2026-11-04, tested, not built)
+
+Read-only tests of free sources; no project code changed. Details are in `docs/data-sources.md`.
+
+**Cyclones: yes.** GDACS needs no key and publishes a forecast cone and wind-field polygons for
+each advisory, and it keeps past advisories. Replay of the 4 north Indian Ocean storms it lists
+since mid-2025 (Murasu, Arnab, One, Ditwah) against 10 harbours (40 harbour-storm pairs):
+- 9 pairs affected and warned, 0 affected and missed, 5 warned but not affected (all Ditwah's
+  early cone), 26 neither.
+- First warning came 24–78 h before closest approach.
+- Testing the cone alone is not enough: harbours close to a track were outside it, so the
+  wind field must be tested too. A first pass with cone only missed these.
+- **Not an independent score.** "Affected" means inside the ≥ 60 km/h wind field in GDACS's own
+  last advisory, which can include forecast points. Four storms, all Bay of Bengal. The storms'
+  data comes from JTWC (US Navy), not IMD, which is the official centre for this basin. The
+  harbour list was hand-picked.
+- A first attempt gave wrong lead times: the line features' `polygondate` is the advisory's
+  date. Real times are in the `Point_Polygon_Point` labels.
+
+**Lightning: only partly.** SACHET (NDMA) needs no key and carries official lightning warnings
+from IMD offices and state authorities, but:
+- 40 sampled alerts were valid for 1–3.1 h (median 3 h), so they cannot help a question about
+  tomorrow morning;
+- areas are land districts and mandals; the CAP files have no polygon (the API gives a centre
+  and an area), and no marine-worded alert was in the 100 items checked;
+- it reports warnings, not strikes, so the spec's "strike within 50 km" still cannot be computed.
+
+**Finding about what we ship today.** At about 10:00 IST on 2026-11-04, our lightning proxy
+(thunderstorm weather code, or CAPE ≥ 2000 J/kg) showed no signal in **any of the 10** areas under
+an official lightning or thunderstorm warning. One morning, clustered areas, and the warnings are
+forecasts rather than confirmed strikes, but it means a proxy "no signal" is weak evidence.
+
+Ruled out: Open-Meteo `lightning_potential` (all 48 hours empty at Kochi); Blitzortung (forum
+posts say raw data is restricted and not for storm warnings). WWLLN access appears to be
+controlled and paid; current terms were not found.
+
+### Step 41 · Cyclone and lightning-warning checks, built (2026-11-12 to 13)
+
+Decision (2026-11-12): the IMD key is not coming, so these two free feeds are the cyclone and
+lightning sources for the project, not a stop-gap.
+
+**New code**
+- `sources/gdacs.py`: active storms in the north Indian Ocean and their latest advisory: cone,
+  ≥ 60 km/h wind areas per forecast time, and timed track. If the newest advisory has no
+  geometry yet, the previous one is used. A storm with no usable forecast is listed as
+  unresolved, and the check is then reported as incomplete.
+- `sources/sachet.py`: lightning and thunderstorm warnings in force (rain-only alerts dropped).
+- `geo/hazards.py` (pure): `cyclone_threat` (inside cone or wind area, arrival time, closest
+  approach, "already passed") and `nearest_lightning_warning` (circle of the stated area, or
+  the alert names the harbour's district).
+- `tools/hazards.py`: `check_hazards` runs both feeds concurrently with the forecast fetches and
+  writes every result to the ledger: `active_cyclones` / `lightning_warnings_in_force` (proof
+  that the check was made), `cyclone_cone_hours`, `cyclone_track_distance_km`,
+  `lightning_warning_distance_km`.
+- **Neither feed is ever served from the snapshot or from an old cache** (6 h for cyclones,
+  45 min for warnings). An old "no cyclone" is not evidence, so offline these checks are reported
+  as not made.
+- Risk engine: cyclone hours use the specification's bands (≤ 48 h no-go, ≤ 120 h caution).
+  Lightning warning: covers the harbour → no-go; within 50 km → caution. This is **our own rule**
+  (the spec's 50 km band is written for observed strikes; a warning is a forecast placed only
+  approximately, so it applies one level lower), marked as such in `thresholds.py`. An official
+  warning outranks the weather-model proxy; beyond 50 km the proxy still decides.
+- Answers: "cyclone check" and "lightning check" lines in the brief, the English template, the
+  model's instructions (rule 9) and the Tamil, Hindi and Malayalam templates. "Not checked"
+  now reads "lightning strike locations" rather than a variable name. Ledger labels in the
+  interface. Both feeds are pre-warmed at server start.
+
+**A rule tried and rejected.** I widened the storm's wind area by the mariner's "1-2-3" track
+error allowance (≈ 185 km per 24 h of lead). Replayed through the real code over the 4 storms
+(Murasu, Arnab, One, Ditwah) and 10 harbours, it caught no extra affected harbour and raised
+false DO NOT SAILs from 1 to 12, including Kochi, 495 km from a 65 km/h depression. Reverted.
+The citation for the rule was also not checked (search unavailable at the time).
+
+**Replay of the shipped rule** (each advisory treated as the latest when a fisherman asks; "hit"
+= inside the ≥ 60 km/h area in GDACS's own last advisory, so not an independent truth):
+- 9 harbour-storm pairs hit: all 9 got DO NOT SAIL, 24–82 h before closest approach. 0 missed.
+- 31 not hit: 1 DO NOT SAIL (Chennai, Ditwah passed 94 km away), 4 CAUTION only (Ditwah's early
+  cone), 26 nothing.
+
+**Found while testing**
+- A bulk edit to the lightning reason had silently not applied (PowerShell `Replace` and CRLF
+  line endings); a new test caught it. Bulk edits are now checked for a match count.
+- **INCOIS's fishing-zone feed served stale data on 2026-11-13:** HTTP 200 with 2 zones dated
+  2026-09-04. The snapshot refresh replaced our 81-zone 2026-10-15 advisory with it and 7 tests
+  failed. `scripts/snapshot.py` now keeps the stored advisory when the served one is older and
+  records why (`refresh_failed`). Live answers now flag any advisory more than 3 days old ("Data
+  note: incois/pfz: advisory dated 2026-09-04 is 70 days old"), in all four languages.
+- Snapshot refreshed 2026-11-13 for every harbour (the 2026-10-18 copy no longer covered
+  "tomorrow", so offline answers had lost waves and wind).
+
+Tests 194 → 220 (`tests/test_hazards.py`, fixtures in `tests/fixtures/` trimmed from the real
+2026-11-04 responses). Offline bank: 44/53, all correct.

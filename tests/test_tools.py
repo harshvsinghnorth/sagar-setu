@@ -260,7 +260,7 @@ async def test_concurrent_same_url_fetches_share_one_request(live_from_snapshot,
     real = base._network
 
     async def counting(url, now, timeout_s=None):
-        calls["n"] += 1
+        calls["n"] += "open-meteo" in url  # the hazard feeds are separate requests
         return await real(url, now, timeout_s)
 
     monkeypatch.setattr(base, "_network", counting)

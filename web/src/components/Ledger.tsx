@@ -29,6 +29,12 @@ const LABEL: Record<string, string> = {
   chlorophyll_a: "chlorophyll-a", sea_temperature_5m: "Argo temp 5 m", pfz_distance_km: "PFZ distance", pfz_bearing_deg: "PFZ bearing",
   imbl_distance_km: "boundary distance", imbl_bearing_deg: "boundary bearing", inside_india_eez: "inside EEZ",
   boundary_crossing_min: "crossing in", boundary_crossing_km: "crossing distance",
+  active_cyclones: "active cyclones", cyclone_cone_hours: "cyclone arrives in",
+  cyclone_track_distance_km: "cyclone track distance", cyclone_position_distance_km: "cyclone distance",
+  lightning_warnings_in_force: "lightning warnings in force",
+  lightning_warning_distance_km: "nearest lightning warning",
+  lightning_strikes: "lightning strike locations", lightning_warnings: "official lightning warnings",
+  cyclone: "cyclone check",
 };
 
 export default function Ledger({ result, highlight }: { result: AskResult; highlight: Set<string> }) {

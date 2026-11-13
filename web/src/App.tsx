@@ -26,6 +26,18 @@ const EXAMPLES = [
   "What is the best route from Kochi to the fishing zone?",
 ];
 
+// Ledger gap variables → the words a person would use (same labels as synthesis.GAP_LABELS).
+const GAP_LABELS: Record<string, string> = {
+  lightning_strikes: "lightning strike locations",
+  lightning_warnings: "official lightning warnings",
+  cyclone: "cyclone check",
+  pfz_distance_km: "fishing zones near this harbour",
+};
+const gapLabel = (g: string) => {
+  const v = g.split(":")[0];
+  return GAP_LABELS[v] ?? v.replace(/_/g, " ");
+};
+
 export default function App() {
   const [geo, setGeo] = useState<StaticGeo | null>(null);
   const [health, setHealth] = useState<Health | null>(null);
@@ -182,7 +194,7 @@ export default function App() {
                 <div className="meta muted">
                   {t.result.plan.language.toUpperCase()} · {t.result.plan.intent} · plan {t.result.plan.source === "fast_path" ? "deterministic" : "model"} ·
                   answer {t.result.answer.source.startsWith("template") ? "template" : "model"} · {t.result.answer.verified ? "all numbers verified against the ledger" : "unverified"}
-                  {t.result.gaps.length > 0 && <> · not checked: {t.result.gaps.map((g) => g.split(":")[0]).join(", ")}</>}
+                  {t.result.gaps.length > 0 && <> · not checked: {[...new Set(t.result.gaps.map(gapLabel))].join(", ")}</>}
                 </div>
               )}
               {t.result?.analytics && (

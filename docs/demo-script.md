@@ -17,12 +17,17 @@ Question bank panel.*
 2. **Warm the cache.** Ask the first demo question once. INCOIS's fishing-zone server is often
    slow the first time (it timed out several times this month). After one answer, everything
    is cached for an hour.
-3. **Open the backups in browser tabs:**
+3. **Check the fishing zones are current.** Ask *Where are the fish near Paradip today?* If a
+   yellow banner says the advisory is days old, INCOIS has not published a new one (on
+   13 November its server was still serving a 4 September advisory). Then skip steps 3 and 5
+   below, or show them and say: "INCOIS hasn't issued a fresh advisory; the system shows the
+   date and flags it instead of passing old zones off as today's."
+4. **Open the backups in browser tabs:**
    - `docs/question_bank_results.md`: the full bank with the model (53 questions, answers recorded).
    - `docs/question_bank_offline.md`: the same bank with the network blocked.
-4. **Choose the boat** in the "boat" box: leave it at *traditional (<12 m)*. Those are the
+5. **Choose the boat** in the "boat" box: leave it at *traditional (<12 m)*. Those are the
    only limits that come from the specification; the larger-boat limits are our own estimate.
-5. If the wifi is bad, don't fight it. The system is built for that (see "If something
+6. If the wifi is bad, don't fight it. The system is built for that (see "If something
    goes wrong" below).
 
 ---
@@ -41,6 +46,9 @@ explaining it."
 - the verdict card's list of parameters, each with its limit;
 - the **Evidence ledger** on the right: every number in the answer is a row there, with its
   source, the time it is for, how far the data point is, and how fresh it is;
+- the two lines *"cyclone check"* and *"lightning check"*: "every answer also checks for an
+  active cyclone, from the UN/EU disaster alert system GDACS, and for official lightning
+  warnings from NDMA's national alert system";
 - the line under the answer: *"all numbers verified against the ledger"*.
 
 > If she asks how it decides, say: "worst-of. One parameter over its limit makes the whole
@@ -142,6 +150,19 @@ warning criteria is pending.
 It tries its recent cache, then a stored snapshot. Every number then carries a lower
 confidence, and the answer says the data is stored. The demo above can show it.
 
+**"How do you check for cyclones and lightning?"**
+Cyclones: GDACS, the UN/EU disaster alert system, publishes each storm's forecast cone and the
+area of strong winds. If the harbour falls inside within 48 hours, the verdict is *do not sail*;
+within 120 hours, *caution*. We replayed the four Bay of Bengal storms since mid-2025 through
+it: all 9 harbours that were hit got *do not sail* 24 to 82 hours ahead, none was missed, and
+there was one false *do not sail*. Lightning: official warnings from IMD offices and state
+disaster authorities, through NDMA's alert system. A warning over the harbour means *do not
+sail*; within 50 km, *caution*.
+
+If asked further: the storm forecasts GDACS carries come from the US Navy's JTWC, not from IMD,
+and the screen names the source. Lightning warnings are issued only a few hours ahead and cover
+land districts, and we have no feed of actual strike locations; the answer says that.
+
 **"How do you know the Tamil is right?"**
 With the model, Gemini writes the Tamil and our checker verifies every number. Offline, the
 Tamil comes from templates we wrote. **A native speaker still has to review those templates**,
@@ -153,8 +174,8 @@ understanding (place, day, boat, language) and behaviour (a verdict, verified nu
 right language). It does not check fixed answers, because tomorrow's sea is different.
 
 **"What doesn't it do yet?"**
-- No lightning or cyclone feed yet: the IMD key needs a college letter. The screen says
-  *"not checked: lightning, cyclone"*.
+- No feed of actual lightning strike locations; we use official warnings instead, and the
+  screen says *"not checked: lightning strike locations"*.
 - No speech input.
 - The coastline is a 1:10 million map, not a navigation chart. The route says so.
 
@@ -168,4 +189,6 @@ right language). It does not check fixed answers, because tomorrow's sea is diff
   19 Oct 2026, median about 6 s per question).
 - **Question bank with the network blocked:** 44 of 53 answered, all correct, median 0.15 s.
   The other 9 are explanations and off-topic questions, which need the model.
-- **Tests:** 194 automated tests, run on every change.
+- **Cyclone check, replayed over the 4 Bay of Bengal storms since mid-2025:** all 9 harbours
+  that were hit got *do not sail* 24–82 hours ahead; none missed; 1 false *do not sail*.
+- **Tests:** 220 automated tests, run on every change.

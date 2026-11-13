@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 from marine.risk.thresholds import (
     CALIBRATION,
     CAPE_CAUTION_JKG,
+    LIGHTNING_WARNING_CAUTION_KM,
     TABLE_SOURCE,
     TABLES,
     THUNDERSTORM_CODES,
@@ -41,8 +42,14 @@ class RiskInputs(BaseModel):
     lightning_km: float | None = None
     lightning_closing: bool | None = None
     lightning_data_available: bool = False
+    # Official lightning / thunderstorm warnings (no strike feed needed): distance from the
+    # point to the nearest warned area in force during the window; 0 = the area covers it.
+    lightning_warning_km: float | None = None
+    lightning_warning_text: str | None = None  # "Thunderstorm with Lightning, IMD Chennai"
+    lightning_warnings_checked: bool = False  # the warning feed answered for this window
     # Cyclone: hours until the cone of uncertainty intersects the area; None = no intersect.
     cyclone_hours: float | None = None
+    cyclone_name: str | None = None
     cyclone_data_available: bool = False
     # Convective proxies from the weather model (used only when no lightning feed).
     weather_code: int | None = None
@@ -211,17 +218,62 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
         if inputs.cape_jkg is not None and inputs.cape_jkg >= CAPE_CAUTION_JKG:
             proxy_level = Level.CAUTION
             why.append(f"CAPE {inputs.cape_jkg:g} J/kg ≥ {CAPE_CAUTION_JKG:g}")
-        if proxy_level is None:
-            if inputs.weather_code is None and inputs.cape_jkg is None:
-                params.append(
-                    ParameterVerdict(
-                        parameter="lightning",
-                        status="missing",
-                        level=None,
-                        unit="km",
-                        reason="no lightning feed (IMD key missing) and no convective proxy",
-                    )
+        # An official warning outranks the model proxy. Covers the point → no-go; a warned
+        # area within the caution distance → caution (thresholds.LIGHTNING_WARNING_CAUTION_KM).
+        km = inputs.lightning_warning_km
+        who = f" ({inputs.lightning_warning_text})" if inputs.lightning_warning_text else ""
+        checked = (
+            "no official lightning warning near this area for the window; "
+            if inputs.lightning_warnings_checked
+            else "no lightning feed; "
+        )
+        if km is not None and km <= LIGHTNING_WARNING_CAUTION_KM:
+            if km <= 0:
+                lvl, reason = Level.NO_GO, f"official lightning warning covers this area{who}"
+            else:
+                lvl = Level.CAUTION
+                reason = (
+                    f"official lightning warning {km:g} km away, inside the "
+                    f"{LIGHTNING_WARNING_CAUTION_KM:g} km caution distance{who}"
                 )
+            params.append(
+                ParameterVerdict(
+                    parameter="lightning",
+                    status="evaluated",
+                    level=lvl,
+                    value=km,
+                    unit="km",
+                    caution_at=LIGHTNING_WARNING_CAUTION_KM,
+                    no_go_at=0.0,
+                    reason=reason,
+                    evidence=ev.get("lightning_warning", []),
+                )
+            )
+        elif proxy_level is None:
+            if inputs.weather_code is None and inputs.cape_jkg is None:
+                if inputs.lightning_warnings_checked:
+                    params.append(
+                        ParameterVerdict(
+                            parameter="lightning",
+                            status="evaluated",
+                            level=Level.GO,
+                            unit="km",
+                            caution_at=LIGHTNING_WARNING_CAUTION_KM,
+                            no_go_at=0.0,
+                            reason="no official lightning warning near this area for the window",
+                            evidence=ev.get("lightning_warning", []),
+                        )
+                    )
+                else:
+                    params.append(
+                        ParameterVerdict(
+                            parameter="lightning",
+                            status="missing",
+                            level=None,
+                            unit="km",
+                            reason="no lightning warning feed answered and no convective proxy",
+                        )
+                    )
             else:
                 params.append(
                     ParameterVerdict(
@@ -229,10 +281,10 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
                         status="proxy",
                         level=Level.GO,
                         unit="km",
-                        reason=(
-                            "no lightning feed; weather model shows no thunderstorm signal (proxy)"
-                        ),
-                        evidence=ev.get("weather_code", []) + ev.get("cape", []),
+                        reason=checked + "weather model shows no thunderstorm signal (proxy)",
+                        evidence=ev.get("lightning_warning", [])
+                        + ev.get("weather_code", [])
+                        + ev.get("cape", []),
                     )
                 )
         else:
@@ -242,8 +294,10 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
                     status="proxy",
                     level=proxy_level,
                     unit="km",
-                    reason="no lightning feed; convective proxy: " + "; ".join(why),
-                    evidence=ev.get("weather_code", []) + ev.get("cape", []),
+                    reason=checked + "convective proxy: " + "; ".join(why),
+                    evidence=ev.get("lightning_warning", [])
+                    + ev.get("weather_code", [])
+                    + ev.get("cape", []),
                 )
             )
 
@@ -261,16 +315,28 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
                 )
             )
         else:
-            params.append(
-                _band_verdict(
-                    "cyclone",
-                    inputs.cyclone_hours,
-                    "h",
-                    th.cyclone_hours,
-                    ev.get("cyclone", []),
-                    "",
-                )
+            p = _band_verdict(
+                "cyclone",
+                inputs.cyclone_hours,
+                "h",
+                th.cyclone_hours,
+                ev.get("cyclone", []),
+                "",
             )
+            # Say it the way a person would, with the limit it was judged against.
+            band = th.cyclone_hours
+            rel, limit, kind = (
+                ("inside", band.no_go, "no-go")
+                if p.level == Level.NO_GO
+                else ("inside", band.caution, "caution")
+                if p.level == Level.CAUTION
+                else ("beyond", band.caution, "caution")
+            )
+            p.reason = (
+                f"storm {inputs.cyclone_name or 'unnamed'} is forecast to reach this area in "
+                f"{inputs.cyclone_hours:g} h, {rel} the {limit:g} h {kind} limit"
+            )
+            params.append(p)
     else:
         params.append(
             ParameterVerdict(
@@ -278,7 +344,7 @@ def evaluate(inputs: RiskInputs, vessel: VesselClass = VesselClass.TRADITIONAL) 
                 status="missing",
                 level=None,
                 unit="h",
-                reason="no cyclone feed (IMD key missing)",
+                reason="no cyclone feed answered",
             )
         )
 

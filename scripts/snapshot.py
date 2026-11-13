@@ -154,6 +154,41 @@ def _keep_or_recover(new: dict, old: dict | None, url: str, out: Path) -> dict:
     return new
 
 
+def _pfz_date(path: Path):
+    """Advisory date of a stored PFZ payload, or None."""
+    from marine.sources.incois_pfz import parse_zones
+
+    try:
+        zones = parse_zones(json.loads(path.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        return None
+    return max((z.advisory_date for z in zones), default=None)
+
+
+def _keep_newer_advisory(new: dict, old: dict | None, out: Path, backup: bytes | None) -> dict:
+    """INCOIS's WFS can answer 200 with an OLDER advisory than the one we hold (2026-11-13: two
+    zones dated 2026-09-04, replacing 81 zones dated 2026-10-15). A refresh must never make the
+    offline fallback older: put the previous file back and record what was served."""
+    if new.get("status") != 200 or backup is None or not old or old.get("status") != 200:
+        return new
+    served = _pfz_date(out)
+    prev = out.with_suffix(".prev")
+    prev.write_bytes(backup)
+    held = _pfz_date(prev)
+    prev.unlink()
+    if served is None or held is None or served >= held:
+        return new
+    out.write_bytes(backup)
+    print(f"         served advisory {served} is older than the stored {held}; kept the stored one")
+    return {
+        **old,
+        "refresh_failed": {
+            "at": new["fetched_at"],
+            "error": f"served an older advisory ({served}) than the stored one ({held})",
+        },
+    }
+
+
 async def main() -> None:
     prev_path = SNAPSHOT_DIR / "manifest.json"
     prev = json.loads(prev_path.read_text(encoding="utf-8")) if prev_path.exists() else {}
@@ -164,10 +199,12 @@ async def main() -> None:
         print("global sources")
         for name, url in GLOBAL_SOURCES.items():
             out = SNAPSHOT_DIR / f"{name}.json"
+            backup = out.read_bytes() if out.exists() else None
+            old = prev.get("global", {}).get(name)
             rec = await fetch(client, name, url, out)
-            manifest["global"][name] = _keep_or_recover(
-                rec, prev.get("global", {}).get(name), url, out
-            )
+            if name == "incois_pfz_lines":
+                rec = _keep_newer_advisory(rec, old, out, backup)
+            manifest["global"][name] = _keep_or_recover(rec, old, url, out)
         for harbour, (lat, lon) in POINTS.items():
             print(f"{harbour} ({lat}, {lon})")
             manifest["points"][harbour] = {"lat": lat, "lon": lon, "sources": {}}

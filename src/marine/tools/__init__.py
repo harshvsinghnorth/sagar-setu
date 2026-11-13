@@ -4,6 +4,7 @@ names; the specialists call them. Nothing here decides safety — `assess_sailin
 just hands ledger values to `marine.risk.rules.evaluate`."""
 
 from marine.tools.context import ToolContext
+from marine.tools.hazards import HazardQuery, HazardResult, check_hazards
 from marine.tools.locations import LocationQuery, ResolvedLocation, resolve_location
 from marine.tools.ocean import (
     Point,
@@ -46,6 +47,7 @@ TOOLS = {
     "check_position": check_position,
     "predict_boundary_crossing": predict_boundary_crossing,
     "assess_sailing_risk": assess_sailing_risk,
+    "check_hazards": check_hazards,
     "safety_briefing": safety_briefing,
     "cyclone_status": cyclone_status,
     "lightning_status": lightning_status,
@@ -55,6 +57,8 @@ TOOLS = {
 
 __all__ = [
     "TOOLS",
+    "HazardQuery",
+    "HazardResult",
     "HeadingQuery",
     "LocationQuery",
     "Point",
@@ -67,6 +71,7 @@ __all__ = [
     "SeriesResult",
     "ToolContext",
     "assess_sailing_risk",
+    "check_hazards",
     "check_position",
     "cyclone_status",
     "describe_window",

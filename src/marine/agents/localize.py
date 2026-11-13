@@ -158,18 +158,24 @@ PARAMS = {
 # What could not be checked: gap variable names → words.
 GAPS = {
     "ta": {
+        "lightning_strikes": "மின்னல் விழுந்த இடங்களின் தரவு",
+        "lightning_warnings": "அதிகாரப்பூர்வ மின்னல் எச்சரிக்கைகள்",
         "lightning": "மின்னல்",
         "cyclone": "புயல்",
         "chlorophyll": "பச்சையம்",
         "disagreement": "தரவு மூலங்களுக்கிடையே முரண்பாடு",
     },
     "hi": {
+        "lightning_strikes": "बिजली गिरने की जगहों का डेटा",
+        "lightning_warnings": "आधिकारिक बिजली चेतावनियाँ",
         "lightning": "बिजली (तड़ित)",
         "cyclone": "चक्रवात",
         "chlorophyll": "क्लोरोफिल",
         "disagreement": "डेटा स्रोतों में अंतर",
     },
     "ml": {
+        "lightning_strikes": "ഇടിമിന്നൽ വീണ സ്ഥലങ്ങളുടെ ഡാറ്റ",
+        "lightning_warnings": "ഔദ്യോഗിക ഇടിമിന്നൽ മുന്നറിയിപ്പുകൾ",
         "lightning": "ഇടിമിന്നൽ",
         "cyclone": "ചുഴലിക്കാറ്റ്",
         "chlorophyll": "ക്ലോറോഫിൽ",
@@ -181,6 +187,8 @@ SOURCES = {  # degraded source → what it supplies, in words
         "open_meteo/marine": "அலை",
         "open_meteo/weather": "காற்று, வானிலை",
         "incois/pfz": "மீன்பிடி மண்டலம்",
+        "gdacs": "புயல் தகவல்",
+        "sachet": "மின்னல் எச்சரிக்கை",
         "chl": "பச்சையம்",
         "argo": "கடல் வெப்பநிலை",
     },
@@ -188,6 +196,8 @@ SOURCES = {  # degraded source → what it supplies, in words
         "open_meteo/marine": "लहरें",
         "open_meteo/weather": "हवा और मौसम",
         "incois/pfz": "मछली क्षेत्र",
+        "gdacs": "चक्रवात जानकारी",
+        "sachet": "बिजली चेतावनी",
         "chl": "क्लोरोफिल",
         "argo": "समुद्र का तापमान",
     },
@@ -195,6 +205,8 @@ SOURCES = {  # degraded source → what it supplies, in words
         "open_meteo/marine": "തിര",
         "open_meteo/weather": "കാറ്റ്, കാലാവസ്ഥ",
         "incois/pfz": "മത്സ്യ മേഖല",
+        "gdacs": "ചുഴലിക്കാറ്റ് വിവരം",
+        "sachet": "ഇടിമിന്നൽ മുന്നറിയിപ്പ്",
         "chl": "ക്ലോറോഫിൽ",
         "argo": "കടൽ താപനില",
     },
@@ -514,10 +526,160 @@ _BASELINE = re.compile(
 )
 
 
+# -- cyclone and lightning-warning lines (tools/hazards.py, risk/rules.py) ---------------------
+
+H: dict[str, dict[str, str]] = {
+    "ta": {
+        "track": " (புயலின் பாதை {d} {km} தொலைவில்)",
+        "pfz_old": "{date} தேதியிட்ட அறிவிப்பு {n} நாள் பழையது",
+        "c_none": "புயல் சரிபார்ப்பு: வட இந்தியப் பெருங்கடலில் இப்போது புயல் எதுவும் இல்லை",
+        "c_clear": "புயல் சரிபார்ப்பு: {name} புயல் செயலில் உள்ளது; இந்த இடம் அதன் முன்னறிவிப்புப் பாதைக்கும் பலத்த காற்றுப் பகுதிக்கும் வெளியே உள்ளது",
+        "c_passed": "புயல் சரிபார்ப்பு: {name} புயல் இந்தப் பகுதியைக் கடந்து சென்றுவிட்டது",
+        "c_hours": "புயல் சரிபார்ப்பு: {name} புயல் சுமார் {h} மணி நேரத்தில் இந்தப் பகுதியைப் பாதிக்கும் என முன்னறிவிப்பு",
+        "c_now": "புயல் சரிபார்ப்பு: புறப்படும் நேரத்திலேயே {name} புயல் இந்தப் பகுதியைப் பாதிக்கும் என முன்னறிவிப்பு",
+        "c_unknown": "புயல் சரிபார்ப்பு: {name} புயல் இங்கிருந்து {d} {km} தொலைவில் செயலில் உள்ளது; ஆனால் அதன் முன்னறிவிப்பைப் பெற முடியவில்லை",
+        "l_none": "மின்னல் சரிபார்ப்பு: இந்த நேரத்துக்கு இந்த இடத்திலிருந்து {r} {km}-க்குள் அதிகாரப்பூர்வ மின்னல் / இடிமழை எச்சரிக்கை எதுவும் இல்லை",
+        "l_later": "மின்னல் சரிபார்ப்பு: அதிகாரப்பூர்வ எச்சரிக்கைகள் சில மணி நேரம் முன்புதான் வெளியிடப்படும்; இந்த நேரத்துக்கு இன்னும் எதுவும் இருக்க முடியாது",
+        "l_covers": "மின்னல் சரிபார்ப்பு: {sender} வெளியிட்ட அதிகாரப்பூர்வ எச்சரிக்கை ({kind}) இந்தப் பகுதிக்கு {t} IST வரை நடைமுறையில் உள்ளது",
+        "l_near": "மின்னல் சரிபார்ப்பு: {sender} வெளியிட்ட அதிகாரப்பூர்வ எச்சரிக்கை ({kind}) இங்கிருந்து {d} {km} தொலைவில், {t} IST வரை நடைமுறையில் உள்ளது",
+        "r_covers": "அதிகாரப்பூர்வ மின்னல் எச்சரிக்கை இந்தப் பகுதிக்கு நடைமுறையில் உள்ளது",
+        "r_near": "அதிகாரப்பூர்வ மின்னல் எச்சரிக்கை {d} {km} தொலைவில் — {c} {km} எச்சரிக்கை தூரத்துக்குள்",
+        "r_proxy": "அதிகாரப்பூர்வ மின்னல் எச்சரிக்கை இல்லை; ஆனால் வானிலை மாதிரியில் இடிமின்னல் அறிகுறி ({detail})",
+        "r_storm_inside": "{name} புயல் சுமார் {h} மணி நேரத்தில் இந்தப் பகுதியை அடையும் என முன்னறிவிப்பு — {k} வரம்பான {t} மணி நேரத்துக்குள்",
+        "r_storm_beyond": "{name} புயல் சுமார் {h} மணி நேரத்தில் இந்தப் பகுதியை அடையும் என முன்னறிவிப்பு — {t} மணி நேர எச்சரிக்கை வரம்புக்கு அப்பால்",
+    },
+    "hi": {
+        "track": " (चक्रवात का रास्ता {d} {km} दूर)",
+        "pfz_old": "{date} की सूचना {n} दिन पुरानी है",
+        "c_none": "चक्रवात जाँच: उत्तरी हिंद महासागर में अभी कोई सक्रिय चक्रवात नहीं है",
+        "c_clear": "चक्रवात जाँच: {name} सक्रिय है; यह जगह उसके पूर्वानुमान शंकु और तेज़ हवा के क्षेत्र से बाहर है",
+        "c_passed": "चक्रवात जाँच: {name} इस इलाके से गुज़र चुका है",
+        "c_hours": "चक्रवात जाँच: {name} के लगभग {h} घंटे में इस इलाके पर असर डालने का पूर्वानुमान है",
+        "c_now": "चक्रवात जाँच: निकलने के समय ही {name} का इस इलाके पर असर रहने का पूर्वानुमान है",
+        "c_unknown": "चक्रवात जाँच: {name} यहाँ से {d} {km} दूर सक्रिय है, पर उसका पूर्वानुमान नहीं मिल सका",
+        "l_none": "बिजली जाँच: इस समय के लिए इस जगह से {r} {km} के अंदर कोई आधिकारिक बिजली / आँधी-तूफ़ान चेतावनी नहीं है",
+        "l_later": "बिजली जाँच: आधिकारिक चेतावनियाँ कुछ घंटे पहले ही जारी होती हैं; इस समय के लिए अभी कोई नहीं हो सकती",
+        "l_covers": "बिजली जाँच: {sender} की आधिकारिक चेतावनी ({kind}) इस इलाके पर {t} IST तक लागू है",
+        "l_near": "बिजली जाँच: {sender} की आधिकारिक चेतावनी ({kind}) यहाँ से {d} {km} दूर है, {t} IST तक लागू",
+        "r_covers": "आधिकारिक बिजली चेतावनी इस इलाके पर लागू है",
+        "r_near": "आधिकारिक बिजली चेतावनी {d} {km} दूर — {c} {km} की सावधानी दूरी के अंदर",
+        "r_proxy": "कोई आधिकारिक बिजली चेतावनी नहीं; पर मौसम मॉडल में आँधी-तूफ़ान का संकेत है ({detail})",
+        "r_storm_inside": "चक्रवात {name} के लगभग {h} घंटे में इस इलाके तक पहुँचने का पूर्वानुमान है — {k} स्तर {t} घंटे के अंदर",
+        "r_storm_beyond": "चक्रवात {name} के लगभग {h} घंटे में इस इलाके तक पहुँचने का पूर्वानुमान है — {t} घंटे की सावधानी सीमा के बाद",
+    },
+    "ml": {
+        "track": " (ചുഴലിക്കാറ്റിന്റെ പാത {d} {km} അകലെ)",
+        "pfz_old": "{date} തീയതിയിലെ അറിയിപ്പ് {n} ദിവസം പഴയതാണ്",
+        "c_none": "ചുഴലിക്കാറ്റ് പരിശോധന: വടക്കൻ ഇന്ത്യൻ മഹാസമുദ്രത്തിൽ ഇപ്പോൾ ചുഴലിക്കാറ്റ് ഒന്നുമില്ല",
+        "c_clear": "ചുഴലിക്കാറ്റ് പരിശോധന: {name} സജീവമാണ്; ഈ സ്ഥലം അതിന്റെ പ്രവചന പാതയ്ക്കും ശക്തമായ കാറ്റിന്റെ മേഖലയ്ക്കും പുറത്താണ്",
+        "c_passed": "ചുഴലിക്കാറ്റ് പരിശോധന: {name} ഈ പ്രദേശം കടന്നുപോയി",
+        "c_hours": "ചുഴലിക്കാറ്റ് പരിശോധന: {name} ഏകദേശം {h} മണിക്കൂറിനുള്ളിൽ ഈ പ്രദേശത്തെ ബാധിക്കുമെന്ന് പ്രവചനം",
+        "c_now": "ചുഴലിക്കാറ്റ് പരിശോധന: പുറപ്പെടുന്ന സമയത്തുതന്നെ {name} ഈ പ്രദേശത്തെ ബാധിക്കുമെന്ന് പ്രവചനം",
+        "c_unknown": "ചുഴലിക്കാറ്റ് പരിശോധന: {name} ഇവിടെ നിന്ന് {d} {km} അകലെ സജീവമാണ്; പക്ഷേ അതിന്റെ പ്രവചനം ലഭിച്ചില്ല",
+        "l_none": "ഇടിമിന്നൽ പരിശോധന: ഈ സമയത്തേക്ക് ഈ സ്ഥലത്തിന് {r} {km} ഉള്ളിൽ ഔദ്യോഗിക ഇടിമിന്നൽ മുന്നറിയിപ്പ് ഒന്നുമില്ല",
+        "l_later": "ഇടിമിന്നൽ പരിശോധന: ഔദ്യോഗിക മുന്നറിയിപ്പുകൾ ഏതാനും മണിക്കൂർ മുമ്പ് മാത്രമേ നൽകൂ; ഈ സമയത്തേക്ക് ഇതുവരെ ഒന്നും ഉണ്ടാകില്ല",
+        "l_covers": "ഇടിമിന്നൽ പരിശോധന: {sender} നൽകിയ ഔദ്യോഗിക മുന്നറിയിപ്പ് ({kind}) ഈ പ്രദേശത്ത് {t} IST വരെ നിലവിലുണ്ട്",
+        "l_near": "ഇടിമിന്നൽ പരിശോധന: {sender} നൽകിയ ഔദ്യോഗിക മുന്നറിയിപ്പ് ({kind}) ഇവിടെ നിന്ന് {d} {km} അകലെ, {t} IST വരെ നിലവിലുണ്ട്",
+        "r_covers": "ഔദ്യോഗിക ഇടിമിന്നൽ മുന്നറിയിപ്പ് ഈ പ്രദേശത്ത് നിലവിലുണ്ട്",
+        "r_near": "ഔദ്യോഗിക ഇടിമിന്നൽ മുന്നറിയിപ്പ് {d} {km} അകലെ — {c} {km} ജാഗ്രതാ ദൂരത്തിനുള്ളിൽ",
+        "r_proxy": "ഔദ്യോഗിക ഇടിമിന്നൽ മുന്നറിയിപ്പ് ഇല്ല; പക്ഷേ കാലാവസ്ഥാ മോഡലിൽ ഇടിമിന്നൽ സൂചന ({detail})",
+        "r_storm_inside": "{name} ചുഴലിക്കാറ്റ് ഏകദേശം {h} മണിക്കൂറിനുള്ളിൽ ഈ പ്രദേശത്തെത്തുമെന്ന് പ്രവചനം — {k} പരിധിയായ {t} മണിക്കൂറിനുള്ളിൽ",
+        "r_storm_beyond": "{name} ചുഴലിക്കാറ്റ് ഏകദേശം {h} മണിക്കൂറിനുള്ളിൽ ഈ പ്രദേശത്തെത്തുമെന്ന് പ്രവചനം — {t} മണിക്കൂർ ജാഗ്രതാ പരിധിക്കപ്പുറം",
+    },
+}
+_TRACK = rf"(?:; its (?:forecast )?track (?:passes|stays|came within) (?P<d>{_NUM}) km[^;]*)?"
+_HAZARD = [
+    (
+        "c_none",
+        re.compile(r"^cyclone check: no active tropical cyclone in the north Indian Ocean$"),
+    ),
+    (
+        "c_unknown",
+        re.compile(
+            rf"^cyclone check: (?P<name>.+?) is active (?P<d>{_NUM}) km from this point but its "
+            r"forecast could not be loaded$"
+        ),
+    ),
+    (
+        "c_clear",
+        re.compile(
+            rf"^cyclone check: (?P<name>.+?) is active(?:; its forecast track stays (?P<d>{_NUM}) km "
+            r"from this point)?, outside the forecast cone and wind field$"
+        ),
+    ),
+    (
+        "c_passed",
+        re.compile(rf"^cyclone check: (?P<name>.+?) has already passed this area{_TRACK}$"),
+    ),
+    (
+        "c_hours",
+        re.compile(
+            rf"^cyclone check: (?P<name>.+?) is forecast to affect this area in about (?P<h>{_NUM}) h{_TRACK}$"
+        ),
+    ),
+    (
+        "c_now",
+        re.compile(
+            rf"^cyclone check: (?P<name>.+?) is forecast to be affecting this area when the window starts{_TRACK}$"
+        ),
+    ),
+    (
+        "l_none",
+        re.compile(
+            rf"^lightning check: no official lightning or thunderstorm warning within (?P<r>{_NUM}) km "
+            r"of this point for the window$"
+        ),
+    ),
+    (
+        "l_later",
+        re.compile(r"^lightning check: official warnings are issued only a few hours ahead"),
+    ),
+    (
+        "l_covers",
+        re.compile(
+            r"^lightning check: official (?P<kind>.+?) warning from (?P<sender>.+?) covers this area "
+            r"until (?P<t>\d{2}:\d{2}) IST$"
+        ),
+    ),
+    (
+        "l_near",
+        re.compile(
+            rf"^lightning check: official (?P<kind>.+?) warning from (?P<sender>.+?) is (?P<d>{_NUM}) km "
+            r"away, in force until (?P<t>\d{2}:\d{2}) IST$"
+        ),
+    ),
+]
+_R_COVERS = re.compile(r"^official lightning warning covers this area(?P<who> \(.+\))?$")
+_R_NEAR = re.compile(
+    rf"^official lightning warning (?P<d>{_NUM}) km away, inside the (?P<c>{_NUM}) km caution "
+    r"distance(?P<who> \(.+\))?$"
+)
+_R_STORM = re.compile(
+    rf"^storm (?P<name>.+?) is forecast to reach this area in (?P<h>{_NUM}) h, "
+    rf"(?P<rel>inside|beyond) the (?P<t>{_NUM}) h (?P<kind>no-go|caution) limit$"
+)
+_PROXY_CHECKED = "no official lightning warning near this area for the window; convective proxy: "
+_PFZ_OLD = re.compile(r"^advisory dated (?P<date>\S+) is (?P<n>\d+) days old$")
+
+
 class Localizer:
     def __init__(self, lang: str):
         self.lang, self.t = lang, T[lang]
         self.u = UNITS[lang]
+        self.h = H[lang]
+
+    def hazard(self, line: str) -> str:
+        for key, rx in _HAZARD:
+            m = rx.match(line)
+            if not m:
+                continue
+            g = {k: v for k, v in m.groupdict().items() if v is not None}
+            d = g.get("d")
+            out = self.h[key].format(km=self.unit("km"), **g)
+            if key in ("c_clear", "c_passed", "c_hours", "c_now") and d:
+                out += self.h["track"].format(d=d, km=self.unit("km"))
+            return out
+        return line
 
     def unit(self, u: str) -> str:
         return self.u.get(u, u)
@@ -568,6 +730,21 @@ class Localizer:
             return out
         if line.startswith("no lightning feed; convective proxy: "):
             return self.t["thunder"].format(detail=line.split(": ", 1)[1])
+        if line.startswith(_PROXY_CHECKED):
+            return self.h["r_proxy"].format(detail=line[len(_PROXY_CHECKED) :])
+        m = _R_COVERS.match(line)
+        if m:
+            return self.h["r_covers"] + (m["who"] or "")
+        m = _R_NEAR.match(line)
+        if m:
+            return self.h["r_near"].format(d=m["d"], c=m["c"], km=self.unit("km")) + (
+                m["who"] or ""
+            )
+        m = _R_STORM.match(line)
+        if m:
+            return self.h[f"r_storm_{m['rel']}"].format(
+                name=m["name"], h=m["h"], t=m["t"], k=self.t[m["kind"]]
+            )
         m = re.match(r"^position is outside Indian waters \((?P<x>.+)\)$", line)
         if m:
             return self.t["outside"].format(x=m["x"])
@@ -692,6 +869,9 @@ class Localizer:
                 continue
             src, _, prov = d.partition(": ")
             name = next((v for k, v in SOURCES[self.lang].items() if k in src), src)
+            old = _PFZ_OLD.match(prov)
+            if old:
+                prov = self.h["pfz_old"].format(date=old["date"], n=old["n"])
             out.append(f"{name}: {self.t.get(prov, prov)}")
         return self.t["degraded"].format(items="; ".join(out))
 
@@ -733,6 +913,7 @@ def localized_template(b) -> str | None:
     elif b.window:
         lines.append(t["conditions_header"].format(location=b.location, window=b.window))
     lines += [f"• {L.condition(c.split(' [')[0])}" for c in b.conditions]
+    lines += [f"• {L.hazard(x)}" for x in b.hazards]
     if b.pfz:
         lines.append(
             t["pfz_header"].format(date=b.pfz_date) if b.pfz_date else t["pfz_header_nodate"]

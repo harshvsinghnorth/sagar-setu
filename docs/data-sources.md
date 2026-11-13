@@ -8,7 +8,7 @@ Status is what actually happened, not what the documentation says.
 | Source | Verdict | Role in the chain |
 |---|---|---|
 | Open-Meteo marine + forecast | ✅ live, no key, 250–1300 ms | **Primary** for waves, swell, wind, visibility, SST, currents. Reliability floor. |
-| INCOIS PFZ (GeoServer WFS) | ✅ live GeoJSON, no key, 1–8 s (1.1 MB) | **Only** PFZ source. Fetch once per day, cache. |
+| INCOIS PFZ (GeoServer WFS) | ✅ live GeoJSON, no key, 1–8 s (1.1 MB). ⚠ 2026-11-13: HTTP 200 but only 2 zones dated 2026-09-04 | **Only** PFZ source. Fetch once per day, cache. Advisories older than 3 days are flagged in the answer. |
 | INCOIS landing centres + sectors (WFS) | ✅ static | Location resolver (1223 named landing centres) + sector polygons. Committed. |
 | Marine Regions EEZ polygon + boundaries | ✅ static, 38 s for 1.85 MB | Committed to `data/static/`. Never fetched at runtime. Mainland (mrgid 8480) **and** Andaman & Nicobar (mrgid 8333, added 2026-10-19) — separate polygons upstream. |
 | Natural Earth 1:10m land + minor islands | ✅ static, public domain, clipped to 0.29 MB | Land mask for route search (`data/static/ne_10m_land_india_region.geojson`). Added 2026-10-19. |
@@ -103,6 +103,55 @@ inlet. Routes are advice, never a chart.
 `eez_boundaries` feature `eez_boundaries.117` is the India–Sri Lanka line through Palk Bay /
 Gulf of Mannar starting at (79.533, 9.10). Properties include `line_name`, `sovereign1/2`,
 `line_type`.
+
+## Cyclone and lightning without the IMD key (tested 2026-11-04, built 2026-11-13: `sources/gdacs.py`, `sources/sachet.py`)
+
+### GDACS: tropical cyclones (no key)
+
+```
+GET https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&alertlevel=green;orange;red
+    (optional fromDate, toDate)                                                     # ~1.2 s, GeoJSON
+GET https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=…   # lists episodes
+GET https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=…&episodeid=…
+```
+
+- Geometry took 5.5 s, over the 2 s budget: fetch it in the background and cache it, only when
+  a storm is active in the basin.
+- `Class` values: `Poly_Cones` (forecast cone), `Poly_Green` / `Poly_Orange` / `Poly_Red` (wind
+  fields; the Green label read "60 km/h"; `featuretype` absent = whole swath, `WindRadii` = one
+  time), `Line_Line_n` (track, with `forecast` true/false), `Point_Polygon_Point_n` (positions).
+- `polygondate` on lines and points is the **advisory's** date. A position's own time is in
+  `polygonlabel`, e.g. "03/11 12:00 UTC".
+- Each north Indian Ocean storm listed gives `source: JTWC`, so this is not IMD data.
+- Advisory 9 of Arnab (eventid 1001345) returned "No data found": handle missing geometry.
+- Intensity text can be inconsistent: Arnab reads "Tropical Storm (maximum wind speed of 222 km/h)".
+- Terms of use not yet checked.
+
+### SACHET (NDMA): official warnings, including lightning (no key)
+
+```
+GET https://sachet.ndma.gov.in/cap_public_website/FetchAllAlertDetails   # active alerts, JSON, ~0.85 s
+GET https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml      # latest 100 items
+GET https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=…   # one CAP 1.2 message
+```
+
+- JSON fields include `disaster_type`, `severity`, `severity_level`, `effective_start_time`,
+  `effective_end_time`, `area_description`, `centroid` ("lon,lat"), `area_covered` (apparently km²),
+  `alert_source`, `warning_message` (often in a regional language).
+- Senders seen: IMD regional offices and state disaster authorities.
+- CAP messages have an `en-IN` info block but no polygon in the 12 checked.
+- 40 sampled alerts were valid for 1–3.1 h, so they apply to the next few hours only.
+- CAP `scope` is Public, but no licence or terms of reuse were found: ask NDMA before any public
+  launch.
+
+### Also checked
+
+| Source | Result |
+|---|---|
+| JTWC RSS `metoc.navy.mil/jtwc/rss/jtwc.rss` | ✅ open; links warning text and data per storm. Possible backup. Not parsed yet. |
+| IMD RSMC New Delhi `rsmcnewdelhi.imd.gov.in` | ✅ pages open without a key; products look like PDFs. Official, but not parsed yet. |
+| Open-Meteo `lightning_potential` | ❌ all 48 hours empty at Kochi. |
+| Blitzortung | ❌ forum posts say raw data is restricted and not for storm warnings. |
 
 ## NOAA CoastWatch VIIRS chlorophyll (gap-filled, near-real-time)
 

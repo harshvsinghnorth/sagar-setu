@@ -135,6 +135,13 @@ TABLES: dict[VesselClass, Thresholds] = {
     ),
 }
 
+# Official lightning / thunderstorm WARNINGS (NDMA SACHET), used while no strike feed exists.
+# A warning whose area covers the point is a no-go; a warned area within this distance is a
+# caution. OUR OWN RULE, agreed 2026-11-12: the specification's 50 km band is written for
+# observed strikes; a warning is a forecast over a district that we can only place
+# approximately, so the same distance is applied one level lower. Not from a cited source.
+LIGHTNING_WARNING_CAUTION_KM = 50.0
+
 # Open-Meteo WMO weather codes that mean thunderstorm — a convective proxy, NOT lightning data.
 THUNDERSTORM_CODES = {95, 96, 99}
 # CAPE (J/kg) above which convection is likely enough to flag caution when we have no

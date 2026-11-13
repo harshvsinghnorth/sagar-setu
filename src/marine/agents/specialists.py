@@ -7,6 +7,7 @@ and everything numeric it learned is already in the ledger via the tools it call
 
 from __future__ import annotations
 
+import asyncio
 import statistics
 from datetime import datetime
 
@@ -18,6 +19,7 @@ from marine.geo.pfz import PfzHit
 from marine.ledger import Observation
 from marine.risk.rules import RiskVerdict
 from marine.tools import (
+    HazardQuery,
     HeadingQuery,
     Point,
     PointWindow,
@@ -26,6 +28,7 @@ from marine.tools import (
     RouteSummary,
     ToolContext,
     assess_sailing_risk,
+    check_hazards,
     check_position,
     fan_out,
     get_chlorophyll,
@@ -47,6 +50,8 @@ class OceanFinding(BaseModel):
     missing: list[str] = Field(default_factory=list)
     disagreements: list[str] = Field(default_factory=list)
     sources: dict[str, str] = Field(default_factory=dict)
+    # Cyclone and official lightning-warning checks, as fixed-format lines (tools/hazards.py).
+    hazards: list[str] = Field(default_factory=list)
 
 
 class GeoFinding(BaseModel):
@@ -81,10 +86,15 @@ async def ocean_weather(ctx: ToolContext, plan: Plan) -> OceanFinding:
     """Fan out waves / wind / visibility / sea concurrently; summarise worst-of per variable."""
     assert plan.location is not None
     start, end = window_for(plan)
-    res = await fan_out(
-        ctx, PointWindow(lat=plan.location.lat, lon=plan.location.lon, start=start, end=end)
+    loc = plan.location
+    res, hazards = await asyncio.gather(
+        fan_out(ctx, PointWindow(lat=loc.lat, lon=loc.lon, start=start, end=end)),
+        check_hazards(
+            ctx,
+            HazardQuery(lat=loc.lat, lon=loc.lon, start=start, end=end, district=loc.district),
+        ),
     )
-    f = OceanFinding(window_start=start, window_end=end)
+    f = OceanFinding(window_start=start, window_end=end, hazards=hazards.lines)
     lower_is_worse = {"visibility"}
     for r in res.values():
         f.missing += r.missing
@@ -216,5 +226,6 @@ def risk(ctx: ToolContext, plan: Plan, geo: GeoFinding | None = None) -> RiskVer
         heading_deg=plan.heading_deg,
         speed_kt=plan.speed_kt,
         route_obs=route.observation_ids if route else [],
+        district=plan.location.district,
     )
     return assess_sailing_risk(ctx, q)

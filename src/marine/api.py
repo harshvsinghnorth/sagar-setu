@@ -34,7 +34,7 @@ from marine.fixtures import HARBOURS, KNOWN_PORTS
 from marine.geo.boundaries import IMBL_TYPES
 from marine.graph import ask_streaming
 from marine.risk.thresholds import TABLE_SOURCE, TABLES, VesselClass
-from marine.sources import incois_pfz
+from marine.sources import gdacs, incois_pfz, sachet
 from marine.sources.base import PointQuery
 from marine.sources.open_meteo import OpenMeteoMarine, OpenMeteoWeather
 from marine.tools import ToolContext
@@ -53,6 +53,16 @@ async def prewarm() -> None:
         log.info("prewarm: PFZ %s zones (%s)", len(adv.zones), adv.outcome.provenance)
     except Exception as e:  # noqa: BLE001
         log.warning("prewarm: PFZ failed: %s", e)
+    # Cyclone list (1-3 s cold, plus storm geometry when one is active) and warnings.
+    for name, fetch in (
+        ("cyclones", gdacs.fetch_active_storms),
+        ("warnings", sachet.fetch_lightning_warnings),
+    ):
+        try:
+            await fetch()
+            log.info("prewarm: %s ok", name)
+        except Exception as ex:  # noqa: BLE001
+            log.warning("prewarm: %s failed: %s", name, ex)
     s, e = named_window("tomorrow", "morning")
     marine, weather = OpenMeteoMarine(), OpenMeteoWeather()
     for name, (lat, lon) in HARBOURS.items():
