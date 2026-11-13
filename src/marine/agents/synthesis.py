@@ -201,7 +201,12 @@ def build_brief(
         b.degradation += [
             f"{s}: {p}" for s, p in ocean.sources.items() if p in ("stale_cache", "snapshot")
         ]
-        b.hazards = list(ocean.hazards)
+        # With no verdict, an all-clear line ("no active cyclone") read as a safety judgement:
+        # the model wrote "GO" and the verifier had to reject it. Without a verdict, only
+        # lines that report a threat or an incomplete check are kept.
+        b.hazards = [
+            h for h in ocean.hazards if verdict is not None or not any(q in h for q in ALL_CLEAR)
+        ]
         nums.add(LIGHTNING_WARNING_CAUTION_KM)
         b.gaps += ocean.missing
         b.gaps += [f"disagreement: {d}" for d in ocean.disagreements]
@@ -318,6 +323,15 @@ def build_brief(
 # -- template answer (no model needed) ---------------------------------------------------------
 
 
+# Hazard-check lines that say nothing was found (tools/hazards.py wording).
+ALL_CLEAR = (
+    "no active tropical cyclone",
+    "outside the forecast cone and wind field",
+    "has already passed this area",
+    "no official lightning or thunderstorm warning",
+    "official warnings are issued only a few hours ahead",
+)
+
 # INCOIS issues PFZ advisories daily; one older than this is flagged as old in the answer.
 PFZ_STALE_DAYS = 3
 
@@ -409,7 +423,7 @@ SYNTHESIS_SYSTEM = """You write the reply of a marine safety assistant for small
 Absolute rules:
 1. If the BRIEF has a VERDICT line, that verdict (GO / CAUTION / DO NOT SAIL) is final: state it first, plainly, and never soften it, hedge it, or add your own judgement about safety. If the BRIEF has NO VERDICT line, no safety assessment was made: do not write GO, CAUTION, DO NOT SAIL, safe, or unsafe anywhere in the reply — report the facts only.
 2. Use ONLY numbers that appear in the BRIEF. Do not compute, convert, round differently, or estimate any number. If a value is not in the BRIEF, do not mention one.
-3. If the BRIEF has a "degradation" section, one sentence of your reply MUST say that some data is old or from a stored copy (name which: wind/weather or waves) because the live source did not answer. If it lists "data gaps", say in one short sentence what could not be checked. The user must know what we could not check.
+3. If the BRIEF has a "degradation" section, one sentence of your reply MUST say that some data is old or from a stored copy, naming exactly which data the degradation section names (waves, wind/weather, fishing zone advisory, …) and nothing else. If it lists "data gaps", say in one short sentence what could not be checked. The user must know what we could not check.
 4. Write in {language}. Simple spoken register, as to a working fisherman, not a scientist. Short sentences. No markdown headers, no bullet symbols, at most 6 sentences unless the BRIEF has many findings.
 5. Give the practical bearing and distance for fishing zones as a fisherman would use them (compass point and km).
 6. Do not add safety tips, disclaimers or advice beyond what the BRIEF supports.
@@ -444,7 +458,11 @@ def brief_text(b: Brief) -> str:
     if b.degradation:
         parts.append("degradation:\n" + "\n".join(f"- {d}" for d in b.degradation))
     if b.gaps:
-        parts.append("data gaps:\n" + "\n".join(f"- {g}" for g in b.gaps))
+        # Plain words, not variable names: the model copies whatever it is given.
+        parts.append(
+            "data gaps:\n"
+            + "\n".join(f"- {gap_label(g)}: {g.partition(':')[2].strip()}" for g in b.gaps)
+        )
     if b.knowledge_answer:
         parts.append(f"knowledge answer to convey: {b.knowledge_answer}")
     return "\n".join(parts)

@@ -341,3 +341,21 @@ def test_an_old_pfz_advisory_is_flagged_in_the_answer_with_its_age():
     assert age > 300 and float(age) in b.allowed_numbers
     ta = Localizer("ta").degradation([note])
     assert str(age) in ta and "days old" not in ta
+
+
+def test_without_a_verdict_all_clear_check_lines_stay_out_of_the_brief():
+    """An all-clear "no active cyclone" line made the model write "GO" on a conditions question
+    (2026-11-13); lines reporting a threat still go in."""
+    from marine.agents.planner import Plan
+    from marine.agents.specialists import OceanFinding
+    from marine.agents.synthesis import brief_text, build_brief
+    from marine.ledger import EvidenceLedger
+
+    clear = "cyclone check: no active tropical cyclone in the north Indian Ocean"
+    threat = "cyclone check: MURASU-26 is forecast to affect this area in about 30.5 h"
+    ocean = OceanFinding(window_start=DAWN_2_NOV, window_end=DAWN_2_NOV, hazards=[clear, threat])
+    plan = Plan(language="en", english_query="fog at Puri?", intent=Intent.CONDITIONS)
+    b = build_brief(plan, EvidenceLedger(), ocean, None, None, None)
+    assert b.hazards == [threat]
+    b.gaps = ["lightning_strikes: no strike-location feed is available"]
+    assert "lightning strike locations: no strike-location" in brief_text(b)
