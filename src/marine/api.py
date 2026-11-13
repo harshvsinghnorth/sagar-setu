@@ -85,7 +85,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Sagar Setu", version="0.4.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    # Any local port: if 5173 is taken, Vite moves to 5174 and the page must still work.
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
     allow_methods=["*"],
     allow_headers=["*"],
 )
