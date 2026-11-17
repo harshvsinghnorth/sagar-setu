@@ -1,0 +1,20 @@
+﻿{
+    "Introduction":  3,
+    "Literature Review":  7,
+    "Methodology":  9,
+    "Sagar Setu as a State-Space Search":  9,
+    "Sagar Setu as a Constraint Satisfaction Problem":  10,
+    "CSP for a Particular Instance":  11,
+    "System Architecture":  12,
+    "Implementation":  14,
+    "Deterministic Rule-Based Safety Engine":  14,
+    "A* Route Search":  15,
+    "Agents: Planner, Specialists and Verifier":  16,
+    "Evidence Ledger and Data Layer":  16,
+    "Cyclone and Lightning Checks":  17,
+    "Indian Languages and Offline Operation":  17,
+    "Results / Performance":  19,
+    "Discussion":  23,
+    "Conclusion and Future Work":  24,
+    "References":  26
+}

@@ -1423,3 +1423,39 @@ The citation for the rule was also not checked (search unavailable at the time).
 
 Tests 194 → 220 (`tests/test_hazards.py`, fixtures in `tests/fixtures/` trimmed from the real
 2026-11-04 responses). Offline bank: 44/53, all correct.
+
+### Step 42 · Final project report (2026-11-17)
+
+`docs/report/Sagar_Setu_Project_Report.docx` (+ `.pdf`), 27 pages, modelled on the department's
+sample report. Structure:
+- contents page with page numbers;
+- introduction (problem, objective, motivation, significance, challenges, novelty);
+- literature review [1]–[8] with a comparison table;
+- methodology: route planning as a state-space search, the verdict and route legality as a CSP,
+  and the Rameswaram → Gulf of Mannar grid as a worked CSP instance; system architecture;
+- implementation (six techniques);
+- results (verdict verification, cyclone replay, question bank, speed, screens, tests);
+- discussion, conclusion and future work, and 16 references.
+
+How it is built (all reproducible):
+- `scripts/report_screenshots.py` takes full-resolution screenshots of the running app,
+  driving the Edge that ships with Windows through Playwright (`uv run --with playwright`;
+  no browser download).
+- `scripts/report_figures.py` draws the verification, cyclone-replay and grid-instance figures.
+- `scripts/build_report.js` builds the .docx.
+- `scripts/report_toc_pages.ps1` renders it in Word, records each heading's page for the
+  contents page, and exports the PDF. It runs twice; the second pass confirmed the numbers
+  are stable.
+
+Found along the way:
+- **INCOIS is publishing again** (17 Nov advisory). Bank re-run of the route and PFZ
+  questions: 53/53 understood, 51/53 behaved. The two misses are Chennai and Rameswaram
+  routes, whose coasts had no zone within 150 km in that day's advisory.
+- **A live cyclone was in the check:** Akvan-26 was active, and answers reported its forecast
+  track 1,110 km from Kochi, outside the cone and wind area.
+- **Word COM left hidden WINWORD processes** holding the .docx open. The script now closes the
+  document and releases every COM object, which was verified to leave no new process.
+  Stopping the earlier strays was refused by the permission check, so the report is built
+  under `docs/report/`. The first-pass drafts in `docs/` are stale and can be deleted once
+  Word is closed.
+- The architecture figure's data sources now include GDACS and NDMA.

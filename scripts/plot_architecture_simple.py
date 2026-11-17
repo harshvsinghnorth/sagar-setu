@@ -95,7 +95,7 @@ def architecture() -> None:
     down(ax, CX, 80.0, 76.6)
 
     node(ax, X, 63.5, W, 12.6, "2.   Collect the data",
-         "Three collectors at the same time, from\nINCOIS · Open-Meteo · Copernicus · NOAA",
+         "Three collectors at the same time, from\nINCOIS · Open-Meteo · NOAA · GDACS · NDMA",
          fc=GREEN_BG, ec=GREEN, badge="AI", bcol=BLUE)
     down(ax, CX, 63.5, 60.4)
 

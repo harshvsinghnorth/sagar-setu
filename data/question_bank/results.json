@@ -1,12 +1,12 @@
 {
   "summary": {
-    "run_at": "2026-11-13T10:18:29+00:00",
+    "run_at": "2026-11-17T18:07:22+00:00",
     "questions": 53,
     "scored": 53,
     "errors": [],
     "llm_unavailable": [],
     "understood": "53/53 (100 %)",
-    "behaved": "50/53 (94 %)",
+    "behaved": "51/53 (96 %)",
     "by_language": {
       "en": "30/30 (100 %)",
       "hi": "10/10 (100 %)",
@@ -46,16 +46,16 @@
       "numbers_verified": "53/53 (100 %)",
       "reply_language": "53/53 (100 %)",
       "verdict_given": "18/18 (100 %)",
-      "route_found": "1/4 (25 %)",
+      "route_found": "2/4 (50 %)",
       "no_verdict": "12/12 (100 %)"
     },
     "answer_sources": {
-      "llm": 27,
-      "llm_retry": 19,
+      "llm": 31,
+      "llm_retry": 15,
       "template": 3,
       "template_fallback": 4
     },
-    "median_ms": 5419
+    "median_ms": 5762
   },
   "rows": [
     {
@@ -1134,12 +1134,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "At Paradip, INCOIS issued no PFZ near this point for 2026-09-04. The nearest maritime boundary is Bangladesh - India (Bangladesh) 271.2 km to the E. Chlorophyll-a is 6.213 mg/m3, and the 10-day baseline mean is 5.955 mg/m3 with a standard deviation of 0.346. The latest reading is 0.75 standard deviations from the baseline, and the 7-day trend is flat. Chlorophyll is within its normal recent range, so the data does not point to a productivity change as an explanation. What could not be checked: no PFZ advisory within that range on 2026-09-04.",
-      "answer_source": "llm_retry",
+      "answer": "Fishing zones:\n• INCOIS issued no PFZ near this point for 2026-11-17\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Bangladesh - India (Bangladesh) 271.2 km to the E\n• chlorophyll-a 6.213 mg/m3 [obs_0013; noaa_coastwatch/viirs_chl; for 17:30 local; grid 5.3 km away; fetched 0 min ago; current]\n• 9-day baseline mean 5.904 mg/m3 (sd 0.328); latest is 0.94 standard deviations from it; 7-day trend flat\n• interpretation: chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation\nNot available: fishing zones near this harbour.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": false,
-      "ms": 6671
+      "ms": 30385
     },
     {
       "id": "P02",
@@ -1179,12 +1179,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "Chlorophyll-a is 7.952 mg/m3. The 10-day baseline mean is 8.739 mg/m3 with a standard deviation of 5.232. The latest reading is -0.15 standard deviations from it, and the 7-day trend is rising, which means chlorophyll is within its normal recent range. INCOIS issued no PFZ near this point for 2026-09-04. The data gaps are: no PFZ advisory within the specified distance.",
-      "answer_source": "llm_retry",
+      "answer": "No safety assessment was made.\nChlorophyll-a is 7.952 mg/m3, and the 9-day baseline mean is 9.305 mg/m3 with a standard deviation of 5.216.\nThe latest reading is -0.26 standard deviations from the baseline, and the 7-day trend is rising.\nChlorophyll is within its normal recent range, so the data does not point to a productivity change as an explanation.\nFishing zone 1 is 50 km WSW from Kochi in the Kerala sector, with an advisory dated 2026-11-17.\nFishing zone 2 is 97.9 km WNW from Kochi in the Kerala sector, with an advisory dated 2026-11-17.\nFishing zone 3 is 130.9 km S from Kochi in the Kerala sector, with an advisory dated 2026-11-17.\nThe nearest maritime boundary is Maldives - India (Maldives), which is 277.1 km to the SSW.",
+      "answer_source": "llm",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": false,
-      "ms": 5748
+      "ms": 15347
     },
     {
       "id": "P03",
@@ -1224,12 +1224,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "Chlorophyll-a is 5.711 mg/m3. The 10-day baseline mean is 8.205 mg/m3 with a standard deviation of 3.324. The latest reading is -0.75 standard deviations from it, and the 7-day trend is falling. Chlorophyll is within its normal recent range, so the data does not point to a productivity change as an explanation. INCOIS issued no PFZ near this point for 2026-09-04. There is no PFZ advisory within the specified distance on 2026-09-04. The nearest maritime boundary is Maldives - India (Maldives), which is 611.2 km to the S.",
-      "answer_source": "llm_retry",
+      "answer": "Chlorophyll-a is 5.711 mg/m3. The 9-day baseline mean is 7.509 mg/m3 with a standard deviation of 2.727, making the latest reading -0.66 standard deviations from it, and the 7-day trend is falling. Chlorophyll is within its normal recent range, so the data does not point to a productivity change as an explanation. Fishing zone PFZ #1 is located NNW 104.6 km from Malpe in the Karnataka sector, with an advisory dated 2026-11-17. You are at an Indian harbour or on Indian land, and the nearest maritime boundary is Maldives - India (Maldives) 611.2 km to the S.",
+      "answer_source": "llm",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": false,
-      "ms": 6639
+      "ms": 8191
     },
     {
       "id": "P04",
@@ -1271,14 +1271,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "மீன் பிடிக்கப் போகவேண்டாம். இன்ஹோயிஸ் மீன் வள இட அறிவிப்பு 70 நாட்கள் பழமையானது. குடலூருக்கு கிழக்கே 70 பாகையில் 104.4 கி.மீ தூரத்தில் முதல் மீன் வள இடமும், 81 பாகையில் 115.8 கி.மீ தூரத்தில் இரண்டாவது மீன் வள இடமும் உள்ளன. குளோரோபில் அளவு 1.805 mg/m3 ஆகும்.",
+      "answer": "இந்த அறிவிப்பில் பாதுகாப்புத் தீர்ப்பு எதுவும் வழங்கப்படவில்லை. கடலூர் துறைமுகத்தில் 2026-11-17 அன்று மீன்பிடி தடை மண்டலம் (PFZ) இல்லை. சரிபார்க்க முடியாதது: இந்த துறைமுகத்திற்கு அருகில் மீன்பிடி மண்டலங்கள் இல்லை. இலங்கையின் கடல் எல்லை தென்கிழக்கில் 168.1 km தொலைவில் உள்ளது. குளோரோபில் அளவு 1.805 mg/m3 ஆகும். 9 நாள் சராசரி 1.195 mg/m3 ஆகும்.",
       "answer_source": "llm",
       "unsupported_numbers": [],
-      "degradation": [
-        "incois/pfz: advisory dated 2026-09-04 is 70 days old"
-      ],
+      "degradation": [],
       "llm_unavailable": false,
-      "ms": 4040
+      "ms": 19565
     },
     {
       "id": "P05",
@@ -1318,12 +1316,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "இராமேஸ்வரம் பகுதியில் மீன் பிடிப்பதற்கு எந்த அறிவிப்பும் இல்லை. குளோரோபில்-ஏ அளவு 1.615 mg/m3 ஆக உள்ளது. 10 நாள் சராசரி 1.58 mg/m3 ஆகும், இதன் திட்ட விலகல் 0.114 ஆகும். சமீபத்திய அளவு சராசரியிலிருந்து 0.31 முறை விலகி உள்ளது மற்றும் 7 நாள் போக்கு அதிகரித்து வருகிறது. இந்தத் தரவு ஒரு உற்பத்தி மாற்றத்தை விளக்கவில்லை. 2026-09-04 அன்று இந்தப் புள்ளிக்கு அருகில் PFZ அறிவிப்பு எதுவும் வழங்கப்படவில்லை. இலங்கை - இந்தியா கடல் எல்லை கிழக்கே 23.1 km தொலைவில் உள்ளது.",
-      "answer_source": "llm_retry",
+      "answer": "மீன் கிடைக்கக்கூடிய பகுதிகள்:\n• 2026-11-17 அன்று இந்த இடத்துக்கு அருகில் INCOIS மீன்பிடி மண்டல அறிவிப்பு எதுவும் வெளியிடவில்லை\n• இடம்: இந்தியத் துறைமுகம் / நிலப்பகுதி; அருகிலுள்ள கடல் எல்லை: Sri Lanka - India (இலங்கை) — கிழக்கு (E) திசையில் 23.1 கி.மீ\n• பச்சையம் (chlorophyll-a): 1.615 mg/m3\n• 9 நாள் சராசரி 1.584 mg/m3 (திட்ட விலக்கம் 0.119); இப்போதைய அளவு அதிலிருந்து 0.26 திட்ட விலக்கம்; 7 நாள் போக்கு: ஏறுமுகம்\n• பச்சையம் வழக்கமான அளவிலேயே உள்ளது — பிடிப்பு மாற்றத்துக்கு உற்பத்தித்திறன் மாற்றம் காரணம் என்று தரவு காட்டவில்லை\nசரிபார்க்க முடியாதவை: pfz_distance_km.",
+      "answer_source": "template_fallback",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": false,
-      "ms": 9002
+      "ms": 15365
     },
     {
       "id": "P06",
@@ -1363,12 +1361,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "पोरबंदर के पास कोई मछली क्षेत्र (PFZ) नहीं है। क्लोरोफिल-ए 2.032 mg/m3 है, जो सामान्य सीमा के भीतर है और इसका रुझान गिर रहा है। डेटा अंतराल: 2026-09-04 पर कोई PFZ सलाह नहीं। सबसे नज़दीकी समुद्री सीमा पाकिस्तान - इंडिया (पाकिस्तान) है जो WNW दिशा में 250.4 km दूर है।",
-      "answer_source": "llm_retry",
+      "answer": "क्लोरोफिल-ए 2.032 mg/m3 है। 9-दिन का औसत 2.405 mg/m3 है, जिसमें मानक विचलन 0.922 है। नवीनतम डेटा औसत से -0.4 मानक विचलन पर है और 7-दिन का रुझान गिर रहा है। इसका मतलब है कि क्लोरोफिल हाल की सामान्य सीमा के भीतर है और उत्पादकता में बदलाव नहीं दिख रहा है। मछली पकड़ने के क्षेत्र यहाँ हैं: पहला क्षेत्र पोरबंदर से दक्षिण-पश्चिम में 31.4 km की दूरी पर है; दूसरा क्षेत्र दक्षिण-दक्षिण-पश्चिम में 33.1 km की दूरी पर है; और तीसरा क्षेत्र पश्चिम में 60.3 km की दूरी पर है। सबसे पास समुद्री सीमा पश्चिम-उत्तर-पश्चिम में 250.4 km दूर पाकिस्तान-भारत सीमा है।",
+      "answer_source": "llm",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": false,
-      "ms": 11412
+      "ms": 13312
     },
     {
       "id": "P07",
@@ -1408,12 +1406,12 @@
       },
       "behaved": true,
       "verdict": null,
-      "answer": "Data gaps: no PFZ advisory within the checked distance on 2026-09-04. Nearest maritime boundary: Bangladesh - India (Bangladesh) 645.4 km to the E. Chlorophyll-a 2.258 mg/m3; 10-day baseline mean 2.411 mg/m3 (sd 0.714); latest is -0.21 standard deviations from it; 7-day trend falling. Chlorophyll is within its normal recent range — the data does not point to a productivity change as an explanation. INCOIS issued no PFZ near this point for 2026-09-04.",
+      "answer": "No safety assessment was made, so report the facts only. Chlorophyll-a is 2.258 mg/m3 at a grid 2 km away. The 9-day baseline mean is 2.234 mg/m3 with a standard deviation of 0.5. The latest reading is 0.05 standard deviations from it, and the 7-day trend is falling. Chlorophyll is within its normal recent range, so the data does not point to a productivity change as an explanation. INCOIS issued no PFZ near this point for 2026-11-17, and there is no PFZ advisory within that distance. The nearest maritime boundary is Bangladesh - India (Bangladesh) 645.4 km to the E, with the position at an Indian harbour or on Indian land.",
       "answer_source": "llm_retry",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": false,
-      "ms": 7293
+      "ms": 20605
     },
     {
       "id": "B01",
@@ -1733,18 +1731,16 @@
         "numbers_verified": true,
         "reply_language": true,
         "verdict_given": true,
-        "route_found": false
+        "route_found": true
       },
-      "behaved": false,
-      "verdict": "GO",
-      "answer": "GO — traditional craft off Kochi, Sat 14 Nov 05:00–12:00 IST.\n• wave height 0.48 m\n• wave period 10 s\n• swell height 0.42 m\n• swell period 8.35 s\n• wind 3.3 kt\n• gusts 10.3 kt\n• wind direction 305 deg\n• visibility 7.96 km\n• sea temperature 31.2 degC\n• current 0.162 kt\n• current direction 315 deg\n• cyclone check: no active tropical cyclone in the north Indian Ocean\n• lightning check: official warnings are issued only a few hours ahead; none can cover this window yet\nFishing zones:\n• INCOIS issued no PFZ near this point for 2026-09-04\n• position: at an Indian harbour / on Indian land; nearest maritime boundary: Maldives - India (Maldives) 277.1 km to the SSW\nRoute:\n• no fishing-zone advisory near this harbour to route to\nData note: incois/pfz: advisory dated 2026-09-04 is 70 days old.\nNot available: fishing zones near this harbour; lightning strike locations.",
-      "answer_source": "template_fallback",
+      "behaved": true,
+      "verdict": "CAUTION",
+      "answer": "CAUTION.\nThe visibility is 4.4 km.\nThe cyclone check found that AKVAN-26 is active; its forecast track stays 1110.6 km from this point, outside the forecast cone and wind field.\nThe lightning check found that official warnings are issued only a few hours ahead; none can cover this window yet.\nPFZ #1 is 50 km WSW from Kochi, Kerala sector, advisory dated 2026-11-17.\nPFZ #2 is 97.9 km WNW from Kochi, Kerala sector, advisory dated 2026-11-17.\nPFZ #3 is 130.9 km S from Kochi, Kerala sector, advisory dated 2026-11-17.\nThe suggested route to PFZ #1 is 47.3 km, about 3 h 32 min at 7 kt, with legs of 26.5 km WSW and 20.8 km WSW.\nThe route stays at least 236.2 km inside the maritime boundary, and the straight line stays in Indian waters, closest 236.2 km to the boundary (the straight line would have meant 47.2 km to the WSW).\nThis is advice, not a navigation chart.",
+      "answer_source": "llm",
       "unsupported_numbers": [],
-      "degradation": [
-        "incois/pfz: advisory dated 2026-09-04 is 70 days old"
-      ],
+      "degradation": [],
       "llm_unavailable": false,
-      "ms": 4912
+      "ms": 3392
     },
     {
       "id": "R02",
@@ -1785,16 +1781,16 @@
         "numbers_verified": true,
         "reply_language": true,
         "verdict_given": true,
-        "route_found": true
+        "route_found": false
       },
-      "behaved": true,
+      "behaved": false,
       "verdict": "GO",
-      "answer": "GO.\nThe cyclone check found no active tropical cyclone in the north Indian Ocean, and the lightning check found that official warnings are issued only a few hours ahead and none can cover this window yet.\nWe could not check lightning_strikes because no strike-location feed is available, so official lightning warnings and the weather-model thunderstorm signal were used instead.\nFishing zone PFZ #1 is 124.3 km SSE from Chennai.\nFishing zone PFZ #2 is 145.8 km SSE from Chennai.\nThe suggested route to PFZ #2 is 142.8 km SSE, taking about 9 h 53 min at 7 kt.\nThe route stays at least 131.7 km inside the maritime boundary, and the straight line would have meant 142.8 km to the SSE in a straight line.\nRemember that this is advice, not a navigation chart.",
-      "answer_source": "llm",
+      "answer": "GO for a traditional craft. The wave height is 1.3 m, wave period is 8 s, swell height is 1.2 m, and swell period is 6.9 s. The wind is 10.5 kt with gusts of 26 kt and wind direction of 353 deg. Visibility is 12.48 km, sea temperature is 28.4 degC, current is 0.594 kt, and current direction is 191 deg. The cyclone check found that AKVAN-26 is active and its forecast track stays 557.7 km from this point, outside the forecast cone and wind field. The lightning check found that official warnings are issued only a few hours ahead and none can cover this window yet. The nearest maritime boundary is Sri Lanka - India (Sri Lanka) 277.4 km to the SSE.",
+      "answer_source": "llm_retry",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": false,
-      "ms": 7567
+      "ms": 5292
     },
     {
       "id": "R03",
@@ -1836,12 +1832,12 @@
       },
       "behaved": false,
       "verdict": "GO",
-      "answer": "GO.\n\nகாற்றின் வேகம் 14.6 நாட், gusts 20.2 நாட், அலை உயரம் 0.7 m, அலை காலம் 4.35 s. கடல் நீர் வெப்பநிலை 28.9 degC, நீரோட்டம் 1.134 நாட், பார்வைத்திறன் 10.12 km.\n\nபுயல் சோதனை: வடக்கு இந்தியப் பெருங்கடலில் தீவிர புயல் எதுவும் இல்லை. மின்னல் சோதனை: இந்த காலக்கட்டத்தை மூடுவதற்கான அதிகாரப்பூர்வ எச்சரிக்கைகள் எதுவும் இன்னும் வரவில்லை.\n\nமீன்பிடி பகுதி குறித்த தகவல் எதுவும் இல்லை. எல்லை விவரம்: மிக அருகில் உள்ள கடல் எல்லை ஸ்ரீ லங்கா - இந்தியா (ஸ்ரீ லங்கா) 23.1 km தொலைவில் E திசையில் உள்ளது.\n\nஇது ஒரு வழிகாட்டுதல் மட்டுமே, வழிசெலுத்தல் வரைபடம் அல்ல.",
+      "answer": "GO.\n\nஅலை உயரம் 0.46 m, அலை காலம் 7.25 s, பெருங்கடல் அலை உயரம் 0.34 m, பெருங்கடல் அலை காலம் 6.85 s. காற்று 12 kt, காற்று வீச்சு 16.3 kt, காற்றின் திசை 358 deg, பார்வை தூரம் 14.06 km. கடல் நீர் வெப்பநிலை 28.9 degC, கடல் நீரோட்டம் 0.918 kt, கடல் நீரோட்ட திசை 201 deg.\n\nபுயல் சோதனையில் ஏகேவன்-26 தீவிரமாக உள்ளது; அதன் கணிப்பு பாதை இந்த புள்ளியிலிருந்து 841.2 km தூரத்தில், கணிப்பு கூம்பு மற்றும் காற்று மண்டலத்திற்கு வெளியே உள்ளது; மின்னல் சோதனையில் இந்த சாளரத்தை இன்னும் மறைக்க முடியவில்லை.\n\nமீன்பிடி மண்டல ஆலோசனை ஏதுமில்லை.\n\nஇந்திய துறைமுகம் / இந்திய நிலத்தில் உள்ளது; மிக அருகில் உள்ள கடல் எல்லை: இலங்கை - இந்தியா (இலங்கை) கிழக்கு திசையில் 23.1 km தொலைவில் உள்ளது.",
       "answer_source": "llm",
       "unsupported_numbers": [],
       "degradation": [],
       "llm_unavailable": false,
-      "ms": 4577
+      "ms": 5809
     },
     {
       "id": "R04",
@@ -1866,7 +1862,7 @@
         "heading_deg": null,
         "speed_kt": null,
         "pfz_index": null,
-        "planner": "fast_path (offline)"
+        "planner": "llm"
       },
       "field_ok": {
         "intent": true,
@@ -1879,19 +1875,16 @@
         "numbers_verified": true,
         "reply_language": true,
         "verdict_given": true,
-        "route_found": false
+        "route_found": true
       },
-      "behaved": false,
+      "behaved": true,
       "verdict": "GO",
-      "answer": "समुद्र में जा सकते हैं (GO) — पारंपरिक नाव, Veraval, Sat 14 Nov 05:00–12:00 IST।\n• लहर की ऊँचाई: 0.48 मी.\n• लहर अंतराल: 10.05 सेकंड\n• स्वेल (लंबी लहर) की ऊँचाई: 0.34 मी.\n• स्वेल अंतराल: 9.75 सेकंड\n• हवा की रफ़्तार: 6.5 नॉट\n• हवा के झोंके: 11.3 नॉट\n• हवा की दिशा: 153°\n• दृश्यता: 10.98 कि.मी.\n• समुद्र का तापमान: 28.1°C\n• धारा की रफ़्तार: 0.432 नॉट\n• धारा की दिशा: 297°\n• चक्रवात जाँच: उत्तरी हिंद महासागर में अभी कोई सक्रिय चक्रवात नहीं है\n• बिजली जाँच: आधिकारिक चेतावनियाँ कुछ घंटे पहले ही जारी होती हैं; इस समय के लिए अभी कोई नहीं हो सकती\nमछली मिलने के संभावित क्षेत्र:\n• INCOIS ने 2026-09-04 के लिए इस जगह के पास कोई PFZ सूचना जारी नहीं की\n• स्थिति: भारतीय बंदरगाह / ज़मीन पर; सबसे नज़दीकी समुद्री सीमा: Pakistan - India (पाकिस्तान) — पश्चिम-उत्तरपश्चिम (WNW) दिशा में 361.9 कि.मी.\nरास्ता:\n• इस बंदरगाह के पास रास्ता बताने के लिए कोई मछली क्षेत्र सूचना नहीं है\nडेटा सूचना: लाइव डेटा नहीं मिला — मछली क्षेत्र: 2026-09-04 की सूचना 70 दिन पुरानी है; बिजली चेतावनी: पुराना डेटा।\nजाँच नहीं हो सकी: pfz_distance_km, बिजली गिरने की जगहों का डेटा।",
-      "answer_source": "template_fallback",
+      "answer": "GO\n\nवेरावल के लिए पारंपरिक नाव के वास्ते यह जा सकते हैं (GO)। चक्रवात जांच में एकेवान-26 सक्रिय है, लेकिन इसका पूर्वानुमानित रास्ता इस बिंदु से 1366.7 km दूर, पूर्वानुमान शंकु और हवा के क्षेत्र के बाहर रहता है। बिजली कड़कने की जांच में कोई चेतावनी नहीं मिली। मछली पकड़ने के क्षेत्र: पीएफजेड #1: वेरावल से 26 km दक्षिण-दक्षिण-पश्चिम (एसएसडब्ल्यू) (दिक्शांक 211°); पीएफजेड #2: वेरावल से 41.5 km दक्षिण (एस) (दिक्शांक 173°); पीएफजेड #3: वेरावल से 49.4",
+      "answer_source": "llm",
       "unsupported_numbers": [],
-      "degradation": [
-        "incois/pfz: advisory dated 2026-09-04 is 70 days old",
-        "ndma/sachet: stale_cache"
-      ],
+      "degradation": [],
       "llm_unavailable": false,
-      "ms": 1655
+      "ms": 13663
     },
     {
       "id": "A01",
